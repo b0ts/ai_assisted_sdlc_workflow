@@ -4,10 +4,8 @@ Documentation and templates for incorporating AI assistance into the software de
 
 ## Contents
 
-This repository will grow to include:
-
-- Guidance on where and how AI assistance fits into each phase of the SDLC
-- Templates to help teams implement the workflow
+- [`docs/`](docs/) — guidance on where and how AI assistance fits into each phase of the SDLC
+- [`templates/`](templates/) — templates to help teams implement the workflow
 
 ## Status
 
