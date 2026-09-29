@@ -1,3 +1,0 @@
-# Planning
-
-Content coming soon.

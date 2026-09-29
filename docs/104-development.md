@@ -1,3 +1,0 @@
-# Development
-
-Content coming soon.

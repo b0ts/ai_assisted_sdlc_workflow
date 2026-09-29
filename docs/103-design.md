@@ -1,3 +1,0 @@
-# Design
-
-Content coming soon.

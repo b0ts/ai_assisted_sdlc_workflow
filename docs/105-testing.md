@@ -1,3 +1,0 @@
-# Testing
-
-Content coming soon.
