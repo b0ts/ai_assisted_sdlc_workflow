@@ -7,7 +7,7 @@ want. It can be one short sentence or several pages of instructions. The AI
 has only your prompt to go on, so the quality of what you get back depends
 heavily on the quality of what you put in.
 
-In [Understanding AI](a03-understanding-ai.md), we compared AI to a very smart
+In [Understanding AI](a05-understanding-ai.md), we compared AI to a very smart
 teenager. A **vague prompt** is like asking *"Did you clean your room?"* You
 get a quick, confident answer that probably isn't what you meant. A
 **well-defined prompt** is like the parent who sets the roles, gives a clear
@@ -43,14 +43,14 @@ quick curiosity questions, but not for work you plan to use.
 
 An informal prompt is written the way you'd explain a task to a helpful
 coworker. It covers the key parts from
-[Understanding AI](a03-understanding-ai.md): the **role** the AI should play,
+[Understanding AI](a05-understanding-ai.md): the **role** the AI should play,
 the **deliverable** you want, the **inputs** to work from, what the **output**
 should contain, and how you'll **test** it. It doesn't need to be tidy or
 perfectly worded.
 
 See [example-01-roles-and-deliverables.md](../prompts/example-01-roles-and-deliverables.md)
 for a real informal prompt. It produced a good first draft of
-[Steps, Roles, and Deliverables](a02-steps-roles-and-deliverables.md) in one
+[Steps, Roles, and Deliverables](a04-steps-roles-and-deliverables.md) in one
 try.
 
 ### 3. The Formal Prompt
@@ -75,7 +75,7 @@ for the formal version of the example-01 prompt.
 ### 4. The Test-Driven (TDD) Prompt
 
 This applies the same idea as the
-[Test-Driven Development workflow](a01-what-is-an-sdlc-workflow.md) to prompts
+[Test-Driven Development workflow](a03-what-is-an-sdlc-workflow.md) to prompts
 themselves. Before relying on a prompt, you build an **evaluator**: a set of
 checks, often run by a second AI, that grades each result against a clear
 answer key. You then run the prompt, see which checks fail, improve the
@@ -132,17 +132,17 @@ way, and add points as you think of them. This document was created that way.
 ## How This Guide Was Written: An Informal Workflow in Practice
 
 The informal approach is the one we use most often. For example, the first
-draft of [Steps, Roles, and Deliverables](a02-steps-roles-and-deliverables.md)
+draft of [Steps, Roles, and Deliverables](a04-steps-roles-and-deliverables.md)
 started with a prompt like this:
 
 1. Please play the role of an SDLC educator. *(role)*
 2. Create a one-to-two-page markdown file called
    03-steps-roles-and-deliverables.md (since renamed
-   a02-steps-roles-and-deliverables.md). *(deliverable and output)*
+   a04-steps-roles-and-deliverables.md). *(deliverable and output)*
 3. Target it to a person with no experience with SDLC or workflows.
    *(audience)*
 4. Please use 02-what-is-an-sdlc-workflow.md (now
-   a01-what-is-an-sdlc-workflow.md) as input. *(input)*
+   a03-what-is-an-sdlc-workflow.md) as input. *(input)*
 5. This was followed by a lot of informal chat describing what the document
    should contain.
 6. No example was needed, because the AI picks up the style and format from
@@ -161,10 +161,10 @@ Then we saved two prompt files: the original informal prompt
 (example-01) and a more formal, repeatable version (example-02).
 
 **Try it yourself:** ask Claude to read either prompt file, or paste one into
-a chat, along with doc a01. (The prompts were written before the docs were
+a chat, along with doc a03. (The prompts were written before the docs were
 renumbered and before Tracking became step 1, so the result will list nine
 steps rather than ten.) It should produce a document very similar to
-[Steps, Roles, and Deliverables](a02-steps-roles-and-deliverables.md).
+[Steps, Roles, and Deliverables](a04-steps-roles-and-deliverables.md).
 
 ---
 
@@ -185,5 +185,5 @@ something different.
   the AI maker's own guide to writing good prompts
 - [Anthropic courses](https://github.com/anthropics/courses): free, hands-on
   tutorials on prompting and prompt evaluation
-- [RC Park Tour case study](rc-park-tour-ai-sdlc-case-study.md): the actual
-  prompts used for each role in a real project
+- [Prompts](../prompts/README.md): the predefined prompts used for each
+  step's chat in this workflow

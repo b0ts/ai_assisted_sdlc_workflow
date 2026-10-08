@@ -53,16 +53,19 @@ nobody has to guess.
 | 3. Requirements | Describe who will use it and what they need to do. | "Three bedrooms, a ramp" |
 | 4. Design | Plan how the software will work, including how it keeps information safe. | The architect's plans |
 | 5. User experience | Sketch the screens people will see. | Choosing layouts and finishes |
-| 6. Infrastructure | Arrange the computers or online services it will run on. | Preparing the lot and utilities |
+| 6. Initial infrastructure | Arrange the computers or online services it will run on, then keep supporting them through the later steps. | Preparing the lot and utilities |
 | 7. **Test creation** | Write down every check that proves the software works. | The inspection checklist |
 | 8. Implementation | The AI builds the software until every check passes. | Construction |
 | 9. Release | Make it available to real users and watch closely. | Move-in day |
-| 10. Upkeep | Fix problems and keep it up to date. | Ongoing repairs |
+| 10. Maintenance | Fix problems and keep it up to date. | Ongoing repairs |
 
 Step 1 is different from the others. Tracking starts first, but it doesn't
 finish when Feasibility begins. It keeps running alongside steps 2 through
 10, recording progress and decisions as the other steps flow one after
-another.
+another. Step 6 is partly like this too: it sets up the *initial*
+infrastructure, and the DevOps Engineer then keeps helping through steps 7
+to 10, for example by setting up a safe place to run tests and helping put
+the software live.
 
 Between every step, someone **reviews and approves** the result before the next
 step begins. If a later step discovers a problem with an earlier one, such as
@@ -112,13 +115,13 @@ encourage readers to compare approaches on their own projects.
 
 **In this repo**
 
-- [RC Park Tour case study](rc-park-tour-ai-sdlc-case-study.md): this workflow
-  applied to a real project, with full detail on each role and document
+- [BeautifulBeachPark Volunteers sample](../samples/README.md): this
+  workflow applied to a made-up project, with a document for every step
 - Step guides: [1 Tracking](b01-tracking.md) ·
   [2 Feasibility](b02-feasibility.md) · [3 Requirements](b03-requirements.md) ·
   [4 Design](b04-design.md) · [5 User experience](b05-user-experience.md) ·
-  [6 Infrastructure](b06-infrastructure.md) · [7 Test creation](b07-test-creation.md) ·
-  [8 Implementation](b08-implementation.md) · [9 Release](b09-release.md) · [10 Upkeep](b10-upkeep.md)
+  [6 Initial infrastructure](b06-infrastructure.md) · [7 Test creation](b07-test-creation.md) ·
+  [8 Implementation](b08-implementation.md) · [9 Release](b09-release.md) · [10 Maintenance](b10-maintenance.md)
 
 **Beginner-friendly outside reading**
 
@@ -131,7 +134,7 @@ encourage readers to compare approaches on their own projects.
 - [Test Driven Development (Martin Fowler)](https://martinfowler.com/bliki/TestDrivenDevelopment.html):
   a short explanation of TDD by a well-known software author
 
-**Next:** [Steps, Roles, and Deliverables](a02-steps-roles-and-deliverables.md)
+**Next:** [Steps, Roles, and Deliverables](a04-steps-roles-and-deliverables.md)
 shows who is involved in each step, and
-[What Is an AI-Assisted SDLC Workflow?](a05-what-is-an-ai-assisted-sdlc-workflow.md)
+[What Is an AI-Assisted SDLC Workflow?](a07-what-is-an-ai-assisted-sdlc-workflow.md)
 shows how AI chats play those roles.

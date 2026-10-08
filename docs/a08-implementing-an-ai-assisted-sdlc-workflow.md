@@ -15,14 +15,16 @@ Tracking.
 
 The earlier guides explained what an AI-assisted SDLC workflow is and why it
 works. This one is hands-on: it sets up everything the ten chats described in
-[What Is an AI-Assisted SDLC Workflow?](a05-what-is-an-ai-assisted-sdlc-workflow.md)
+[What Is an AI-Assisted SDLC Workflow?](a07-what-is-an-ai-assisted-sdlc-workflow.md)
 will need.
 
-Throughout this guide, `<your-project>` stands for the product you're building.
-Each step also shows how it was done for **rc_park_tour**, a real project built
-with this workflow. You can browse it at
-[github.com/b0ts/rc_park_tour](https://github.com/b0ts/rc_park_tour) to see the
-results of each step. Don't copy its name; use your own.
+Throughout this guide, `<your-project>` stands for the product you're building,
+for example `OurGroupVolunteerApp`. Each step also shows how it was done for
+**BeautifulBeachParkVolunteers**, the sample project for a made-up park. The
+finished sample is kept in this repo's
+[`samples/BeautifulBeachParkVolunteers/`](../samples/BeautifulBeachParkVolunteers/)
+folder, so you can compare your folder with it after each step. Don't copy its
+name; use your own.
 
 You'll use two Claude tools along the way:
 
@@ -53,7 +55,7 @@ Create a folder for your product in your projects folder, next to
     ├── ai_assisted_sdlc_workflow/
     └── <your-project>/
 
-**In rc_park_tour:** the folder is `projects/rc_park_tour`.
+**In the sample:** the folder was `projects/BeautifulBeachParkVolunteers`.
 
 ---
 
@@ -88,8 +90,8 @@ doesn't show by default.
 **In projects:** "Copy everything in ai_assisted_sdlc_workflow/skeleton,
 including hidden files, into `<your-project>`."
 
-**In rc_park_tour:** rc_park_tour was set up before the skeleton existed, so its
-layout is different. It will be brought in line as the example develops.
+**In the sample:** "Copy everything in ai_assisted_sdlc_workflow/skeleton,
+including hidden files, into BeautifulBeachParkVolunteers."
 
 ---
 
@@ -105,11 +107,12 @@ research and planning conversations together where you can pick them up later.
 3. Click the folder button and select your `<your-project>` folder.
 4. Click **Create Project**.
 
-**In rc_park_tour:**
+**In the sample:**
 
-- Name: `rc_park_tour`
-- Details: "A printed and interactive tour of RC Park in San Jose, CA"
-- Folder: `projects/rc_park_tour`
+- Name: `BeautifulBeachParkVolunteers`
+- Details: "A volunteer sign-up app for BeautifulBeachPark, where coordinators
+  post tasks with one-hour slots and volunteers sign up using a username only"
+- Folder: `projects/BeautifulBeachParkVolunteers`
 
 ---
 
@@ -135,11 +138,11 @@ description of your project and ask it to fill in the placeholders in
 and push everything. Your new repo then starts with a clear description
 instead of blank placeholders.
 
-**In rc_park_tour:** "Create a new public GitHub repo named rc_park_tour for
-this folder. Add a README.md describing the project as a printed and
-interactive tour of RC Park in San Jose, CA, then commit and push it." Claude
-Code also added a `LICENSE` file. The result is
-[github.com/b0ts/rc_park_tour](https://github.com/b0ts/rc_park_tour).
+**In the sample:** "Create a new private GitHub repo named
+BeautifulBeachParkVolunteers for this folder. Fill in the README.md and
+CLAUDE.md placeholders, describing the project as a volunteer sign-up app for
+BeautifulBeachPark, where coordinators post tasks with one-hour slots and
+volunteers sign up using a username only. Then commit and push everything."
 
 ---
 
@@ -157,7 +160,8 @@ in your `<your-project>` folder. This uses the Filesystem extension.
    the files and folders in `<your-project>`, including the skeleton folders
    from Step 3.
 
-**In rc_park_tour:** the directory added was `~/projects/rc_park_tour`.
+**In the sample:** the directory added was
+`~/projects/BeautifulBeachParkVolunteers`.
 
 ---
 
@@ -184,7 +188,7 @@ Use this to track your progress through the setup steps.
 
 **Learn more:**
 
-- [What Is an AI-Assisted SDLC Workflow?](a05-what-is-an-ai-assisted-sdlc-workflow.md):
+- [What Is an AI-Assisted SDLC Workflow?](a07-what-is-an-ai-assisted-sdlc-workflow.md):
   the ten chats this setup prepares for
 - [Step 1: Tracking](b01-tracking.md): the first chat you'll start
 - [GitHub CLI manual](https://cli.github.com/manual/): more on the `gh`

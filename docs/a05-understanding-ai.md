@@ -7,7 +7,7 @@ does its best work only when **you** tell it clearly who it should be, what
 you want, what to work from, and how you'll check the result. Giving AI those
 instructions is called **prompt engineering**, and it's the skill that makes
 the workflow in
-[What Is a Software Development Lifecycle Workflow?](a01-what-is-an-sdlc-workflow.md)
+[What Is a Software Development Lifecycle Workflow?](a03-what-is-an-sdlc-workflow.md)
 possible.
 
 ---
@@ -93,5 +93,5 @@ parts:
 
 - [Prompt engineering overview (Anthropic)](https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview):
   the AI maker's own guide to writing good prompts
-- [RC Park Tour case study](rc-park-tour-ai-sdlc-case-study.md): the actual
-  prompts used for each role in a real project
+- [Prompts](../prompts/README.md): the predefined prompts used for each
+  step's chat in this workflow

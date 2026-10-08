@@ -16,11 +16,11 @@ An **AI-assisted Software Development Lifecycle (SDLC) workflow** combines
 three ideas covered earlier in this guide:
 
 - the **Waterfall SDLC adapted for Test-Driven Development (TDD)** from
-  [What Is a Software Development Lifecycle Workflow?](a01-what-is-an-sdlc-workflow.md),
+  [What Is a Software Development Lifecycle Workflow?](a03-what-is-an-sdlc-workflow.md),
 - the **steps, roles, and deliverables** from
-  [Steps, Roles, and Deliverables](a02-steps-roles-and-deliverables.md), and
-- **prompt engineering** from [Understanding AI](a03-understanding-ai.md) and
-  [Prompt Engineering](a04-prompt-engineering.md).
+  [Steps, Roles, and Deliverables](a04-steps-roles-and-deliverables.md), and
+- **prompt engineering** from [Understanding AI](a05-understanding-ai.md) and
+  [Prompt Engineering](a06-prompt-engineering.md).
 
 Together, they create a workflow that can match, and in some cases exceed,
 the results of a large team of dedicated professionals. The difference is
@@ -86,8 +86,12 @@ chain can start.
 
 **The other nine chats** play the roles and produce the deliverables
 outlined in
-[What Is a Software Development Lifecycle Workflow?](a01-what-is-an-sdlc-workflow.md)
-and [Steps, Roles, and Deliverables](a02-steps-roles-and-deliverables.md).
+[What Is a Software Development Lifecycle Workflow?](a03-what-is-an-sdlc-workflow.md)
+and [Steps, Roles, and Deliverables](a04-steps-roles-and-deliverables.md).
+One of them, the **Initial Infrastructure** chat (Step 6), is also
+revisited later: after it sets up the initial infrastructure, later steps
+bring DevOps questions back to it, such as a test environment for Step 7
+or help putting the software live in Step 9.
 
 | Step | Chat | Role | Main deliverable |
 |---|---|---|---|
@@ -96,11 +100,11 @@ and [Steps, Roles, and Deliverables](a02-steps-roles-and-deliverables.md).
 | 03 | Requirements | Product Manager | Product Requirements Document (PRD) |
 | 04 | Design | Software Architect | Software Design Specification ("Spec") |
 | 05 | User experience | UI/UX Designer | UI/UX Document with screen sketches |
-| 06 | Infrastructure | DevOps Engineer | System Infrastructure Document |
+| 06 | Initial infrastructure | DevOps Engineer | Cost Sign-Off Sheet (approved before building) and System Infrastructure Document, then ongoing DevOps support |
 | 07 | Test creation | SDET (Software Development Engineer in Test) | Test Plan and automated tests |
 | 08 | Implementation | Software Engineer | Working software and Release Notes |
 | 09 | Release | Release Manager | Live software and Release Efficacy Document |
-| 10 | Upkeep | SRE (Site Reliability Engineer) / Maintenance Engineer | Maintenance Log |
+| 10 | Maintenance | SRE (Site Reliability Engineer) / Maintenance Engineer | Maintenance Log |
 
 ### When the Chain Runs Backward
 
@@ -128,22 +132,23 @@ step's number:
 
 | Prefix | What it is | Where it lives | Example |
 |---|---|---|---|
-| **a** | How-to and background guides | `docs/` | `a05-what-is-an-ai-assisted-sdlc-workflow.md` |
+| **a** | How-to and background guides | `docs/` | `a07-what-is-an-ai-assisted-sdlc-workflow.md` |
 | **b** | Step guides, one per step | `docs/` | `b01-tracking.md` |
 | **c** | Predefined prompts for each step's chat | `prompts/` | `c01-tracking-prompt.md` |
 | **d** | Templates for each step's documents | `templates/` | `d01-01-checklist`, `d01-02-gantt` |
-| **e** | Worked examples, each in its own repository | separate repos | e01 is RC Park Tour |
+| **d** | Sample documents: the templates filled in for the sample project | `samples/` | `d03-01-prd.md` in the sample's `docs/` |
+| **e** | Case studies of real projects, each in its own repository | separate repos | None yet |
 
 Templates have two numbers because one step can produce several documents.
 Prompts get a second number only if a step needs more than one. For example, the Tracking step (01) can produce a checklist
 (`d01-01`), a Gantt chart (`d01-02`), and a status report (`d01-03`).
 
-Each worked example lives in its own repository and is listed by its
-e-number in this repo's README. Inside an example repo, files use the same
-c and d numbers as the prompts and templates they came from, so
-`d03-01` is always that project's requirements document. The first example,
-**e01**, is the [RC Park Tour](https://github.com/b0ts/rc_park_tour)
-application. More examples can be added later the same way.
+The [sample project](../samples/README.md),
+**BeautifulBeachPark Volunteers**, is a volunteer sign-up app for a made-up
+park. Its documents use the same d numbers as the templates they came from,
+so `d03-01` is always its requirements document. Additional
+[case studies](case-studies.md) may be added to this repo at a future time,
+each numbered the same way.
 
 ---
 
@@ -151,7 +156,7 @@ application. More examples can be added later the same way.
 
 - [Chain complex prompts for stronger performance (Anthropic)](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/chain-prompts):
   Anthropic's guide to prompt chaining
-- [RC Park Tour case study](rc-park-tour-ai-sdlc-case-study.md): each role,
-  deliverable, and feedback loop in full detail
-- [Prompt Engineering](a04-prompt-engineering.md): how to choose and write
+- [BeautifulBeachPark Volunteers sample](../samples/README.md): every
+  step's deliverable for one made-up project
+- [Prompt Engineering](a06-prompt-engineering.md): how to choose and write
   the kind of prompt each chat needs

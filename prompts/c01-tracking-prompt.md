@@ -3,8 +3,8 @@
 ## How to Use This Prompt
 
 This is a generic prompt for **Step 1: Tracking** in the AI-assisted SDLC
-workflow. It works for the RC Park Tour example (e01), for later examples,
-and for your own projects.
+workflow. It works for the BeautifulBeachParkVolunteers sample project, for
+any case studies added later, and for your own projects.
 
 1. Start a **new chat** and name it something like `01-tracking`.
 2. Paste everything below the line into the chat, or attach this file and
@@ -21,7 +21,7 @@ attach your latest tracking checklist (`d01-01-checklist.md`). The Scrum
 Master will pick up where you left off.
 
 Background reading: [Step 1: Tracking](../docs/b01-tracking.md) and
-[What Is an AI-Assisted SDLC Workflow?](../docs/a05-what-is-an-ai-assisted-sdlc-workflow.md).
+[What Is an AI-Assisted SDLC Workflow?](../docs/a07-what-is-an-ai-assisted-sdlc-workflow.md).
 
 ---
 
@@ -58,16 +58,16 @@ Use these step names and numbers exactly.
 | 3 | Requirements | Product Manager | Project intent + Feasibility deliverable | Product Requirements Document (PRD) |
 | 4 | Design | Software Architect | PRD | Software Design Specification ("Spec"), including Security & Compliance |
 | 5 | User Experience | UI/UX Designer | PRD + Spec | UI/UX Document with mockups |
-| 6 | Infrastructure | DevOps Engineer | PRD + Spec + UI/UX Document | System Infrastructure Document; the infrastructure itself |
+| 6 | Initial Infrastructure | DevOps Engineer | PRD + Spec + UI/UX Document | Cost Sign-Off Sheet (approved before building); System Infrastructure Document; the initial infrastructure itself; then ongoing DevOps support for steps 7 to 10 |
 | 7 | Test Creation | SDET (Software Development Engineer in Test) | Spec + Infrastructure Document | Test Plan and automated tests |
 | 8 | Implementation | Software Engineer | Spec + Infrastructure + UI/UX Document + tests | Working software that passes every test; Release Notes |
 | 9 | Release | Release Manager | Software + Release Notes | Live release; Release Efficacy Document |
-| 10 | Upkeep | SRE (Site Reliability Engineer) / Maintenance Engineer | Release Efficacy Document; live system | Maintenance Log (ongoing) |
+| 10 | Maintenance | SRE (Site Reliability Engineer) / Maintenance Engineer | Release Efficacy Document; live system | Maintenance Log (ongoing) |
 
 Each step's chat uses a prompt numbered to match: `c02-...` for Feasibility,
 `c03-...` for Requirements, and so on. If a step's prompt doesn't exist yet,
 say so and suggest I write one using
-[Prompt Engineering](../docs/a04-prompt-engineering.md) as a guide.
+[Prompt Engineering](../docs/a06-prompt-engineering.md) as a guide.
 
 ## Inputs
 
@@ -78,7 +78,7 @@ say so and suggest I write one using
 - **Templates** from this repository's [`templates/`](../templates/) folder.
   See the next section.
 - If you can read files in this repository, these give useful background:
-  `docs/b01-tracking.md` and `docs/a02-steps-roles-and-deliverables.md`.
+  `docs/b01-tracking.md` and `docs/a04-steps-roles-and-deliverables.md`.
 
 If something you need is missing, ask me for it instead of guessing.
 
@@ -149,8 +149,9 @@ Then ask me the following, and create the initial tracking documents.
 
 1. **Project:** the name and a one- or two-sentence description of what it
    should do and for whom.
-2. **Example or own project:** is this a repo example (for example, e01 RC
-   Park Tour) or my own project? Where do the project's files live?
+2. **Sample or own project:** is this the repo's sample project
+   (`samples/BeautifulBeachParkVolunteers`) or my own project? Where do the
+   project's files live?
 3. **Stakeholders:** who has a say in the project, and who signs off each
    step? (One person may do everything.)
 4. **Size:** small, medium, or large? Is it likely to be delivered in phases?
@@ -178,7 +179,8 @@ Create `d01-01-checklist.md` from its template. Its sections are:
 1. **Project Summary:** name, description, stakeholders, sign-off owners,
    tracking level, and where files live.
 2. **Step Checklist:** all ten steps, with Step 1 marked
-   "initialized (ongoing)" and the rest unchecked.
+   "initialized (ongoing)" and the rest unchecked. Step 6 has two items:
+   its cost sign-off and its final sign-off.
 3. **Status Table** (medium and large projects): step, name, role,
    deliverable with its template number, sign-off owner, target date,
    status, notes. For small projects, write "Not used for this project."
@@ -270,7 +272,33 @@ checklist, status table, and Gantt chart. If the deliverable has its own
 Status line (from its template), remind me to update it to match the
 decision.
 
-For **Step 10: Upkeep**, which is ongoing, route routine bug fixes back to a
+For **Step 6: Initial Infrastructure**, run **two** go/no-go reviews:
+
+1. **Cost sign-off, before building.** When the DevOps Engineer brings the
+   Cost Sign-Off Sheet, ask the stakeholders to approve the expected cost,
+   the approved spending limit, and who pays. Record it in the decision
+   log as its own row (for example, "6 Initial Infrastructure: cost
+   sign-off"), with the approved limit in the reason. Until this is
+   recorded, the Next Action must say that nothing that costs money may
+   be created.
+2. **Final sign-off, before Step 7.** After the setup is built and tested,
+   review the System Infrastructure Document as usual. Before recommending
+   Go, check that the setup matches the approved Cost Sign-Off Sheet. If
+   expected costs have gone over the approved limit, send the project back
+   for a new cost sign-off first.
+
+If real costs later go over the approved limit, treat the updated Cost
+Sign-Off Sheet as a new cost sign-off: record it, and don't let the extra
+spending continue until it is approved.
+
+After Step 6's final sign-off, the DevOps Engineer stays involved. When a
+later step needs an infrastructure change (for
+example, a test environment for Step 7 or a change for Step 9), route it to
+the Initial Infrastructure chat, and treat the updated System
+Infrastructure Document like any other revised deliverable: record it and
+get it signed off.
+
+For **Step 10: Maintenance**, which is ongoing, route routine bug fixes back to a
 new Implementation chat, and route anything that changes scope (for example,
 a major upgrade that forces a design change) to a go/no-go review about
 starting a new phase at Requirements.

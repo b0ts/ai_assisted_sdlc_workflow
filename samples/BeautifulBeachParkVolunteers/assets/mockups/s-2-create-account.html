@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S-2 Create Account · BeautifulBeachPark Volunteers mockup</title>
+<link rel="stylesheet" href="mockups.css">
+</head>
+<body>
+<p class="label">Mockup S-2: Create Account (UC-2). Sample only: the park and its people are made up.</p>
+<div class="screens">
+
+  <div>
+    <div class="phone">
+      <header><span class="wordmark">BeautifulBeachPark</span></header>
+      <main>
+        <h1>Create an account</h1>
+        <label for="username">Username</label>
+        <input id="username" class="field" value="SandyHelps">
+        <p class="small">3 to 20 letters, numbers, or underscores. This is the only name others will see.</p>
+        <label for="email">Email</label>
+        <input id="email" class="field" type="email" value="sandy@example.test">
+        <div class="notice"><strong>Your privacy.</strong> We only ask for a username and an email address. Other volunteers and coordinators see only your username, never your email. The park's System Administrator can see your email to keep the app running. We use it only for sign-in links, reminders, and messages from coordinators.</div>
+        <label><input type="checkbox" checked> I've read this</label>
+        <button class="btn">Create account</button>
+      </main>
+    </div>
+    <p class="state">Normal</p>
+  </div>
+
+  <div>
+    <div class="phone">
+      <header><span class="wordmark">BeautifulBeachPark</span></header>
+      <main>
+        <h1>Create an account</h1>
+        <label for="username2">Username</label>
+        <input id="username2" class="field error" value="BigHeartedGuy">
+        <p class="field-error">That username is taken. Please try another.</p>
+        <label for="email2">Email</label>
+        <input id="email2" class="field" type="email" value="sandy@example.test">
+        <button class="btn">Create account</button>
+      </main>
+    </div>
+    <p class="state">Error: username taken</p>
+  </div>
+
+</div>
+</body>
+</html>

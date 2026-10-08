@@ -1,5 +1,7 @@
 # Step 1: Tracking (The Scrum Master Chat)
 
+**Role:** Scrum Master · **Prompt:** [c01](../prompts/c01-tracking-prompt.md) · **Templates:** d01-01 to d01-03
+
 ## Executive Summary
 
 Every project needs someone who keeps the big picture in view. In our
@@ -9,9 +11,11 @@ the stakeholders informed, and, together with those stakeholders, makes a
 **go/no-go decision** at the end of every step.
 
 Tracking is **Step 1** because it is the first chat started: it
-**initializes tracking** for the project. But unlike every other step, it
+**initializes tracking** for the project. But unlike most other steps, it
 doesn't end when the next one begins. It keeps running alongside steps 2
-through 10 and is the chat you return to most often.
+through 10 and is the chat you return to most often. (Another role that
+stays involved through the later steps is the DevOps Engineer: see
+[Step 6: Initial Infrastructure](b06-infrastructure.md).)
 
 ---
 
@@ -33,7 +37,7 @@ Our workflow is a Waterfall adapted for Test-Driven Development (TDD), not
 Scrum, so we borrow the title and stretch it a little. Our Scrum Master also
 tracks progress across all ten steps and brokers **sign-off** for each
 deliverable, as described in
-[Steps, Roles, and Deliverables](a02-steps-roles-and-deliverables.md).
+[Steps, Roles, and Deliverables](a04-steps-roles-and-deliverables.md).
 
 > **Why "Scrum Master"?** In classic Waterfall, this role is called the
 > **Project Manager**. We use Scrum Master instead, as many companies do even
@@ -43,7 +47,7 @@ deliverable, as described in
 ### An Everyday Comparison: The General Contractor
 
 Go back to the house example from
-[What Is a Software Development Lifecycle Workflow?](a01-what-is-an-sdlc-workflow.md).
+[What Is a Software Development Lifecycle Workflow?](a03-what-is-an-sdlc-workflow.md).
 The architect, electrician, and plumber each do their own job. The
 **general contractor** doesn't wire the house or lay the pipes. They keep
 the schedule, make sure each inspection passes before the next crew shows
@@ -56,7 +60,7 @@ or stop here?"* That is the Scrum Master's job.
 ## The Scrum Master Agent in Our Workflow
 
 In the AI-assisted workflow described in
-[What Is an AI-Assisted SDLC Workflow?](a05-what-is-an-ai-assisted-sdlc-workflow.md),
+[What Is an AI-Assisted SDLC Workflow?](a07-what-is-an-ai-assisted-sdlc-workflow.md),
 each step is carried out by its own AI chat, or **agent**. The Scrum Master
 agent is the **overseer of that group of agents**. It has three jobs:
 
@@ -67,7 +71,7 @@ agent is the **overseer of that group of agents**. It has three jobs:
 | **Interface** | Act as the go-between for the AI agents and the human stakeholders: summarize results for people, and turn people's decisions into instructions for the agents. |
 
 The Scrum Master agent does **not** make decisions on its own. As
-[Understanding AI](a03-understanding-ai.md) reminds us, AI is a smart
+[Understanding AI](a05-understanding-ai.md) reminds us, AI is a smart
 assistant, not a boss. The agent lays out the facts and a recommendation;
 the stakeholders decide.
 
@@ -115,12 +119,15 @@ Step  2  Feasibility              [===]
 Step  3  Requirements                 [===]
 Step  4  Design                           [===]
 Step  5  User experience                      [===]
-Step  6  Infrastructure                           [===]
+Step  6  Initial infrastructure                   [===]----------------------
 Step  7  Test creation                                [===]
 Step  8  Implementation                                   [===]
 Step  9  Release                                              [===]
-Step 10  Upkeep                                                   [===...
+Step 10  Maintenance                                              [===...
 ```
+
+The dashes after Step 6 show the DevOps Engineer's ongoing support for the
+steps that follow.
 
 **Initializing tracking** means starting the Tracking chat and creating the
 first tracking document: the project's name and goal, who the stakeholders
@@ -143,11 +150,11 @@ several kinds of document. Their size should match the project.
 - [x] Requirements: PRD signed off
 - [ ] Design: in progress
 - [ ] User experience
-- [ ] Infrastructure
+- [ ] Initial infrastructure
 - [ ] Test creation
 - [ ] Implementation
 - [ ] Release
-- [ ] Upkeep
+- [ ] Maintenance
 ```
 
 **Medium projects** add a status table with owners, dates, decisions, and
@@ -164,10 +171,10 @@ level.
 
 ---
 
-## Examples, Templates, and Prompts
+## Prompts, Templates, and Samples
 
-> **To be updated:** This section will link to real-world material for the
-> Tracking chat as it becomes available.
+> **To be updated:** This section will link to sample documents for the
+> Tracking chat as they become available.
 
 **Prompts** (in `prompts/`):
 
@@ -184,11 +191,13 @@ level.
 - [`d01-03-status-report.md`](../templates/d01-03-status-report.md): status
   report for stakeholders
 
-**Examples** (each in its own repository):
+**Samples** (in [`samples/BeautifulBeachParkVolunteers/docs/`](../samples/BeautifulBeachParkVolunteers/docs/)):
 
-- **e01 · d01-01:** the tracking checklist from the
-  [RC Park Tour](https://github.com/b0ts/rc_park_tour) project: *coming soon*
-- **e01:** a go-back decision (Design back to Requirements): *coming soon*
+- **d01-01:** the sample project's tracking checklist, including a go-back
+  decision (Design back to Requirements): *coming soon*
+
+Additional [case studies](case-studies.md) may be added to this repo at a
+future time.
 
 ---
 
@@ -196,7 +205,7 @@ level.
 
 - [The Scrum Guide](https://scrumguides.org/scrum-guide.html): the official
   definition of Scrum and the Scrum Master role
-- [What Is an AI-Assisted SDLC Workflow?](a05-what-is-an-ai-assisted-sdlc-workflow.md):
+- [What Is an AI-Assisted SDLC Workflow?](a07-what-is-an-ai-assisted-sdlc-workflow.md):
   the ten chats and how they chain together
 - [Step 2: Feasibility](b02-feasibility.md): the first step Tracking
   watches over

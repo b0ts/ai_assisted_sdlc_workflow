@@ -12,7 +12,7 @@ like this one. Keep every heading, in this order. -->
 |---|---|
 | Project | [Name] |
 | Description | [One or two sentences: what it does and for whom] |
-| Example or own project | [e.g., e01 RC Park Tour, or "own project"] |
+| Sample or own project | [e.g., "sample: samples/BeautifulBeachParkVolunteers," or "own project"] |
 | Where files live | [Repo, folder, or link] |
 | Stakeholders | [Names and roles] |
 | Signs off each step | [Name, or "see Status Table"] |
@@ -28,11 +28,13 @@ like this one. Keep every heading, in this order. -->
 - [ ] Step 3: Requirements
 - [ ] Step 4: Design
 - [ ] Step 5: User Experience
-- [ ] Step 6: Infrastructure
+- [ ] Step 6: Initial Infrastructure (DevOps support continues through Step 10)
+  - [ ] Cost sign-off: Cost Sign-Off Sheet approved, before anything is built
+  - [ ] Final sign-off: System Infrastructure Document approved, before Step 7
 - [ ] Step 7: Test Creation
 - [ ] Step 8: Implementation
 - [ ] Step 9: Release
-- [ ] Step 10: Upkeep
+- [ ] Step 10: Maintenance
 
 ## 3. Status Table
 
@@ -49,16 +51,17 @@ After each deliverable, add its template number in parentheses, e.g.,
 | 3 | Requirements | Product Manager | Product Requirements Document (d03-01) | [Name] | [YYYY-MM-DD] | Not started | |
 | 4 | Design | Software Architect | Software Design Specification (Spec) | [Name] | [YYYY-MM-DD] | Not started | |
 | 5 | User Experience | UI/UX Designer | UI/UX Document with mockups | [Name] | [YYYY-MM-DD] | Not started | |
-| 6 | Infrastructure | DevOps Engineer | System Infrastructure Document | [Name] | [YYYY-MM-DD] | Not started | |
+| 6 | Initial Infrastructure | DevOps Engineer | Cost Sign-Off Sheet (approved before building); System Infrastructure Document; then ongoing DevOps support | [Name] | [YYYY-MM-DD] | Not started | [Approved monthly limit, once signed off] |
 | 7 | Test Creation | SDET | Test Plan and automated tests | [Name] | [YYYY-MM-DD] | Not started | |
 | 8 | Implementation | Software Engineer | Working software and Release Notes | [Name] | [YYYY-MM-DD] | Not started | |
 | 9 | Release | Release Manager | Live release and Release Efficacy Document | [Name] | [YYYY-MM-DD] | Not started | |
-| 10 | Upkeep | SRE / Maintenance Engineer | Maintenance Log | [Name] | Ongoing | Not started | |
+| 10 | Maintenance | SRE / Maintenance Engineer | Maintenance Log | [Name] | Ongoing | Not started | |
 
 ## 4. Decision Log
 
 <!-- One row per decision: Go, Go back, Park, or Abandon. Newest at the
-bottom. Never delete rows. -->
+bottom. Never delete rows. Step 6 gets two rows: its cost sign-off (with
+the approved spending limit in the Reason) and its final sign-off. -->
 
 | # | Date | Step | Decision | Decided by | Reason |
 |---|---|---|---|---|---|

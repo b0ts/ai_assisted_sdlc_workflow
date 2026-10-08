@@ -28,11 +28,13 @@ gantt
     3 Requirements           :s3, after s2, 7d
     4 Design                 :s4, after s3, 7d
     5 User Experience        :s5, after s4, 5d
-    6 Infrastructure         :s6, after s5, 5d
+    6 Initial Infrastructure :s6, after s5, 5d
     7 Test Creation          :s7, after s6, 7d
     8 Implementation         :s8, after s7, 14d
     9 Release                :s9, after s8, 3d
-    10 Upkeep (ongoing)      :s10, after s9, 2026-03-31
+    10 Maintenance (ongoing) :s10, after s9, 2026-03-31
+    section DevOps
+    DevOps support (ongoing) :d6, after s6, 2026-03-31
 ```
 
 ## Key Dates

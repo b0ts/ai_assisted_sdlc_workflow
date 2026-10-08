@@ -1,6 +1,6 @@
 # Step 2: Feasibility (The Product Manager Chat)
 
-**Role:** Product Manager · **Prompts:** c02-xx · **Templates:** d02-xx
+**Role:** Product Manager · **Prompt:** [c02](../prompts/c02-feasibility-prompt.md) · **Templates:** d02-01 to d02-04
 
 ## Executive Summary
 
@@ -96,7 +96,7 @@ great idea well creates more value than launching all eleven.
 ## The Product Manager Agent in Our Workflow
 
 In the AI-assisted workflow described in [What Is an AI-Assisted SDLC
-Workflow?](a05-what-is-an-ai-assisted-sdlc-workflow.md), the Feasibility
+Workflow?](a07-what-is-an-ai-assisted-sdlc-workflow.md), the Feasibility
 chat is its own agent with one role: Product Manager. It takes the place of
 the research and writing that a product team would do by hand.
 
@@ -125,24 +125,22 @@ call described in [Step 1: Tracking](b01-tracking.md):
   repeats the study.
 
 The agent does **not** make the decision. As [Understanding
-AI](a03-understanding-ai.md) reminds us, AI is a smart assistant, not a
+AI](a05-understanding-ai.md) reminds us, AI is a smart assistant, not a
 boss. It gathers the evidence and lays out a recommendation; the
 stakeholders decide.
 
 ---
 
-## Examples, Templates, and Prompts
+## Prompts, Templates, and Samples
 
-> **To be updated:** This section will link to real-world material for the
-> Feasibility chat as it becomes available.
+> **To be updated:** This section will link to sample documents for the
+> Feasibility chat as they become available.
 
 **Prompts** (in `prompts/`):
 
-- `c02-01`: brainstorm and research product ideas: *coming soon*
-- `c02-02`: draft a one-pager: *coming soon*
-- `c02-03`: expand a one-pager into a feasibility study: *coming soon*
-- `c02-04`: compare ideas in a pitch summary: *coming soon*
-- `c02-05`: draft a proposal for an outside party: *coming soon*
+- [`c02-feasibility-prompt`](../prompts/c02-feasibility-prompt.md): the
+  Product Manager prompt for this step, covering intake questions,
+  research, each template, and the hand-off to Tracking
 
 **Templates** (in `templates/`):
 
@@ -155,10 +153,12 @@ stakeholders decide.
 - [`d02-04-proposal`](../templates/d02-04-proposal.md): proposal for outside
   approval or funding
 
-**Examples** (each in its own repository):
+**Samples** (in [`samples/BeautifulBeachParkVolunteers/docs/`](../samples/BeautifulBeachParkVolunteers/docs/)):
 
-- **e02 · d02-01:** the one-pager from the [RC Park
-  Tour](https://github.com/b0ts/rc_park_tour) project: *coming soon*
+- **d02-01:** the sample project's one-pager: *coming soon*
+
+Additional [case studies](case-studies.md) may be added to this repo at a
+future time.
 
 ---
 

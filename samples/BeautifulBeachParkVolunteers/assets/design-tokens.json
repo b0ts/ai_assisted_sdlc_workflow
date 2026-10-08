@@ -1,0 +1,19 @@
+{
+  "color": {
+    "primary": "#0B5E7A",
+    "background": "#F7F1E3",
+    "surface": "#FFFFFF",
+    "text": "#2B2B2B",
+    "textSecondary": "#5F6B73",
+    "info": "#E3F2F7",
+    "success": "#2E7D4F",
+    "error": "#B3261E",
+    "decoration": "#3FB8C9"
+  },
+  "font": {
+    "heading": "Nunito, \"Segoe UI\", Arial, sans-serif",
+    "body": "Nunito, \"Segoe UI\", Arial, sans-serif"
+  },
+  "space": [4, 8, 16, 24, 32],
+  "radius": 8
+}

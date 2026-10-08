@@ -4,20 +4,21 @@ Documentation and templates for incorporating AI assistance into the software de
 
 ## Start here
 
-- [What Is a Software Development Lifecycle Workflow?](docs/a01-what-is-an-sdlc-workflow.md) — a plain-language introduction for non-programmers
+- [What Is a Software Development Lifecycle Workflow?](docs/a03-what-is-an-sdlc-workflow.md) — a plain-language introduction for non-programmers
 - [Documentation index](docs/README.md) — all how-to guides and the ten step guides
 
 ## Numbering system
 
-Every file starts with a letter that says what kind of file it is. Steps are numbered 01 to 10, and that number links a step's guide, prompts, templates, and examples.
+Every file starts with a letter that says what kind of file it is. Steps are numbered 01 to 10, and that number links a step's guide, prompts, templates, and sample documents.
 
 | Prefix | What it is | Where it lives | Example |
 |---|---|---|---|
-| **a**NN | How-to and background guides | [`docs/`](docs/) | `a01-what-is-an-sdlc-workflow.md` |
+| **a**NN | How-to and background guides | [`docs/`](docs/) | `a03-what-is-an-sdlc-workflow.md` |
 | **b**NN | Step guides, one per step | [`docs/`](docs/) | `b01-tracking.md` |
 | **c**NN | Predefined prompts: step number, plus a second number if a step needs more than one prompt | [`prompts/`](prompts/) | `c01-tracking-prompt.md` |
 | **d**NN-NN | Templates: step number, then document number | [`templates/`](templates/) | `d01-01-checklist`, `d01-02-gantt` |
-| **e**NN | Worked examples, each in its own repository | see below | `e01` RC Park Tour |
+| **d**NN-NN | Sample documents: filled-in templates for the made-up sample project, named after the template they fill in | [`samples/`](samples/) | `samples/BeautifulBeachParkVolunteers/docs/d03-01-prd.md` |
+| **e**NN | Case studies of real projects, each in its own repository | [`docs/case-studies.md`](docs/case-studies.md) | None yet |
 
 ### The ten steps
 
@@ -28,19 +29,19 @@ Every file starts with a letter that says what kind of file it is. Steps are num
 | 03 | [Requirements](docs/b03-requirements.md) | Product Manager |
 | 04 | [Design](docs/b04-design.md) | Software Architect |
 | 05 | [User Experience](docs/b05-user-experience.md) | UI/UX Designer |
-| 06 | [Infrastructure](docs/b06-infrastructure.md) | DevOps Engineer |
+| 06 | [Initial Infrastructure](docs/b06-infrastructure.md) (DevOps support continues through step 10) | DevOps Engineer |
 | 07 | [Test Creation](docs/b07-test-creation.md) | SDET |
 | 08 | [Implementation](docs/b08-implementation.md) | Software Engineer |
 | 09 | [Release](docs/b09-release.md) | Release Manager |
-| 10 | [Upkeep](docs/b10-upkeep.md) | SRE / Maintenance Engineer |
+| 10 | [Maintenance](docs/b10-maintenance.md) | SRE / Maintenance Engineer |
 
-## Examples
+## Sample
 
-Each example lives in its own repository. Inside an example repo, files use the same c and d numbers as the prompts and templates they came from (for example, `d01-01-checklist.md` is that project's tracking checklist). E-numbers are never reused; retired examples are marked archived.
+The [`samples/`](samples/) folder holds a finished sample project: [BeautifulBeachPark Volunteers](samples/BeautifulBeachParkVolunteers/), a volunteer sign-up app for a made-up park. It has the same layout as the [`skeleton/`](skeleton/), so you can compare your own project folder with it after any step, then build your own version by following the docs.
 
-| # | Example | Repository |
-|---|---|---|
-| e01 | RC Park Tour: an interactive and printable tour of Rosicrucian Park in San Jose | [b0ts/rc_park_tour](https://github.com/b0ts/rc_park_tour) |
+## Case studies
+
+Additional [case studies](docs/case-studies.md) may be added to this repo at a future time.
 
 ## Status
 

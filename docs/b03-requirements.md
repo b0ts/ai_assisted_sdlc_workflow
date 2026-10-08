@@ -40,7 +40,7 @@ do, the answer comes back to the PM).
 
 Requirements still runs in its **own new chat**, following the Multi Chat
 Prompt Chaining (MCPC) approach in
-[What Is an AI-Assisted SDLC Workflow?](a05-what-is-an-ai-assisted-sdlc-workflow.md).
+[What Is an AI-Assisted SDLC Workflow?](a07-what-is-an-ai-assisted-sdlc-workflow.md).
 Only the approved Step 2 documents carry forward. If something from
 Feasibility isn't written down, the Requirements chat won't know about it,
 which is a quick way to spot gaps.
@@ -63,7 +63,7 @@ really just the author, which misses the needs of admins and people using
 accessibility tools.
 
 **Use cases (template Section 5).** A **use case** describes one goal a user
-wants to reach, such as *"Book a tour,"* written from the user's point of
+wants to reach, such as *"Sign up for a shift,"* written from the user's point of
 view with no mention of how the software works inside. Each one lists the
 normal step-by-step path, what happens when things go differently, a
 priority, and **acceptance criteria**: specific, checkable statements of
@@ -77,8 +77,8 @@ Language)** is a standard set of diagram types used across the software
 industry. Its Use Case Diagram gives a one-glance picture of the product's
 scope: **stick figures** are actors, **ovals** are use cases, **lines**
 connect them, and a **box** marks the edge of the system. It is
-**required** in every PRD (see the UML Diagram Guide in the
-[RC Park Tour case study](rc-park-tour-ai-sdlc-case-study.md)), because the
+**required** in every PRD (see the
+[UML Diagram Guide](a09-uml-diagram-guide.md)), because the
 Architect draws one sequence diagram per use case and the SDET writes tests
 per use case. A use case missing from this diagram will likely be missing
 from everything that follows. AI can draw it as
@@ -119,10 +119,10 @@ The most important boundary in this step is between the **PRD** and the
 | **Owner** | Product Manager | Software Architect |
 | **Contains** | Users, use cases, acceptance criteria, priorities, constraints | System structure, data, technology choices, security design |
 | **Key diagram** | UML Use Case Diagram | UML Sequence Diagram for each use case |
-| **Example** | "A visitor can book a tour and get a confirmation." | "Bookings are saved in a database and confirmations sent through an email service." |
+| **Example** | "A volunteer can sign up for a one-hour Beach Cleanup shift and get a confirmation." | "Sign-ups are saved in a database, and confirmations are sent through an email service." |
 
 Think back to the house example from
-[What Is a Software Development Lifecycle Workflow?](a01-what-is-an-sdlc-workflow.md).
+[What Is a Software Development Lifecycle Workflow?](a03-what-is-an-sdlc-workflow.md).
 The PRD is the homeowner's list: *three bedrooms, a kitchen big enough for
 family dinners, a ramp for Grandma's wheelchair.* The Spec is the
 architect's blueprint: *where the walls go, which beams hold the roof, how
@@ -155,25 +155,27 @@ Design chat begins.
 
 ---
 
-## Examples, Templates, and Prompts
+## Prompts, Templates, and Samples
 
-> **To be updated:** This section will link to real-world material for the
-> Requirements chat as it becomes available.
+> **To be updated:** This section will link to sample documents for the
+> Requirements chat as they become available.
 
 **Prompts** (in `prompts/`):
 
-- `c03-01`: identify users and draft use cases from the feasibility outputs:
-  *coming soon*
-- `c03-02`: assemble the PRD with a UML Use Case Diagram: *coming soon*
+- [`c03-requirements-prompt`](../prompts/c03-requirements-prompt.md):
+  reviews the Feasibility outputs, asks for what's missing, identifies the
+  users, writes the use cases and UML Use Case Diagram, and assembles the PRD
 
 **Templates** (in `templates/`):
 
 - [`d03-01-prd`](../templates/d03-01-prd.md): Product Requirements Document
 
-**Examples** (each in its own repository):
+**Samples** (in [`samples/BeautifulBeachParkVolunteers/docs/`](../samples/BeautifulBeachParkVolunteers/docs/)):
 
-- **e01 · d03-01:** the PRD from the [RC Park
-  Tour](https://github.com/b0ts/rc_park_tour) project: *coming soon*
+- **d03-01:** the sample project's PRD: *coming soon*
+
+Additional [case studies](case-studies.md) may be added to this repo at a
+future time.
 
 ---
 
