@@ -2,7 +2,10 @@
 
 <!-- Template d06-03. A one-page approval of the spending for the chosen
 infrastructure option. It must be signed off through the Tracking chat
-BEFORE anything that costs money is created. If expected or real costs go
+BEFORE anything is set up. If going live costs nothing new (for example,
+the organization's existing servers), still fill it in with $0: it records
+that the stakeholders approved the plan, and what would make it cost
+more. If expected or real costs go
 over the approved limit later, make a new version and sign it off again
 before the extra spending continues. Replace every [placeholder]. Delete
 all hint comments like this one. Keep every heading, in this order. Never
@@ -14,10 +17,11 @@ write account numbers, card numbers, passwords, or keys on this sheet. -->
 
 ## 1. What Is Being Approved
 
-**Option:** [From d06-02 Section 7, e.g., "A: Cloud, managed services"]
+**Option:** [From d06-02 Section 7, e.g., "A: Our existing servers"]
 
-**In one sentence:** [e.g., "Monthly hosting for the volunteer app's test
-and live systems, starting when setup begins."]
+**In one sentence:** [e.g., "The volunteer app goes live on the servers our
+IT team already runs, after the stakeholders approve the demo; the local
+environment is free."]
 
 **Source:** [d06-02, version, date]
 
@@ -39,7 +43,7 @@ estimates. -->
 | Item | Value |
 |---|---|
 | Approved monthly limit | [$ amount: the most that may be spent per month without a new sign-off] |
-| Budget alert set at | [$ amount, below the limit] |
+| Budget alert set at | [$ amount, below the limit, or "Not needed: no new spending"] |
 | Alert goes to | [Name or role of a person, not a tool] |
 | If the limit is reached | [e.g., "Stop adding services; prepare a new version of this sheet."] |
 
@@ -48,7 +52,7 @@ estimates. -->
 | Item | Value |
 |---|---|
 | Paid from | [Budget line, grant, or department] |
-| Account owner | [Name and role of the person who owns the provider account and receives the bills] |
+| Account owner | [Name and role of the person who owns the provider account and receives the bills, or who the organization's IT contact is] |
 
 ## 5. Price Check
 

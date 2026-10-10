@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% set title = "My tasks" %}
+{% block content %}
+<div class="title-row">
+  <h1>My tasks</h1>
+  <a class="btn inline" href="/tasks/new">Post a task</a>
+</div>
+{% for day in days %}
+  <h2>{{ day.date|day_heading }}</h2>
+  <table>
+    <tr><th scope="col">Task</th><th scope="col">Slot</th><th scope="col">Places filled</th><th scope="col"><span class="small">Roster</span></th></tr>
+    {% for r in day.rows %}
+    <tr>
+      <td>{{ r.title }}</td>
+      <td>{{ r|slot_time }}</td>
+      <td>{{ r.places - r.places_left }} of {{ r.places }}{% if r.places_left == 0 %} (Full){% endif %}</td>
+      <td><a href="/slots/{{ r.id }}/roster" aria-label="Roster for {{ r.title }}, {{ r|hours }}">Roster</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+{% else %}
+  <p>You haven't posted any upcoming tasks.</p>
+{% endfor %}
+{% endblock %}

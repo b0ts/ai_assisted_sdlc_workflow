@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% set title = "Block a volunteer" %}
+{% block content %}
+<h1>Block a volunteer</h1>
+<p>{{ w.block_confirm(volunteer.username) }}</p>
+<form method="post" action="/volunteers/{{ volunteer.username }}/block">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <input type="hidden" name="confirm" value="yes">
+  <button class="btn danger" type="submit">Yes, block</button>
+</form>
+<a class="btn secondary" href="/my-tasks">Don't block</a>
+{% endblock %}

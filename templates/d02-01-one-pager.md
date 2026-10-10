@@ -19,7 +19,7 @@ everything at once. -->
 <!-- The people who feel the problem most. These become the actors in the
 PRD (Step 3). -->
 
-- [e.g., First-time visitors who can't find tour times]
+- [e.g., Volunteers who can't tell which slots still need help]
 
 ## 3. Proposed Solution
 
@@ -49,7 +49,7 @@ PRD (d03-01). -->
 
 | Goal | How success is measured | Target |
 |---|---|---|
-| [e.g., Visitors can book without calling] | [e.g., Share of bookings made online] | [e.g., 80% within 3 months] |
+| [e.g., Volunteers can sign up without calling the office] | [e.g., Share of sign-ups made in the app] | [e.g., 80% within 3 months] |
 
 ## 7. Risks and Unknowns
 

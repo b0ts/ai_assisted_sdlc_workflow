@@ -1,0 +1,5 @@
+# What the tests need (the app's own packages are in src/requirements.txt, written in Step 08)
+pytest>=8
+SQLAlchemy>=2    # reads the test database directly in T-SEC-03
+playwright>=1.40         # the two browser tests (T-QR-01, T-QR-02); then run:
+#   python -m playwright install chromium

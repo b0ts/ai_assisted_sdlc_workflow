@@ -4,8 +4,8 @@
 · **For:** Park Manager, Volunteer Program Manager · **Status:** Approved
 · **Prepared by:** SRE (Maintenance chat)
 
-> **Sample document.** BeautifulBeachPark, its people, "SampleCloud," and
-> "SampleMail" are made up, and every number is made up for illustration.
+> **Sample document.** BeautifulBeachPark, its city, its people, and Parks
+> IT are made up, and every number is made up for illustration.
 > This is the third monthly report, which is also the three-month
 > success-measure check promised in d09-03.
 
@@ -33,18 +33,18 @@ and the summer beach program will push it past them.
 
 | Part | Status | Date | Action |
 |---|---|---|---|
-| SampleMail connection | End of support coming | 2027-06-30 | Move to version 3 by 2027-05-15 (U-4, in progress) |
-| Python 3.11 | End of support coming | 2027-10-31 | Move to 3.13 in July (U-5) |
-| PostgreSQL | Updated by SampleCloud to 16 | 2027-03-14 | None; tested first (U-3) |
+| City email service connection | Old sending method retired | 2027-06-30 | Move to the new method by 2027-05-15 (U-4, in progress) |
+| Python 3.12 | Parks IT moves every app to 3.13 | 2027-12-01 | Move to 3.13 in July (U-5) |
+| PostgreSQL | Updated by Parks IT to 17 | 2027-03-14 | None; tested first (U-3) |
 | Claude Code | Updated to a newer model | 2027-03-02 | None; tests and prompts unchanged (U-2) |
 
 ## 5. Scale: Growth and Tipping Points
 
 | Limit | Capacity | Highest this period | % used | Likely reached by |
 |---|---|---|---|---|
-| Database connections | 15 | 14 (Earth Day) | 93% | The first summer program sign-up day, 2027-06-01 |
+| Database connections | 16 (4 copies of the app × 4; Parks IT allows 20) | 14 (Earth Day) | 88% | The first summer program sign-up day, 2027-06-01 |
 | Volunteer accounts planned for | 500 (d06-01 assumption) | 468 | 94% | 2027-05 |
-| Emails per month | 2,000 (SampleMail plan) | 1,780 | 89% | 2027-05 |
+| Emails per month | 3,000 (Parks IT's limit) | 2,680 | 89% | 2027-05 |
 
 The park plans to announce the summer beach program on 2027-06-01 and
 expects about 800 volunteers. At that size, all three limits are passed.
@@ -53,9 +53,9 @@ expects about 800 volunteers. At that size, all three limits are passed.
 
 | Item | Amount | Source |
 |---|---|---|
-| Approved monthly limit | $60 | d06-03 |
-| Spent this period | $44 | SampleCloud and SampleMail billing |
-| Expected next period | $55, and over $60 in June without changes | Growth in emails and database use |
+| Approved monthly limit | $0 new spending | d06-03 |
+| Spent this period | $0 | Parks IT confirmed no charge |
+| Expected next period | $0, but Parks IT will charge departments that pass their limits from July (about $25 a month, made up) | Parks IT, 2027-04-20 |
 
 ## 7. Success Measures
 
@@ -75,8 +75,8 @@ expects about 800 volunteers. At that size, all three limits are passed.
 
 | # | Recommendation | Why | Who | Needed by |
 |---|---|---|---|---|
-| 1 | Prepare options for more database connections and a larger email plan, with a new Cost Sign-Off Sheet | Two limits at 89% to 93% (Section 5) | DevOps chat | 2027-05-15 |
-| 2 | Finish the SampleMail version 3 move | Version 2 stops working 2027-06-30 | SDET and Software Engineer chats | 2027-05-15 |
+| 1 | Ask Parks IT for more database connections and a higher email limit, with a new Cost Sign-Off Sheet if they charge for it | Two limits at 88% to 89% (Section 5) | DevOps chat, with Parks IT | 2027-05-15 |
+| 2 | Finish the move to the city email service's new sending method | The old method stops working 2027-06-30 | SDET and Software Engineer chats | 2027-05-15 |
 | 3 | Start Phase 2 in Step 2: text reminders, task editing, and support for 1,000 volunteers | Phase 1 has met its goals, but the park's needs have grown past its design; see d10-03 | Product Manager, through Tracking | Decision by 2027-04-30 |
 
 ## 10. Product Fit: New Phase

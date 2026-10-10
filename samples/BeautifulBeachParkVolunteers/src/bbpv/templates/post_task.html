@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% set title = "Post a task" %}
+{% block content %}
+<h1>Post a task</h1>
+{% if error %}<div class="banner error" role="alert"><strong>Problem:</strong> {{ error }}</div>{% endif %}
+<form method="post" action="/tasks/new">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <label for="title">Title</label>
+  <input id="title" class="field" name="title" value="{{ form.title or '' }}" required aria-describedby="title-hint">
+  <p class="small" id="title-hint">Up to 60 characters.</p>
+  <label for="description">Description</label>
+  <textarea id="description" class="field" name="description">{{ form.description or '' }}</textarea>
+  <label for="date">Date</label>
+  <input id="date" class="field" type="date" name="date" value="{{ form.date or '' }}" required>
+  <h2>Slots</h2>
+  <p class="small">Each slot is one hour, with 1 to 20 volunteers. Leave unused rows empty.</p>
+  {% for i in range(rows) %}
+  {% set r = form.rows[i] if i < form.rows|length else {} %}
+  <div class="slot-row">
+    <div><label for="start{{ i }}">Slot {{ i + 1 }} starts</label>
+      <input id="start{{ i }}" class="field slot-start" type="time" step="900" name="slot_start" value="{{ r.start or '' }}"></div>
+    <div><label for="end{{ i }}">Ends</label>
+      <input id="end{{ i }}" class="field slot-end" type="time" name="slot_end" value="{{ r.end or '' }}" readonly></div>
+    <div><label for="places{{ i }}">Volunteers needed</label>
+      <input id="places{{ i }}" class="field" type="number" min="1" max="20" name="places" value="{{ r.places or '' }}"></div>
+  </div>
+  {% endfor %}
+  <button class="btn" type="submit">Post task</button>
+</form>
+<script>
+  // Every slot is one hour (UX-3): the end time follows the start time.
+  document.querySelectorAll(".slot-row").forEach(function (row) {
+    var start = row.querySelector(".slot-start"), end = row.querySelector(".slot-end");
+    start.addEventListener("change", function () {
+      if (!start.value) { end.value = ""; return; }
+      var p = start.value.split(":"), h = (parseInt(p[0], 10) + 1) % 24;
+      end.value = (h < 10 ? "0" : "") + h + ":" + p[1];
+    });
+  });
+</script>
+{% endblock %}

@@ -28,7 +28,7 @@ deleting a section. -->
 
 | Existing product or workaround | What it does | Cost to users | Gap it leaves |
 |---|---|---|---|
-| [e.g., Phone booking] | [Description] | [e.g., Free] | [e.g., Only during office hours] |
+| [e.g., Paper sign-up sheet] | [Description] | [e.g., Free] | [e.g., Only during office hours] |
 
 ## 3. Customer Interviews
 
@@ -40,13 +40,13 @@ interviews. Record what was heard, not what was hoped. -->
 
 | Finding | How many said it | What it means for the product |
 |---|---|---|
-| [e.g., Want to book on a phone] | [e.g., 7 of 10] | [e.g., Mobile is a must-have] |
+| [e.g., Want to sign up on a phone] | [e.g., 7 of 10] | [e.g., Mobile is a must-have] |
 
 ## 4. Technical Feasibility
 
 | Question | Finding | Risk |
 |---|---|---|
-| [e.g., Can we show live tour availability?] | [What was found] | [Low / Medium / High] |
+| [e.g., Can we send reminders without showing anyone's email?] | [What was found] | [Low / Medium / High] |
 
 **Proof of concept:** [What was tried and what it proved, or "Not needed"]
 
@@ -60,7 +60,7 @@ interviews. Record what was heard, not what was hoped. -->
 
 | Benefit | Per year | How it was estimated |
 |---|---|---|
-| [e.g., New online bookings] | [$] | [Assumption behind the number] |
+| [e.g., Coordinator hours saved] | [$] | [Assumption behind the number] |
 
 - **Return on investment (ROI):** [(Total benefit − Total cost) ÷ Total cost,
   over [N] years = [%]]

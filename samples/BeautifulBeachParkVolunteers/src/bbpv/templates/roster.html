@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% set title = "Roster" %}
+{% block content %}
+<h1>{{ slot.title }}</h1>
+<p class="small">{{ slot.date|day_heading }}, {{ slot|slot_time }} · {{ slot.places - slot.places_left }} of {{ slot.places }} places filled</p>
+{% if names %}
+<div class="card">
+  {% for n in names %}
+  <div class="slot"><strong>{{ n }}</strong>
+    <span class="actions">
+      <a class="btn inline secondary" href="/volunteers/{{ n }}/message" aria-label="Message {{ n }}">Message</a>
+      <a class="btn inline danger" href="/volunteers/{{ n }}/block" aria-label="Block {{ n }}">Block</a>
+    </span>
+  </div>
+  {% endfor %}
+</div>
+<p class="small">Usernames only. Volunteers' emails are never shown.</p>
+{% else %}
+<div class="banner info" role="status"><strong>Note:</strong> {{ w.EMPTY_ROSTER }}</div>
+{% endif %}
+<a class="btn secondary" href="/my-tasks">Back to my tasks</a>
+{% endblock %}

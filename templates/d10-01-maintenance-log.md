@@ -43,7 +43,8 @@ Check each one on every update cycle. -->
 ## 3. Updates
 
 <!-- One row per update, applied or planned. Every update that changes the
-product goes through the test environment and the full test suite first.
+product goes through the local environment and the full test suite first,
+then the full suite again on the live servers.
 Write "None yet." if empty. -->
 
 | ID | Date | Part | From → To | Why (security, end of support, new feature, fix) | Tests run | Result | Released |

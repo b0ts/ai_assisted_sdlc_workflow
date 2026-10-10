@@ -4,14 +4,14 @@
 · **Last updated:** 2027-01-21 · **Status:** Go
 · **Owner:** Release Manager (Release chat)
 
-> **Sample document.** BeautifulBeachPark, its people, "SampleCloud," and
-> "SampleMail" are made up. This review shows the rules working under
+> **Sample document.** BeautifulBeachPark, its city, its people, and Parks
+> IT are made up. This review shows the rules working under
 > pressure. **Version 1.0 (2027-01-19) recommended No-Go:** reminder
 > emails were landing in spam at one email provider, and the spring
 > newsletter announcing sign-ups was already scheduled. The Park Manager
 > asked whether the app could go live anyway. The Release chat recorded
 > the pressure, kept the result at Fail, and gave the stakeholders two
-> options. They chose to fix it first (D14). **Version 1.1** is the new
+> options. They chose to fix it first (D15). **Version 1.1** is the new
 > review after the fix.
 
 ## 1. Overview
@@ -28,19 +28,19 @@
 
 | # | Rule | Evidence | Result |
 |---|---|---|---|
-| HS-1 | Every earlier step has a recorded sign-off | D2 to D13 in d01-01 | Pass |
-| HS-2 | Every automated test passes on the exact version being released | d07-02 Run 13; production version confirmed in d09-01 Section 6 | Pass |
-| HS-3 | No test was changed, skipped, or weakened without the SDET's recorded reason | d07-01 v1.0 Change Log; TC-1 in d08-01 was turned down | Pass |
+| HS-1 | Every earlier step has a recorded sign-off, the stakeholders approved the demo of this version, and the people who run the live servers approved the move | D2 to D14 in d01-01, including the demo approval (D13); Parks IT's security review, 2027-01-07 (d09-01 Section 6) | Pass |
+| HS-2 | Every automated test passes on the exact version being released, on the local environment and on the live servers | d07-02 Run 4 (local) and Run 6 (Parks IT's servers); same version confirmed in d09-01 Section 6 | Pass |
+| HS-3 | No test was changed, skipped, or weakened without the SDET's recorded reason | d07-01 v1.1 Change Log: TC-1 and TC-2 (d08-01) changed how two tests run, never what they expect, each with the SDET's recorded reason | Pass |
 | HS-4 | A person has reviewed the code | d08-01 Section 7, 2026-12-10 | Pass |
 | HS-5 | The stress test passes at the expected busiest load | d09-01 Section 7, Run 2 (Run 1 failed; fixed by d06-01 v1.2) | Pass |
 | HS-6 | Every manual check passes | d09-01 Section 8: MC-1 to MC-4 | Pass (v1.0: **Fail**, MC-1) |
-| HS-7 | Every Security & Compliance item is met on production | d06-01 Section 8, rechecked on production 2027-01-13 | Pass |
+| HS-7 | Every Security & Compliance item is met on the live servers | d06-01 Section 8, rechecked on Parks IT's servers 2027-01-13 | Pass |
 | HS-8 | The rollback has been practiced, and its triggers are written down | d09-01 Section 9: 6 minutes, 2027-01-16 | Pass |
-| HS-9 | Backups, monitoring, and the budget alert are on in production, and alerts reach a person | d09-01 Section 6 | Pass |
+| HS-9 | Backups, monitoring, and any budget alert are on for the live servers, and alerts reach a person | d09-01 Section 6 (no budget alert needed: $0 new spending) | Pass |
 | HS-10 | No known issue affects a Must-have use case, security, or privacy | Reminders (UC-3 AC5, Must-have) arrive in inboxes at all three providers | Pass (v1.0: **Fail**, same cause as MC-1) |
-| HS-11 | Expected costs are within the approved spending limit | Expected $41 a month against the $60 limit (d06-03) | Pass |
-| HS-12 | Every open question that blocks release is answered | Second account owner named (I2, D13) | Pass |
-| HS-13 | No email address appears on any screen in production | T-SEC-01 run once against production with made-up accounts, 2027-01-15 | Pass |
+| HS-11 | Expected costs are within the approved spending limit | Expected $0 new spending against the $0 limit (d06-03) | Pass |
+| HS-12 | Every open question that blocks release is answered | Second contact for Parks IT named (I2, D14) | Pass |
+| HS-13 | No email address appears on any screen on the live servers | T-SEC-01 passes on Parks IT's servers with made-up accounts (d07-02 Run 6, 2027-01-15) | Pass |
 
 ## 3. Other Readiness Checks
 
@@ -76,12 +76,12 @@ HS-6 and HS-10 (Option B in Section 6) and chose not to use it.
 
 | Decision | Decided by | Date | Tracking Decision ID | Conditions |
 |---|---|---|---|---|
-| No-Go (version 1.0); Option A chosen | Park Manager, with the Volunteer Program Manager | 2027-01-19 | D14 | Keep the newsletter date only if MC-1 passes by 2027-01-21 |
-| **Go** (version 1.1) | Park Manager, with the Volunteer Program Manager | 2027-01-21 | D15 | Follow d09-01 v1.1, Stages 1 and 2 |
+| No-Go (version 1.0); Option A chosen | Park Manager, with the Volunteer Program Manager | 2027-01-19 | D15 | Keep the newsletter date only if MC-1 passes by 2027-01-21 |
+| **Go** (version 1.1) | Park Manager, with the Volunteer Program Manager | 2027-01-21 | D16 | Follow d09-01 v1.1, Stages 1 and 2 |
 
 ## 8. Change Log
 
 | Version | Date | Change | Reason | Approved by |
 |---|---|---|---|---|
-| 1.0 | 2027-01-19 | First review: No-Go (HS-6, HS-10) | MC-1 failed | Park Manager (D14, 2027-01-19) |
-| 1.1 | 2027-01-21 | New review after the email fix: Go | Release Rule 6: a change after a review needs a new review | Park Manager (D15, 2027-01-21) |
+| 1.0 | 2027-01-19 | First review: No-Go (HS-6, HS-10) | MC-1 failed | Park Manager (D15, 2027-01-19) |
+| 1.1 | 2027-01-21 | New review after the email fix: Go | Release Rule 6: a change after a review needs a new review | Park Manager (D16, 2027-01-21) |

@@ -31,9 +31,9 @@ Templates for the documents each step produces. Names use two numbers: the step 
 
 **Step 6: Initial Infrastructure**
 
-- [d06-01-infrastructure.md](d06-01-infrastructure.md): System Infrastructure Document: infrastructure needs, environments, chosen setup, deployment diagram, network and access, security review, monitoring and alerts, costs, setup record, ongoing DevOps support, and change log
-- [d06-02-infrastructure-options.md](d06-02-infrastructure-options.md): Infrastructure Options and Cost Analysis: side-by-side comparison of ways to provide the infrastructure (such as cloud vs. on-premises), with up-front, monthly, and three-year costs and a recommendation
-- [d06-03-cost-sign-off.md](d06-03-cost-sign-off.md): Cost Sign-Off Sheet: one-page approval of the chosen option's costs, spending limit, budget alert, and who pays, signed off before anything is built
+- [d06-01-infrastructure.md](d06-01-infrastructure.md): System Infrastructure Document: infrastructure needs, environments (local and live), chosen setup, live server requirements, deployment diagram, network and access, security review, monitoring and alerts, costs, setup record, ongoing DevOps support, and change log
+- [d06-02-infrastructure-options.md](d06-02-infrastructure-options.md): Infrastructure Options and Cost Analysis: side-by-side comparison of ways to provide the infrastructure (such as the organization's existing servers, new cloud hosting, or on-premises), with up-front, monthly, and three-year costs and a recommendation
+- [d06-03-cost-sign-off.md](d06-03-cost-sign-off.md): Cost Sign-Off Sheet: one-page approval of the chosen option's costs, spending limit, budget alert, and who pays, signed off before anything is set up
 
 **Step 7: Test Creation**
 
@@ -48,7 +48,7 @@ Templates for the documents each step produces. Names use two numbers: the step 
 
 **Step 9: Release**
 
-- [d09-01-release-plan.md](d09-01-release-plan.md): Release Plan: what is released, release approach, feature flags, production readiness, stress test, manual checks, rollback plan, release-day schedule, communication, and watch period
+- [d09-01-release-plan.md](d09-01-release-plan.md): Release Plan: stakeholder demo, what is released, release approach, private pilot, feature flags, move to the live servers, stress test, manual checks, rollback plan, release-day schedule, communication, and watch period
 - [d09-02-release-readiness-review.md](d09-02-release-readiness-review.md): Release Readiness Review: hard-stop rules with evidence, pressures on the decision, stakeholder risk acceptances, and the go/no-go recommendation and decision
 - [d09-03-release-efficacy.md](d09-03-release-efficacy.md): Release Efficacy Document: plan compared with what happened, stress test compared with real use, problems, rollbacks, early results, costs, lessons learned, and hand-off to Step 10
 

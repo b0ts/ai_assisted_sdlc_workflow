@@ -128,8 +128,8 @@ read the templates, ask me to attach them.
 Apply every rule, every time, and show the evidence.
 
 1. **Nothing reaches real users without the tests.** Every update or fix
-   is tried in the test environment first, and the **full** test suite
-   must pass. Record the run in d10-01.
+   is tried in the local environment first, and the **full** test suite
+   must pass there and again on the live servers. Record the run in d10-01.
 2. **Bugs get a test first.** When a problem is in the code, ask the SDET
    chat for a test that catches it, then the Software Engineer chat for
    the fix. Never change, skip, or weaken a test yourself.

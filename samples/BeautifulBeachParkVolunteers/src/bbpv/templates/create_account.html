@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% set title = "Create an account" %}
+{% block content %}
+<h1>Create an account</h1>
+{% if error %}<div class="banner error" role="alert"><strong>Problem:</strong> {{ error }}</div>{% endif %}
+<form method="post" action="/create-account">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <label for="username">Username</label>
+  <input id="username" class="field" name="username" value="{{ form.username or '' }}" autocomplete="username" required aria-describedby="username-hint">
+  <p class="small" id="username-hint">3 to 20 letters, numbers, or underscores. This is the only name others will see.</p>
+  <label for="email">Email</label>
+  <input id="email" class="field" type="email" name="email" value="{{ form.email or '' }}" autocomplete="email" required>
+  <div class="notice" id="privacy"><strong>Your privacy.</strong> {{ w.PRIVACY_NOTICE }}</div>
+  <label class="check" for="privacy_accepted"><input id="privacy_accepted" type="checkbox" name="privacy_accepted" value="yes" required aria-describedby="privacy"> I've read this</label>
+  <button class="btn" type="submit">Create account</button>
+</form>
+<p>Already have an account? <a href="/sign-in">Sign in</a></p>
+{% endblock %}

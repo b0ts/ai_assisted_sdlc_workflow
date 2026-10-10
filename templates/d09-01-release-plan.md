@@ -3,9 +3,12 @@
 <!-- Template d09-01. Replace every [placeholder]. Delete all hint comments
 like this one. Keep every heading, in this order.
 The Release Plan says what is being released, how, and how it will be
-undone if something goes wrong. It is written by the Release Manager at the
-start of Step 9, with the DevOps Engineer, and approved through the
-Tracking chat BEFORE anything is released. Scale it to the risk: a small
+undone if something goes wrong. Step 9 has four stages: a stakeholder demo
+on the local environment, the move to the live servers, a private pilot
+with test accounts, and going live. Section 1.1 (the demo) is filled in
+first; the rest of the plan is written after the demo is approved, with the
+DevOps Engineer and the people who run the live servers, and approved
+through the Tracking chat BEFORE anything is moved to the live servers. Scale it to the risk: a small
 change on one website may need a few lines per section; a shared library
 (SDK) used by many products needs much more. Write "Not needed" with a
 reason rather than deleting a section. Never write passwords, keys, or
@@ -28,7 +31,24 @@ account numbers here. -->
 | Planned release date | [YYYY-MM-DD] |
 | Hard deadline, if any | [YYYY-MM-DD, and why] |
 | Release type | [e.g., "Small: one new website" / "Large: shared library used by N products"] |
-| Plan in one sentence | [e.g., "Release quietly to coordinators, then open sign-ups on launch day."] |
+| Live servers | [e.g., "The organization's existing servers, run by its IT team" (d06-01)] |
+| Plan in one sentence | [e.g., "Demo locally, move to the IT team's servers, pilot with test accounts for a week, then open sign-ups on launch day."] |
+
+### 1.1 Stakeholder Demo
+
+<!-- The stakeholders try the working software on the local environment
+(your computer), with made-up data, BEFORE anything is moved. Nothing goes
+to the live servers until their approval is recorded in the Tracking chat.
+If they ask for changes, list them and the chat each goes to. -->
+
+| Item | Details |
+|---|---|
+| Date and place | [YYYY-MM-DD, e.g., "Park office, on the Volunteer Program Manager's laptop"] |
+| Who tried it | [Stakeholders and roles] |
+| Version shown | [e.g., 1.0, the version that passed d07-02 Run N] |
+| Script | [The Must-have use cases walked through, e.g., "UC-1 to UC-7, one per person"] |
+| What they said | [Approved / Changes asked for, with each change and the chat it went to] |
+| Demo approval | [Tracking Decision ID and date, or "Not yet"] |
 
 ## 2. Inputs
 
@@ -59,6 +79,19 @@ or Side by side (blue-green). See b09-release.md. -->
 | Stages | [Each stage, its audience, and how long it lasts] |
 | Move to the next stage when | [e.g., "No rollback trigger for 24 hours"] |
 
+### 4.1 Private Pilot
+
+<!-- After the move, and before real users are invited, a few trusted
+people use TEST accounts on the live servers. The stress test, manual
+checks, and rollback practice happen here. -->
+
+| Item | Details |
+|---|---|
+| Who takes part | [e.g., "Two coordinators and three staff, with test accounts"] |
+| Dates | [YYYY-MM-DD to YYYY-MM-DD] |
+| What they do | [e.g., "Use every screen; post real-looking tasks; sign up and cancel"] |
+| Test accounts removed by | [Role, date, and how it is checked] |
+
 ## 5. Feature Flags
 
 <!-- One row per on/off switch. Write "None" and why if none are used.
@@ -70,13 +103,18 @@ features added to an application people already use. -->
 |---|---|---|---|---|
 | [Name] | [Feature] | [Off] | [Role, date or condition] | [Version or date] |
 
-## 6. Production Environment
+## 6. Move to the Live Servers
 
-<!-- Confirm with the DevOps Engineer, from d06-01. -->
+<!-- Done only after the demo approval (Section 1.1) is recorded. Confirm
+with the DevOps Engineer and the people who run the live servers, from
+d06-01 (especially Section 5.1, the live server requirements). -->
 
 | Item | Ready? | Checked by and date |
 |---|---|---|
-| Production environment built | [Yes / No] | [Who, date] |
+| The people who run the live servers approved the move | [Yes / No] | [Who, date] |
+| Software installed on the live servers, following the Developer Guide (d08-02) | [Yes / No] | [Who, date] |
+| Every automated test passes on the live servers | [Yes / No] | [d07-02 run, date] |
+| Real email service connected | [Yes / No] | [Who, date] |
 | Secrets in the secret store (never in files) | [Yes / No] | [Who, date] |
 | Backups running, and a restore tested | [Yes / No] | [Who, date] |
 | Monitoring and alerts on, going to a person | [Yes / No] | [Who, date] |
@@ -85,15 +123,16 @@ features added to an application people already use. -->
 
 ## 7. Stress Test
 
-<!-- Pretend to be many users at once, on production (before real users
-arrive) or on an exact copy. Base the numbers on the busiest moment you
+<!-- Pretend to be many users at once, on the live servers during the
+private pilot (before real users arrive), at a time the people who run
+them agree to. Base the numbers on the busiest moment you
 expect, plus a safety margin. -->
 
 | Item | Details |
 |---|---|
 | Busiest moment expected | [e.g., "Newsletter at 9:00: up to 300 people in 10 minutes"] |
 | Test load | [e.g., "500 pretend users over 10 minutes, then 150 at the same moment"] |
-| Where it runs | [Production before launch / copy of production] |
+| Where it runs | [Live servers, during the pilot / copy of the live servers] |
 | Tool | [e.g., an open-source load-testing tool] |
 | Passes if | [e.g., "Error pages for under 1 in 1,000 requests; pages under 2 seconds; costs stay under the limit"] |
 
@@ -123,7 +162,7 @@ only possible on the live system. -->
 | Time to roll back | [e.g., "Under 10 minutes"] |
 | What happens to data | [e.g., "Sign-ups made after launch are kept"] |
 | Roll forward instead when | [e.g., "A one-line fix is ready and tested"] |
-| Practiced on | [YYYY-MM-DD, in which environment, how long it took] |
+| Practiced on | [YYYY-MM-DD, on the live servers during the pilot, how long it took] |
 
 ## 10. Release-Day Schedule
 

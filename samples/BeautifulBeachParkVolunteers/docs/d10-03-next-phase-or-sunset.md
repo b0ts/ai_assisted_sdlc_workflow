@@ -4,8 +4,8 @@
 · **Last updated:** 2027-04-26 · **Status:** Approved
 · **Owner:** SRE (Maintenance chat)
 
-> **Sample document.** BeautifulBeachPark, its people, "SampleCloud," and
-> "SampleMail" are made up, and every number and price is made up for
+> **Sample document.** BeautifulBeachPark, its city, its people, and Parks
+> IT are made up, and every number and price is made up for
 > illustration. This sample recommends a new phase. A sunset is shown only
 > as an option that was considered.
 
@@ -23,9 +23,9 @@
 
 | Evidence | Source | What it shows |
 |---|---|---|
-| Database connections at 14 of 15 on Earth Day | d10-02 Section 5; M-3 | The busiest day already reaches the limit |
+| Database connections at 14 of 16 on Earth Day | d10-02 Section 5; M-3 | The busiest day already reaches the limit |
 | 468 accounts against a design for 500; about 800 expected this summer | d10-02 Section 5 | The PRD's size limit will be passed by June |
-| Costs expected to pass $60 in June | d10-02 Section 6 | The approved budget no longer fits |
+| Parks IT will charge from July for apps past their limits | d10-02 Section 6 | Going live cost nothing new; growing past Parks IT's limits will not |
 | "Edit a posted task" still the top request | R-2; Issue I4 | A need the PRD didn't include |
 | Text reminders requested by volunteers | d10-02 Section 8; PRD Phase 2 | A planned feature is now wanted |
 | Every success measure met | d10-02 Section 7 | The product works; retiring it would lose that |
@@ -34,9 +34,9 @@
 
 | Option | What it means | Cost | Risk | Pros | Cons |
 |---|---|---|---|---|---|
-| Keep running as is | Maintenance only; turn people away above 500 | About $60 a month | High: slow pages and errors on summer sign-up day | No new work | Fails the summer program |
+| Keep running as is | Maintenance only; turn people away above 500 | $0 new spending | High: slow pages and errors on summer sign-up day | No new work | Fails the summer program |
 | New phase | Run Steps 2 to 9 again for Phase 2; Phase 1 keeps running meanwhile | New estimate in Step 6 | Medium: a new release | Meets the new needs; builds on what works | Volunteer and stakeholder time |
-| Sunset | Retire the app and go back to email chains | Saves about $60 a month | High: coordinators lose the time saved | Lowest cost | Undoes every success measure |
+| Sunset | Retire the app and go back to email chains | Saves nothing: Parks IT's servers cost the park nothing today | High: coordinators lose the time saved | Lowest cost | Undoes every success measure |
 
 ## 4. Recommendation
 
@@ -63,10 +63,10 @@ need for it is growing.
 
 | Decision | Decided by | Date | Tracking Decision ID |
 |---|---|---|---|
-| New phase: start Phase 2 at Step 2; Phase 1 stays in Step 10 | Park Manager, Volunteer Program Manager | 2027-04-28 | D18 |
+| New phase: start Phase 2 at Step 2; Phase 1 stays in Step 10 | Park Manager, Volunteer Program Manager | 2027-04-28 | D19 |
 
 ## 8. Change Log
 
 | Version | Date | Change | Reason | Approved by |
 |---|---|---|---|---|
-| 1.0 | 2027-04-26 | First version | — | Park Manager (D18, 2027-04-28) |
+| 1.0 | 2027-04-26 | First version | — | Park Manager (D19, 2027-04-28) |

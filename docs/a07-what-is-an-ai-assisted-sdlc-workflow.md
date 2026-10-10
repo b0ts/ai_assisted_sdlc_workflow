@@ -90,8 +90,13 @@ outlined in
 and [Steps, Roles, and Deliverables](a04-steps-roles-and-deliverables.md).
 One of them, the **Initial Infrastructure** chat (Step 6), is also
 revisited later: after it sets up the initial infrastructure, later steps
-bring DevOps questions back to it, such as a test environment for Step 7
+bring DevOps questions back to it, such as the local test environment for Step 7
 or help putting the software live in Step 9.
+
+Everything up to the stakeholders' approval runs on **your own computer**,
+at no cost. Only after the stakeholders have tried the working software and
+approved it is it moved to the organization's own servers to go live. See
+[Where the Software Lives](a04-steps-roles-and-deliverables.md#where-the-software-lives-local-demo-live).
 
 | Step | Chat | Role | Main deliverable |
 |---|---|---|---|
@@ -100,10 +105,10 @@ or help putting the software live in Step 9.
 | 03 | Requirements | Product Manager | Product Requirements Document (PRD) |
 | 04 | Design | Software Architect | Software Design Specification ("Spec") |
 | 05 | User experience | UI/UX Designer | UI/UX Document with screen sketches |
-| 06 | Initial infrastructure | DevOps Engineer | Cost Sign-Off Sheet (approved before building) and System Infrastructure Document, then ongoing DevOps support |
+| 06 | Initial infrastructure | DevOps Engineer | Cost Sign-Off Sheet and System Infrastructure Document (where it will go live, and a free local setup to build on), then ongoing DevOps support |
 | 07 | Test creation | SDET (Software Development Engineer in Test) | Test Plan and automated tests |
 | 08 | Implementation | Software Engineer | Working software and Release Notes |
-| 09 | Release | Release Manager | Live software and Release Efficacy Document |
+| 09 | Release | Release Manager | Stakeholder demo, move to the live servers, private pilot, go live, and Release Efficacy Document |
 | 10 | Maintenance | SRE (Site Reliability Engineer) / Maintenance Engineer | Maintenance Log |
 
 ### When the Chain Runs Backward

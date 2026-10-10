@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% set title = "Message a volunteer" %}
+{% block content %}
+<h1>Message {{ volunteer.username }}</h1>
+{% if error %}<div class="banner error" role="alert"><strong>Problem:</strong> {{ error }}</div>{% endif %}
+<form method="post" action="/volunteers/{{ volunteer.username }}/message">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <label for="message">Message</label>
+  <textarea id="message" class="field" name="message" maxlength="500" required aria-describedby="message-hint">{{ text }}</textarea>
+  <p class="small" id="message-hint">Up to 500 characters. {{ volunteer.username }} gets it by email from the park's no-reply address. Neither of you sees the other's email.</p>
+  <button class="btn" type="submit">Send</button>
+</form>
+<a class="btn secondary" href="/my-tasks">Back to my tasks</a>
+{% endblock %}

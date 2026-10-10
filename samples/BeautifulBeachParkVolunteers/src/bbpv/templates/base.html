@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ title or "Volunteers" }}{% endblock %} · BeautifulBeachPark Volunteers</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <a class="wordmark" href="/">BeautifulBeachPark</a>
+    {% if user %}
+    <nav aria-label="Main">
+      {% if user.role == "volunteer" %}
+        <a href="/slots"{% if request.path == "/slots" %} class="current" aria-current="page"{% endif %}>Open slots</a>
+        <a href="/my-sign-ups"{% if request.path == "/my-sign-ups" %} class="current" aria-current="page"{% endif %}>My sign-ups</a>
+      {% elif user.role == "coordinator" %}
+        <a href="/my-tasks"{% if request.path == "/my-tasks" %} class="current" aria-current="page"{% endif %}>My tasks</a>
+        <a href="/slots"{% if request.path == "/slots" %} class="current" aria-current="page"{% endif %}>Open slots</a>
+      {% elif user.role == "admin" %}
+        <a href="/blocked"{% if request.path == "/blocked" %} class="current" aria-current="page"{% endif %}>Blocked volunteers</a>
+      {% endif %}
+      <a href="/sign-out">Sign out ({{ user.username }})</a>
+    </nav>
+    {% endif %}
+  </div>
+</header>
+<main>
+{% if banner %}
+  {% set kind, text = banner %}
+  <div class="banner {{ kind }}" role="{{ 'alert' if kind == 'error' else 'status' }}"><strong>{{ {"success": "Done:", "error": "Problem:", "info": "Note:"}[kind] }}</strong> {{ text }}</div>
+{% endif %}
+{% block content %}{% endblock %}
+</main>
+</body>
+</html>

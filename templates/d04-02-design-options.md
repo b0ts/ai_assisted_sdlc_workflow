@@ -30,8 +30,8 @@ who is not technical. -->
 
 | Option | Plain-language description |
 |---|---|
-| A: [e.g., Web app] | [e.g., Visitors open a web address in their phone's browser. Nothing to install.] |
-| B: [e.g., App-store app] | [e.g., Visitors download an app from Apple's App Store or Google Play.] |
+| A: [e.g., Web app] | [e.g., Volunteers open a web address in their phone's browser. Nothing to install.] |
+| B: [e.g., App-store app] | [e.g., Volunteers download an app from Apple's App Store or Google Play.] |
 | C: [e.g., Both] | [e.g., A web app first, with an app-store app added later.] |
 
 ## 3. Side-by-Side Comparison

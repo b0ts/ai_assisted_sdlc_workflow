@@ -13,14 +13,17 @@ Every one of those tests is failing, because nothing has been built yet.
 Step 8 builds it.
 
 - **Inputs:** every signed-off document from Steps 3 to 7, the **locked
-  automated tests**, and the **build-and-test pipeline** the DevOps
-  Engineer set up.
+  automated tests**, the **local environment** and **build-and-test
+  pipeline** the DevOps Engineer set up, and the **live server
+  requirements** the code must fit.
 - **Output:** **working software** that passes every test, the
   **Implementation Record**, a **Developer Guide** that explains the code,
   and draft **Release Notes**.
 - **Hand-off:** once every test passes and the stakeholders sign off, the
-  software goes to [Step 9: Release](b09-release.md), where it is put in
-  front of real users.
+  software goes to [Step 9: Release](b09-release.md), where the
+  stakeholders try it in a demo on your computer, and only after they
+  approve it is it moved to the live servers and put in front of real
+  users.
 
 ---
 
@@ -62,7 +65,7 @@ build the house, and they are finished when it passes every inspection.
 | PRD (`d03-01`) | Step 3 | The use cases: what each user needs to do |
 | Spec (`d04-01`) | Step 4 | The components, the data, the requests, the technology, and the Security & Compliance rules |
 | UI/UX Document and Style Guide (`d05-01`, `d05-02`) | Step 5 | Every screen, every message's exact wording, colors, fonts, and design files |
-| System Infrastructure Document (`d06-01`) | Step 6 | The test environment and the build-and-test pipeline |
+| System Infrastructure Document (`d06-01`) | Step 6 | The local environment, the build-and-test pipeline, and the **live server requirements** (Section 5.1) the code must fit |
 | Test Plan, Test Results Log, and tests (`d07-01`, `d07-02`, `tests/`) | Step 7 | **The finish line:** every test that must pass |
 
 **The role.** The Software Engineer's work goes in a loop, described
@@ -80,6 +83,27 @@ looks wrong, they send a request back through the
 | **Developer Guide** (`d08-02`) | How the code is organized, and how to set it up, run it, test it, and change it | Step 10, and anyone who works on the code later |
 | **Release Notes** (`d08-03`) | What this version does, in plain language, and any known problems | Users, stakeholders, the Release Manager |
 | **Test Results Log** (`d07-02`, continued) | A new row for every test run | Scrum Master, SDET |
+
+---
+
+## Built Locally, Ready to Move
+
+All of Step 8 happens on **your own computer**, in the local environment
+set up in Step 6. Nothing is put on the live servers yet: that waits until
+the stakeholders have seen a demo and approved it in Step 9. But the code
+must be **ready to move** there, often onto servers the organization's IT
+team already runs. So the Software Engineer follows a few rules that make
+moving it a matter of changing settings, not rewriting code:
+
+| Rule | Why |
+|---|---|
+| **Fit the live server requirements** (d06-01 Section 5.1): the same language version and database type | Code that works only on your computer is not finished |
+| **Every setting comes from outside the code**: the database address, the web address, the email service, the secrets | The same code runs locally and on the live servers; only the settings change |
+| **No services that exist only on one computer or one provider**, unless the live servers have them too | Moving would mean rewriting that part |
+| **Write down how to install and start it** in the Developer Guide (`d08-02`) | The IT team in Step 9 follows these steps |
+
+The same automated tests are run again on the live servers in Step 9,
+which proves the move worked.
 
 ---
 
@@ -211,6 +235,7 @@ still reviews the code before it goes live.
 | **Building more than was asked.** AI likes to add "helpful" extras. | Build only what the PRD and Spec describe. Extras go to the Product Manager as requests. |
 | **Ignoring the design.** | Every screen is built from the UI/UX Document and Style Guide, and checked against its mockup. |
 | **Secrets in the code.** | Passwords and keys are never written into the code or pasted into a chat; they stay where d06-01 says. |
+| **Code that only runs on your computer.** | Every setting comes from outside the code, and the code fits the live server requirements in d06-01 Section 5.1. |
 | **Unknown code libraries.** | Every library is listed in the Developer Guide with its license (Spec Section 11.2). |
 | **No human review.** | A person reviews the code before Step 9, as the Spec's AI-Related Risks section requires. |
 

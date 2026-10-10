@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% set title = "Confirm sign-up" %}
+{% block content %}
+<h1>Confirm sign-up</h1>
+<div class="card">
+  <strong>{{ slot.title }}</strong>
+  <p>{{ slot.date|day_heading }}, {{ slot|slot_time }}</p>
+  {% if slot.description %}<p class="small">{{ slot.description }}</p>{% endif %}
+  <p class="small">Signing up as {{ user.username }}. We'll email you a reminder the day before.</p>
+</div>
+<form method="post" action="/slots/{{ slot.id }}/sign-up">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <button class="btn" type="submit">Confirm</button>
+</form>
+<a class="btn secondary" href="/slots">Back to open slots</a>
+{% endblock %}

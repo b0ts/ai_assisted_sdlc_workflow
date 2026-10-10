@@ -1,0 +1,7 @@
+# The app's outside libraries (licenses in docs/d08-02-developer-guide.md Section 7)
+Flask>=3.0,<4
+SQLAlchemy>=2.0,<3
+cryptography>=42
+python-dotenv>=1.0       # reads src/.env in the local environment
+# On Parks IT's servers only (PostgreSQL); not needed locally:
+#   psycopg[binary]>=3.1

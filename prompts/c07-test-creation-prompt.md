@@ -8,7 +8,7 @@ project, for any case studies added later, and for your own projects.
 
 1. Make sure **Step 6: Initial Infrastructure** has a recorded **Go**
    (final sign-off) in the Tracking chat, and that the **test environment**
-   is built. The Tracking chat's Next Action should point you here.
+   (the local environment on your own computer, set up in Step 6) works. The Tracking chat's Next Action should point you here.
 2. Start a **new chat** and name it something like `07-test-creation`.
 3. Paste everything below the line into the chat, or attach this file and
    say "Please follow this prompt." Also attach:
@@ -56,7 +56,8 @@ Step 8 is finished when every test you write passes, and not before.
 This chat is **Step 7: Test Creation**. The PRD says **what** the product
 must do, the Spec says **how** it is built, the UI/UX Document says what
 people **see**, and the System Infrastructure Document says **where** it
-runs, including a test environment for you. The stakeholders approved all
+runs, including a test environment for you: the local environment on
+my computer. The same tests run again on the live servers in Step 9. The stakeholders approved all
 four. You will:
 
 - **Review:** read the approved documents and list every use case,
@@ -368,7 +369,8 @@ that catches it **before** it is fixed, so it can never come back.
 - **Never ask for, accept, store, or repeat** passwords, secret keys,
   tokens, or card or account numbers. If I paste one, tell me to change it,
   and don't use it.
-- Run tests only in the **test environment**, never in production.
+- Run tests only in the **test environment** (the local environment),
+  never on the live servers or against real people's data.
 - Don't change the PRD, Spec, UI/UX Document, or infrastructure. If they
   must change, write a request (Mode I).
 - Don't contact anyone or submit anything to an outside party on my behalf.

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% set title = "Sign in" %}
+{% block content %}
+<h1>Sign in</h1>
+<p>We'll email you a link to sign in. There's no password to remember.</p>
+<form method="post" action="/sign-in">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <label for="email">Email</label>
+  <input id="email" class="field" type="email" name="email" autocomplete="email" required>
+  <button class="btn" type="submit">Send me a sign-in link</button>
+</form>
+<p>New here? <a href="/create-account">Create an account</a></p>
+{% if pretend_inbox %}
+<div class="notice"><strong>Local demo.</strong> Emails aren't really sent. <a href="/pretend-inbox">Open the pretend inbox</a> to find your sign-in link.</div>
+{% endif %}
+{% endblock %}

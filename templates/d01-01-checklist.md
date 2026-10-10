@@ -29,11 +29,13 @@ like this one. Keep every heading, in this order. -->
 - [ ] Step 4: Design
 - [ ] Step 5: User Experience
 - [ ] Step 6: Initial Infrastructure (DevOps support continues through Step 10)
-  - [ ] Cost sign-off: Cost Sign-Off Sheet approved, before anything is built
+  - [ ] Cost sign-off: Cost Sign-Off Sheet approved, before anything is set up
   - [ ] Final sign-off: System Infrastructure Document approved, before Step 7
 - [ ] Step 7: Test Creation
 - [ ] Step 8: Implementation
 - [ ] Step 9: Release
+  - [ ] Demo approval: stakeholders tried the software on the local environment, before anything moves to the live servers
+  - [ ] Go/no-go: Release Readiness Review, after the move and the private pilot, before real users are invited
 - [ ] Step 10: Maintenance
 
 ## 3. Status Table
@@ -51,17 +53,18 @@ After each deliverable, add its template number in parentheses, e.g.,
 | 3 | Requirements | Product Manager | Product Requirements Document (d03-01) | [Name] | [YYYY-MM-DD] | Not started | |
 | 4 | Design | Software Architect | Software Design Specification (Spec) | [Name] | [YYYY-MM-DD] | Not started | |
 | 5 | User Experience | UI/UX Designer | UI/UX Document with mockups | [Name] | [YYYY-MM-DD] | Not started | |
-| 6 | Initial Infrastructure | DevOps Engineer | Cost Sign-Off Sheet (approved before building); System Infrastructure Document; then ongoing DevOps support | [Name] | [YYYY-MM-DD] | Not started | [Approved monthly limit, once signed off] |
+| 6 | Initial Infrastructure | DevOps Engineer | Cost Sign-Off Sheet (approved before anything is set up); System Infrastructure Document, with the live servers chosen and a local environment set up; then ongoing DevOps support | [Name] | [YYYY-MM-DD] | Not started | [Approved monthly limit, once signed off] |
 | 7 | Test Creation | SDET | Test Plan and automated tests | [Name] | [YYYY-MM-DD] | Not started | |
 | 8 | Implementation | Software Engineer | Working software and Release Notes | [Name] | [YYYY-MM-DD] | Not started | |
-| 9 | Release | Release Manager | Live release and Release Efficacy Document | [Name] | [YYYY-MM-DD] | Not started | |
+| 9 | Release | Release Manager | Stakeholder demo, move to the live servers, private pilot, live release, and Release Efficacy Document | [Name] | [YYYY-MM-DD] | Not started | [Demo approval, once recorded] |
 | 10 | Maintenance | SRE / Maintenance Engineer | Maintenance Log | [Name] | Ongoing | Not started | |
 
 ## 4. Decision Log
 
 <!-- One row per decision: Go, Go back, Park, or Abandon. Newest at the
 bottom. Never delete rows. Step 6 gets two rows: its cost sign-off (with
-the approved spending limit in the Reason) and its final sign-off. -->
+the approved spending limit in the Reason) and its final sign-off. Step 9
+gets at least two: the demo approval and the go/no-go decision. -->
 
 | # | Date | Step | Decision | Decided by | Reason |
 |---|---|---|---|---|---|

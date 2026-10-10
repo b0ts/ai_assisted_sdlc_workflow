@@ -5,14 +5,17 @@
 ## Executive Summary
 
 At the end of [Step 8: Implementation](b08-implementation.md), the software
-works and every test passes, but only in the **test environment**, with
-made-up data, used by a handful of people. No real user has seen it yet.
-Step 9 puts it in front of real users, safely.
+works and every test passes, but only on **your own computer**, with
+made-up data, used by a handful of people. No stakeholder has tried it,
+and no real user has seen it. Step 9 takes it the rest of the way, in four
+stages: a **demo** for the stakeholders, a **move** to the live servers, a
+private **pilot**, and **going live**.
 
 - **Inputs:** the working software, the signed-off documents from Steps 3
-  to 8, the draft **Release Notes**, and the **production environment**
-  the DevOps Engineer builds.
-- **Output:** the software, **live for real users**, a **Release Plan**, a
+  to 8, the draft **Release Notes**, the **live server requirements**, and
+  the organization's IT staff, who run the live servers.
+- **Output:** the stakeholders' **demo approval**, the software moved to
+  the live servers and then **live for real users**, a **Release Plan**, a
   **Release Readiness Review** (the go/no-go decision), finalized
   **Release Notes**, and a **Release Efficacy Document** describing how
   well the release went.
@@ -38,6 +41,8 @@ the date, and what happens if a pipe bursts on the first night.
 
 ### What They Do
 
+- **Show** the working software to the stakeholders in a demo, and record
+  their approval or the changes they ask for.
 - **Plan** the release: what goes live, when, how, and in what order.
 - **Check readiness:** confirm every earlier sign-off, run the checks the
   automated tests couldn't, and test the system under real-world load.
@@ -45,8 +50,8 @@ the date, and what happens if a pipe bursts on the first night.
   what would trigger it.
 - **Recommend Go or No-Go**, following written rules, and record the
   stakeholders' decision.
-- **Run release day** with the DevOps Engineer, then **watch** the live
-  system for problems.
+- **Run release day** with the DevOps Engineer and the organization's IT
+  staff, then **watch** the live system for problems.
 - **Report** how well it went, and hand the live product to Step 10.
 
 ---
@@ -59,7 +64,7 @@ the date, and what happens if a pipe bursts on the first night.
 |---|---|---|
 | PRD (`d03-01`) | Step 3 | Success measures, Must-have use cases, and the deadline |
 | Spec (`d04-01`) | Step 4 | Quality requirements (speed, number of users) and Security & Compliance rules |
-| System Infrastructure Document (`d06-01`) | Step 6 | Production environment, monitoring, backups, costs, and the spending limit |
+| System Infrastructure Document (`d06-01`) | Step 6 | The live servers and their requirements, who runs them, monitoring, backups, costs, and the spending limit |
 | Test Plan and Test Results Log (`d07-01`, `d07-02`) | Step 7 | What was tested, and what was **left to check by hand** in Step 9 |
 | Implementation Record, Developer Guide, Release Notes (`d08-01` to `d08-03`) | Step 8 | What was built, how to run it, and any known issues |
 
@@ -71,10 +76,43 @@ the release finds a problem, they send a request back through the
 
 | Document | What it contains | Used by |
 |---|---|---|
-| **Release Plan** (`d09-01`) | What is released, how, the feature flags, the stress test, manual checks, the rollback plan, and the release-day schedule | DevOps Engineer, stakeholders |
+| **Release Plan** (`d09-01`) | The stakeholder demo and its approval, the hand-off to the live servers, the private pilot, the feature flags, the stress test, manual checks, the rollback plan, and the release-day schedule | DevOps Engineer, the IT staff, stakeholders |
 | **Release Readiness Review** (`d09-02`) | The go/no-go rules, each checked, any pressures disclosed, and the decision | Stakeholders (sign-off), Scrum Master |
 | **Release Notes** (`d08-03`, finalized) | The release date and final wording for users | Users, stakeholders |
 | **Release Efficacy Document** (`d09-03`) | How well the release went: problems, rollbacks, results, lessons | Stakeholders, the SRE (Step 10) |
+
+---
+
+## Four Stages: Demo, Move, Pilot, Live
+
+```mermaid
+flowchart LR
+    D["1. Demo<br/>on your computer"] -- "approved" --> M["2. Move<br/>to the live servers"]
+    D -- "changes asked for" --> B["Back to an<br/>earlier step"]
+    M --> P["3. Private pilot<br/>test accounts only"]
+    P --> L["4. Go live<br/>for real users"]
+```
+
+| Stage | Where | What happens | Ends with |
+|---|---|---|---|
+| **1. Stakeholder demo** | Your computer | The stakeholders try the working software themselves, with made-up data, following a short script of the main use cases. It costs nothing. | Their **demo approval**, recorded in the Tracking chat, or a list of changes |
+| **2. Move to the live servers** | The organization's servers | The DevOps Engineer and the IT staff who run the servers install the approved software, following the Developer Guide and the live server requirements, and connect the real email service. Then the **same automated tests** are run there. | Every test passing on the live servers, and the IT staff's OK |
+| **3. Private pilot** | The live servers | A few trusted people (staff, a couple of volunteers) use **test accounts** for a week or so. Nothing is announced. Stress testing and the checks the tests couldn't do (such as real emails arriving) happen here. | The Release Readiness Review: Go or No-Go |
+| **4. Go live** | The live servers | The test accounts are removed and real users are invited. | The watch period, then the Release Efficacy Document |
+
+**Why demo locally, before moving?** The stakeholders see exactly what was
+built while changes are still free and easy. If they ask for changes, the
+work goes back to the right step (often Step 5 or Step 8), and nothing has
+been installed on anyone's servers yet. Many changes come from simply
+seeing the real thing: a button that's hard to find, a word that confuses
+people.
+
+**Why does the IT team matter?** When the live servers belong to the
+organization's IT team, they decide **how and when** new software goes on
+them. They may want to review security first, install it themselves, or
+schedule it for a quiet evening. The Release Plan includes their steps and
+their approval, and the Release Manager plans around their timeline,
+which often takes longer than anything else in this step.
 
 ---
 
@@ -157,7 +195,8 @@ crisis:
 - **Triggers:** exactly what would cause a rollback (for example, error
   pages for more than 2% of users for 10 minutes).
 - **Who decides**, and who can do it at 7 a.m. on a Saturday.
-- **Steps**, written down and **practiced** in the test environment.
+- **Steps**, written down and **practiced** during the private pilot,
+  agreed with whoever runs the live servers.
 - **Data:** code is easy to undo; data is not. If the release changed the
   database, or users have already signed up, the plan must say what
   happens to that data.
@@ -229,14 +268,16 @@ with the facts, and their names, on the record.
 **Prompt** (in `prompts/`):
 
 - [`c09-release-prompt`](../prompts/c09-release-prompt.md): plays the
-  Release Manager; plans the release, the flags, the stress test, and the
-  rollback, applies the hard-stop rules, runs release day with the DevOps
-  Engineer, and reports on how it went
+  Release Manager; runs the stakeholder demo, plans the move to the live
+  servers with the IT staff, the private pilot, the flags, the stress
+  test, and the rollback, applies the hard-stop rules, runs release day
+  with the DevOps Engineer, and reports on how it went
 
 **Templates** (in `templates/`):
 
 - [`d09-01-release-plan`](../templates/d09-01-release-plan.md): Release
-  Plan: what, how, flags, stress test, manual checks, rollback, schedule
+  Plan: demo, move to the live servers, pilot, flags, stress test, manual
+  checks, rollback, schedule
 - [`d09-02-release-readiness-review`](../templates/d09-02-release-readiness-review.md):
   Release Readiness Review: hard-stop rules, pressures, risk acceptances,
   and the go/no-go decision
@@ -247,7 +288,8 @@ with the facts, and their names, on the record.
 **Samples** (in [`samples/BeautifulBeachParkVolunteers/docs/`](../samples/BeautifulBeachParkVolunteers/docs/)):
 
 - [**d09-01**](../samples/BeautifulBeachParkVolunteers/docs/d09-01-release-plan.md):
-  the sample's Release Plan, including the stress test that failed and
+  the sample's Release Plan, including the stakeholder demo, the move to
+  the city's servers with Parks IT, and the stress test that failed and
   how it was fixed
 - [**d09-02**](../samples/BeautifulBeachParkVolunteers/docs/d09-02-release-readiness-review.md):
   the sample's Readiness Review, including a No-Go under newsletter
@@ -264,6 +306,6 @@ future time.
 
 - [Step 8: Implementation](b08-implementation.md): the previous step
 - [Step 10: Maintenance](b10-maintenance.md): the next step
-- [Step 6: Initial Infrastructure](b06-infrastructure.md): where production, monitoring, and costs are set up
+- [Step 6: Initial Infrastructure](b06-infrastructure.md): where the live servers, their requirements, monitoring, and costs are planned
 - [Feature toggle (Wikipedia)](https://en.wikipedia.org/wiki/Feature_toggle):
   a general introduction

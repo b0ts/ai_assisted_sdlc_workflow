@@ -18,7 +18,8 @@ writes the answer key.
 
 - **Inputs:** the signed-off PRD, Spec, UI/UX Document, and System
   Infrastructure Document, plus the **test environment** the DevOps
-  Engineer built in Step 6.
+  Engineer set up in Step 6: the local environment on your own computer.
+  The same tests run again on the live servers in Step 9.
 - **Output:** the **Test Plan** (every test, linked to the use case it
   checks), the **automated tests** themselves, and a **Test Results Log**
   showing the first run, in which **every test fails**, as it should.

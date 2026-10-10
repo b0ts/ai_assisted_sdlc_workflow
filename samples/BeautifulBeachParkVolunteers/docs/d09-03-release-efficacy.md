@@ -4,8 +4,8 @@
 · **Last updated:** 2027-02-09 · **Status:** Approved
 · **Owner:** Release Manager (Release chat)
 
-> **Sample document.** BeautifulBeachPark, its people, "SampleCloud," and
-> "SampleMail" are made up, and every number is made up for illustration.
+> **Sample document.** BeautifulBeachPark, its city, its people, and Parks
+> IT are made up, and every number is made up for illustration.
 > Counts are used instead of any volunteer's details.
 
 ## 1. Overview
@@ -14,7 +14,7 @@
 |---|---|
 | Product and software version | BeautifulBeachPark Volunteers 1.0 |
 | Release Plan and Readiness Review | d09-01 v1.1; d09-02 v1.1 |
-| Go decision | D15, 2027-01-21 (after the No-Go, D14, 2027-01-19) |
+| Go decision | D16, 2027-01-21 (after the No-Go, D15, 2027-01-19) |
 | Released on | Stage 1: 2027-01-22, 10:00; Stage 2: 2027-01-23, 9:00 |
 | Watch period | 2027-01-23 to 2027-02-06 |
 | In one sentence | Released on the planned day with no rollback; the two problems the release checks found would both have hit launch morning. |
@@ -33,10 +33,10 @@
 | Measure | Stress test | Real busiest moment | Notes |
 |---|---|---|---|
 | Users at the same moment | 150 | 96 (2027-01-23, 9:04) | 340 volunteers visited in the first hour |
-| Error rate | 0 | 3 error pages in about 9,000 requests | All during a SampleCloud update at 11:40; under the 2% trigger |
+| Error rate | 0 | 3 error pages in about 9,000 requests | All during a Parks IT server update at 11:40; under the 2% trigger |
 | Slowest page | 1.6 seconds | 1.4 seconds | Open Slots, on phones |
 
-Without the connection-pool fix from stress test Run 1, the 9:04 peak
+Without the connection-limit fix from stress test Run 1, the 9:04 peak
 would have passed the 20-connection limit, and volunteers would have seen
 error pages at the moment the newsletter arrived.
 
@@ -46,7 +46,7 @@ error pages at the moment the newsletter arrived.
 |---|---|---|---|---|---|---|
 | R-1 | 2027-01-23 | Some volunteers didn't get a sign-in email because they mistyped their address. Not a fault in the app. | 27 volunteers, all helped by the park office | No | Park office help sheet used; a clearer "check your email address" message suggested | Handed to Step 10, as a request for the UI/UX Designer |
 | R-2 | 2027-01-27 | Coordinators can't edit a task after posting it; one posted the wrong date and had to ask the park office. Not in the PRD. | 2 coordinators | No | Logged as a feature request | Handed to Step 10, for the Product Manager (Phase 2) |
-| R-3 | 2027-01-23 | 3 error pages during a SampleCloud update | 3 visitors | No (under 2%) | No action needed; noted for Step 10 to watch | Closed |
+| R-3 | 2027-01-23 | 3 error pages during a Parks IT server update | 3 visitors | No (under 2%) | No action needed; noted for Step 10 to watch | Closed |
 
 ## 5. Rollbacks
 
@@ -64,9 +64,9 @@ None.
 
 | Item | Amount | Source |
 |---|---|---|
-| Approved monthly limit | $60 | d06-03 |
-| Actual spend in the watch period | $19, plus $2 for the stress test | SampleCloud and SampleMail billing |
-| Any alert reached? | No | Expected about $41 for a full month |
+| Approved monthly limit | $0 new spending | d06-03 |
+| Actual spend in the watch period | $0 | Parks IT confirmed no charge |
+| Any alert reached? | No | Emails: about 1,100 in the watch period, within Parks IT's limit of 3,000 a month |
 
 ## 8. What People Said
 
@@ -89,11 +89,11 @@ None.
 |---|---|
 | Open problems handed over | R-1, R-2 |
 | Flags still to remove | None |
-| Things to watch | Spam rate on reminder emails; database connections at busy times; monthly costs against $60 |
+| Things to watch | Spam rate on reminder emails; database connections at busy times; monthly email volume against Parks IT's limit of 3,000 |
 | Next success-measure check | 2027-04-23 (three months after launch) |
 
 ## 11. Change Log
 
 | Version | Date | Change | Reason | Approved by |
 |---|---|---|---|---|
-| 1.0 | 2027-02-09 | First version | — | Park Manager (D16, 2027-02-10) |
+| 1.0 | 2027-02-09 | First version | — | Park Manager (D17, 2027-02-10) |

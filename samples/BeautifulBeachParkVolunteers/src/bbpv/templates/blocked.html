@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% set title = "Blocked volunteers" %}
+{% block content %}
+<h1>Blocked volunteers</h1>
+<p class="small">Usernames only. Only you, the System Administrator, can undo a block.</p>
+{% if rows %}
+<table>
+  <tr><th scope="col">Username</th><th scope="col">Blocked by</th><th scope="col">Date</th><th scope="col"><span class="small">Action</span></th></tr>
+  {% for r in rows %}
+  <tr>
+    <td>{{ r.username or "(account deleted)" }}</td>
+    <td>{{ r.blocked_by }}</td>
+    <td>{{ r.blocked_on.isoformat() }}</td>
+    <td>{% if r.username %}
+      <form method="post" action="/blocked/{{ r.username }}/undo">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button class="btn inline secondary" type="submit" aria-label="Undo block for {{ r.username }}">Undo block</button>
+      </form>
+      {% else %}<span class="small">Stays blocked</span>{% endif %}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>No one is blocked.</p>
+{% endif %}
+{% endblock %}

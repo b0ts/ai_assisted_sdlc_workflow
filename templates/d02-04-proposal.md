@@ -67,7 +67,7 @@ numbers, interview findings, or sources.]
 
 | Measure | Target | How and when it is reported |
 |---|---|---|
-| [e.g., Online bookings] | [e.g., 80% within 3 months] | [e.g., Quarterly report] |
+| [e.g., Sign-ups made in the app] | [e.g., 80% within 3 months] | [e.g., Quarterly report] |
 
 ## 9. Risks
 

@@ -1,7 +1,7 @@
 # BeautifulBeachPark Volunteers: Test Plan
 
-**Document:** d07-01 · **Step:** 7, Test Creation · **Version:** 1.0
-· **Last updated:** 2026-10-16 · **Status:** Approved
+**Document:** d07-01 · **Step:** 7, Test Creation · **Version:** 1.1
+· **Last updated:** 2026-12-08 · **Status:** Approved
 · **Owner:** SDET (Test Creation chat)
 
 > **Sample document.** BeautifulBeachPark, its people, and every username
@@ -16,10 +16,10 @@
 | Source PRD | d03-01 v1.1, 2026-09-18 |
 | Source Spec | d04-01 v1.1, 2026-09-30 |
 | Source UI/UX Document | d05-01 v1.1, 2026-10-13 (v1.0 plus two messages; Section 12) |
-| Source System Infrastructure Document | d06-01 v1.1, 2026-10-13 (v1.0 plus a test inbox; Section 12) |
+| Source System Infrastructure Document | d06-01 v1.1, 2026-10-13 (v1.0 plus a pretend inbox; Section 12) |
 | Infrastructure sign-off | D10, 2026-10-09 |
 | Phase covered | Phase 1: UC-1 to UC-7, email reminders |
-| Test environment | Test (made-up data only), d06-01 Section 4 |
+| Test environment | Local (made-up data only, on the Volunteer Program Manager's laptop), d06-01 Section 4; the full suite runs again on Parks IT's servers in Step 9 |
 | Where the tests live | `tests/` |
 | Number of tests | 38: 10 happy path, 17 expected failure, 7 bounds, 2 monkey, 2 quality |
 | Plan in one sentence | Every use case is tested for its normal path, its refusals, and its limits, with extra checks that no email address ever reaches a volunteer's or coordinator's screen. |
@@ -31,7 +31,7 @@
 | Product Requirements Document | d03-01 v1.1 | UC-1 to UC-7 and their acceptance criteria; Section 6 quality requirements |
 | Software Design Specification | d04-01 v1.1 | Limits (Section 6), requests and failure replies (Section 7), sequence diagrams (Section 9), Security & Compliance (Section 11) |
 | UI/UX Document | d05-01 v1.1 | Screens S-1 to S-10; exact wording (Section 9); accessibility (Section 10); privacy on screen (Section 11) |
-| System Infrastructure Document | d06-01 v1.1 | Test environment with `example.test` emails, test inbox, and a reminder job that can be run by hand |
+| System Infrastructure Document | d06-01 v1.1 | Local environment with `example.test` emails, a pretend inbox (the "test inbox"), and a reminder job that can be run by hand |
 
 ## 3. Scope
 
@@ -44,9 +44,10 @@
 
 - Reliability (99% available): measured by the uptime alert in d06-01
   Section 9 once the app is live (Step 10).
-- Devices and browsers: every test runs in one desktop and one phone-sized
-  browser; other browsers are checked by hand in Step 9.
-- Delivery of real emails into real inboxes: the test environment never
+- Devices and browsers: T-QR-01 and T-QR-02 run in a real phone-sized and
+  desktop browser; the other 36 tests send requests straight to the app,
+  which is much faster. Other browsers are checked by hand in Step 9.
+- Delivery of real emails into real inboxes: the local environment never
   sends to real addresses (d06-01 v1.1). Checked by hand in Step 9.
 - Text-message reminders: Phase 2 (PRD Section 8).
 
@@ -59,13 +60,20 @@
 | Bounds checking (BC) | Behavior at and just past every limit | Username length, title length, places per slot, message length, the last place, an empty roster |
 | Monkey testing (MK) | The app survives random input without crashing or leaking an email | Every form and screen |
 
-**Testing tools:** A common Python web-app test framework that drives a
-real browser, chosen with the Software Engineer to match the Spec's Python
-web service (d04-01 Section 5).
+**Testing tools:** pytest, a common Python test framework, chosen with the
+Software Engineer to match the Spec's Python web service (d04-01 Section
+5). 36 tests use Flask's built-in test client, which sends requests
+straight to the app; T-QR-01 and T-QR-02 use Playwright to drive a real
+Chromium browser. T-QR-02's accessibility check is written into the test
+(contrast, text labels, button sizes, page language) rather than using an
+outside checker, so it runs without the internet.
 
-**How to run the tests:** Run the test command in the project folder. It
-uses the test environment only. Tests that check email read the test inbox
-(d06-01 v1.1).
+**How to run the tests:** In the project folder, run `pytest` (see
+`tests/README.md`). It uses the local environment only, with a throwaway
+database for each test. Tests that check email read the test inbox
+(d06-01 v1.1). `tests/README.md` also records the **contract**: the
+screen addresses, field names, and commands the code must provide, so the
+tests could be written before the code.
 
 **How sources are written:** "UC-3 AC2" means the second acceptance
 criterion of UC-3 in the PRD. "UC-3 2a" means alternate flow 2a.
@@ -229,7 +237,7 @@ has a security test. No test lacks a source.
 |---|---|---|---|
 | 1. Wording for a username that breaks the rules | Designer: UI/UX Document | T-02-03 needs an exact message; d05-01 Section 9 had none | d05-01 v1.1: "Usernames are 3 to 20 letters, numbers, or underscores." |
 | 2. Wording for a title over 60 characters | Designer: UI/UX Document | T-01-04 needs an exact message; d05-01 Section 9 had none | d05-01 v1.1: "Titles can be up to 60 characters." |
-| 3. A way for tests to read emails sent to `example.test` addresses | DevOps Engineer: infrastructure | T-02-01, T-03-07, T-06-01, and T-SEC-05 must check emails without sending to real inboxes | d06-01 v1.1: test inbox in the test environment |
+| 3. A way for tests to read emails sent to `example.test` addresses | DevOps Engineer: infrastructure | T-02-01, T-03-07, T-06-01, and T-SEC-05 must check emails without sending to real inboxes | d06-01 v1.1: pretend inbox in the local environment |
 
 ## 13. Risks, Assumptions, and Open Questions
 
@@ -242,7 +250,7 @@ has a security test. No test lacks a source.
 
 **Assumptions:**
 
-- The test inbox behaves like SampleMail for the content of each email;
+- The test inbox behaves like the city email service for the content of each email;
   confirm by hand in Step 9.
 
 **Open questions:**
@@ -254,3 +262,4 @@ has a security test. No test lacks a source.
 | Version | Date | Change | Reason | Approved by |
 |---|---|---|---|---|
 | 1.0 | 2026-10-16 | First version | — | Park Manager (D11, 2026-10-16) |
+| 1.1 | 2026-12-08 | TC-1: the shared test setup now opens the app at its `https://` address (every test had failed for the wrong reason in Run 2). TC-2: T-MK-01 lets text a coordinator typed earlier reappear, measures titles as people read them, and checks usernames as saved, after spaces around them are trimmed (false alarms in Run 3). Testing tools described. No expected result changed. | Requests TC-1 and TC-2 from the Implementation chat (d08-01 Section 8) | SDET chat; Park Manager (D12, 2026-12-11) |

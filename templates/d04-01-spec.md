@@ -28,7 +28,7 @@ situational diagram you added and why, or say none were needed. -->
 | PRD sign-off | [Decision ID and date from the Tracking Checklist, e.g., D3, YYYY-MM-DD] |
 | Phase covered | [e.g., Phase 1: UC-1 to UC-3, or "all"] |
 | Application type | [e.g., Web app / App-store app / Both / Desktop program] |
-| Design in one sentence | [e.g., "A web app whose server saves bookings in a database and sends confirmations by email."] |
+| Design in one sentence | [e.g., "A web app whose server saves sign-ups in a database and sends reminders by email."] |
 
 ## 2. Inputs
 
@@ -85,10 +85,10 @@ the choice matters. The DevOps Engineer confirms the exact setup. -->
 
 | Component | What it is responsible for | Type of technology | Use cases it serves |
 |---|---|---|---|
-| Client | [e.g., Shows tours, collects booking details] | [e.g., Web page (HTML, CSS, JavaScript)] | [UC-1, UC-2] |
-| Application server | [e.g., Checks availability, saves bookings] | [e.g., Python web service] | [UC-1 to UC-3] |
-| Database | [e.g., Stores tours and bookings] | [e.g., Relational database] | [UC-1 to UC-3] |
-| [External system] | [e.g., Sends confirmation emails] | [e.g., Email service] | [UC-1] |
+| Client | [e.g., Shows open slots, collects sign-ups] | [e.g., Web page (HTML, CSS, JavaScript)] | [UC-1, UC-2] |
+| Application server | [e.g., Checks the slot has room, saves sign-ups] | [e.g., Python web service] | [UC-1 to UC-3] |
+| Database | [e.g., Stores tasks, slots, and sign-ups] | [e.g., Relational database] | [UC-1 to UC-3] |
+| [External system] | [e.g., Sends reminder emails] | [e.g., Email service] | [UC-1] |
 
 ## 6. Data
 
@@ -97,8 +97,8 @@ information, which Section 11 must protect. -->
 
 | Item (entity) | What it holds | Personal information? | Kept for how long | Use cases |
 |---|---|---|---|---|
-| [e.g., Tour] | [e.g., Name, date, time, places left] | [No] | [e.g., Until the tour is removed] | [UC-1] |
-| [e.g., Booking] | [e.g., Tour, visitor name, email] | [Yes: name, email] | [e.g., 90 days after the tour] | [UC-1, UC-2] |
+| [e.g., Slot] | [e.g., Task, date, start time, places left] | [No] | [e.g., Until the task is removed] | [UC-1] |
+| [e.g., Sign-up] | [e.g., Slot, volunteer username] | [No: the email stays on the account] | [e.g., 90 days after the slot] | [UC-1, UC-2] |
 
 ## 7. Client–Server Interface
 
@@ -108,8 +108,8 @@ diagrams in Section 9 use these same names. Also called the API
 
 | Request | From → To | Sends | Returns when it works | Returns when it fails | Use cases |
 |---|---|---|---|---|---|
-| [e.g., Get tours] | [Client → Server] | [e.g., Date] | [e.g., List of tours] | [e.g., "No tours found"] | [UC-1] |
-| [e.g., Create booking] | [Client → Server] | [e.g., Tour, name, email] | [e.g., Booking number] | [e.g., "Tour is full"] | [UC-1] |
+| [e.g., Get open slots] | [Client → Server] | [e.g., Date] | [e.g., List of open slots] | [e.g., "No open slots"] | [UC-1] |
+| [e.g., Create sign-up] | [Client → Server] | [e.g., Slot, username] | [e.g., Sign-up confirmation] | [e.g., "Slot is full"] | [UC-1] |
 
 ## 8. Use Case Coverage
 
@@ -118,7 +118,7 @@ Flag any use case with no design, and any design with no use case. -->
 
 | Use case (PRD) | Priority | Sequence diagram | Components involved | Requests used |
 |---|---|---|---|---|
-| [UC-1: Book a tour] | [Must have] | [Section 9, UC-1] | [Client, Server, Database, Email service] | [Get tours, Create booking] |
+| [UC-1: Sign up for a slot] | [Must have] | [Section 9, UC-1] | [Client, Server, Database, Email service] | [Get open slots, Create sign-up] |
 
 ## 9. Sequence Diagrams
 
@@ -127,7 +127,7 @@ use case's main flow from the PRD, top to bottom: user → client →
 application server → database → back again. Show at least one alternate
 flow per use case with an "alt" block. -->
 
-### UC-1: [Verb phrase, e.g., Book a tour]
+### UC-1: [Verb phrase, e.g., Sign up for a slot]
 
 ```mermaid
 sequenceDiagram
@@ -135,22 +135,22 @@ sequenceDiagram
     participant Client
     participant Server as Application Server
     participant DB as Database
-    User->>Client: [Action, e.g., Chooses a tour and taps "Book"]
-    Client->>Server: [Request, e.g., Create booking]
+    User->>Client: [Action, e.g., Chooses a slot and taps "Sign up"]
+    Client->>Server: [Request, e.g., Create sign-up]
     Server->>DB: [e.g., Check places left]
     DB-->>Server: [e.g., Places available]
     alt [Main flow, e.g., place available]
-        Server->>DB: [e.g., Save booking]
-        Server-->>Client: [e.g., Booking number]
-        Client-->>User: [e.g., "You're booked!"]
-    else [Alternate flow, e.g., tour is full]
-        Server-->>Client: [e.g., "Tour is full"]
+        Server->>DB: [e.g., Save sign-up]
+        Server-->>Client: [e.g., Sign-up confirmation]
+        Client-->>User: [e.g., "You're signed up!"]
+    else [Alternate flow, e.g., slot is full]
+        Server-->>Client: [e.g., "Slot is full"]
         Client-->>User: [e.g., Suggests other times]
     end
 ```
 
 **Notes:** [Anything the diagram doesn't show, e.g., "Email is sent after
-the reply, so a slow email service doesn't delay the visitor."]
+the reply, so a slow email service doesn't delay the volunteer."]
 
 ## 10. Quality Requirements: How They Are Met
 
@@ -159,7 +159,7 @@ does. -->
 
 | Area | PRD requirement | How the design meets it |
 |---|---|---|
-| Speed | [From PRD] | [e.g., Tour list is cached on the server] |
+| Speed | [From PRD] | [e.g., Open-slot list is cached on the server] |
 | Reliability | [From PRD] | [e.g., Database is backed up daily] |
 | Accessibility | [From PRD] | [e.g., Client follows WCAG 2.1 AA; detail in Step 5] |
 | Devices and browsers | [From PRD] | [e.g., Web app tested in current phone and desktop browsers] |
@@ -177,7 +177,7 @@ Step 6. -->
 
 | Information | Who may see or change it | How it is protected |
 |---|---|---|
-| [e.g., Visitor email] | [e.g., The visitor and staff only] | [e.g., Sent only over secure connections (HTTPS); stored encrypted] |
+| [e.g., Volunteer email] | [e.g., The volunteer and the System Administrator only] | [e.g., Sent only over secure connections (HTTPS); stored encrypted] |
 
 **Sign-in and permissions:** [Who must sign in, how, and what each kind of
 user may do, or "No sign-in required, because ..."]
@@ -224,7 +224,7 @@ DD-[N]". -->
 
 | Risk | Likelihood | Impact | What we'll do about it |
 |---|---|---|---|
-| [e.g., Email service goes down] | [Low / Medium / High] | [Low / Medium / High] | [e.g., Retry later; booking is still saved] |
+| [e.g., Email service goes down] | [Low / Medium / High] | [Low / Medium / High] | [e.g., Retry later; the sign-up is still saved] |
 
 ## 15. Assumptions and Open Questions
 

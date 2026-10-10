@@ -33,6 +33,12 @@ You'll use two Claude tools along the way:
 | **Claude desktop app** | Claude in a window on your computer, with chats organized into Projects | Research, planning, and the step chats |
 | **Claude Code** | Claude in a terminal, working directly in a folder on your computer | Creating folders and files, and working with GitHub |
 
+**Prefer menus to the terminal?** Steps 1 and 5 work with GitHub, and each
+shows two ways to do it: asking Claude Code in a terminal, or clicking through
+menus in [GitHub Desktop](https://desktop.github.com), a free app from GitHub.
+Pick whichever you're more comfortable with; both give the same result. Menu
+names can differ slightly between versions of GitHub Desktop.
+
 A checklist of all the steps is at the [end of this guide](#checklist).
 
 ---
@@ -43,6 +49,14 @@ If you don't already have this repo locally, open a terminal in the folder
 where you keep your projects, start Claude Code, and ask it to clone the repo.
 
 **In projects:** "Clone https://github.com/b0ts/ai_assisted_sdlc_workflow into this folder."
+
+**Using menus instead (GitHub Desktop):**
+
+1. Choose **File | Clone Repository...**.
+2. Click the **URL** tab and paste
+   `https://github.com/b0ts/ai_assisted_sdlc_workflow`.
+3. Under **Local Path**, click **Choose...** and select your projects folder.
+4. Click **Clone**.
 
 ---
 
@@ -144,6 +158,25 @@ CLAUDE.md placeholders, describing the project as a volunteer sign-up app for
 BeautifulBeachPark, where coordinators post tasks with one-hour slots and
 volunteers sign up using a username only. Then commit and push everything."
 
+**Using menus instead (GitHub Desktop):** You don't need the GitHub CLI for
+this path; GitHub Desktop asks you to sign in to GitHub the first time you
+open it.
+
+1. Fill in the skeleton first. Start Claude Code in your `<your-project>`
+   folder and ask it to fill in the `README.md` and `CLAUDE.md` placeholders
+   (and add a `LICENSE` if you want one), **without** committing.
+2. In GitHub Desktop, choose **File | Add Local Repository...**, click
+   **Choose...**, and select your `<your-project>` folder.
+3. GitHub Desktop says the folder isn't a Git repository yet. Click the
+   **create a repository** link in that message, keep the name it suggests,
+   and click **Create Repository**. This makes your first commit.
+4. Click **Publish repository** in the bar at the top of the window. Check or
+   uncheck **Keep this code private**, then click **Publish Repository**.
+
+From then on, whenever you change files: type a short description in the
+**Summary** box at the bottom left, click **Commit to main**, then click
+**Push origin** at the top.
+
 ---
 
 ## Step 6: Give Claude desktop access to your folder
@@ -193,3 +226,5 @@ Use this to track your progress through the setup steps.
 - [Step 1: Tracking](b01-tracking.md): the first chat you'll start
 - [GitHub CLI manual](https://cli.github.com/manual/): more on the `gh`
   command used in Step 5
+- [GitHub Desktop documentation](https://docs.github.com/en/desktop): more on
+  the menu-based path in Steps 1 and 5

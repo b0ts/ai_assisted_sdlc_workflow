@@ -58,10 +58,10 @@ Use these step names and numbers exactly.
 | 3 | Requirements | Product Manager | Project intent + Feasibility deliverable | Product Requirements Document (PRD) |
 | 4 | Design | Software Architect | PRD | Software Design Specification ("Spec"), including Security & Compliance |
 | 5 | User Experience | UI/UX Designer | PRD + Spec | UI/UX Document with mockups |
-| 6 | Initial Infrastructure | DevOps Engineer | PRD + Spec + UI/UX Document | Cost Sign-Off Sheet (approved before building); System Infrastructure Document; the initial infrastructure itself; then ongoing DevOps support for steps 7 to 10 |
+| 6 | Initial Infrastructure | DevOps Engineer | PRD + Spec + UI/UX Document | Cost Sign-Off Sheet (approved before anything is set up); System Infrastructure Document, including where the software will go live and the live servers' requirements; a free local environment; then ongoing DevOps support for steps 7 to 10 |
 | 7 | Test Creation | SDET (Software Development Engineer in Test) | Spec + Infrastructure Document | Test Plan and automated tests |
 | 8 | Implementation | Software Engineer | Spec + Infrastructure + UI/UX Document + tests | Working software that passes every test; Release Notes |
-| 9 | Release | Release Manager | Software + Release Notes | Live release; Release Efficacy Document |
+| 9 | Release | Release Manager | Software + Release Notes | Stakeholder demo (local); move to the live servers; private pilot; live release; Release Efficacy Document |
 | 10 | Maintenance | SRE (Site Reliability Engineer) / Maintenance Engineer | Release Efficacy Document; live system | Maintenance Log (ongoing) |
 
 Each step's chat uses a prompt numbered to match: `c02-...` for Feasibility,
@@ -180,7 +180,8 @@ Create `d01-01-checklist.md` from its template. Its sections are:
    tracking level, and where files live.
 2. **Step Checklist:** all ten steps, with Step 1 marked
    "initialized (ongoing)" and the rest unchecked. Step 6 has two items:
-   its cost sign-off and its final sign-off.
+   its cost sign-off and its final sign-off. Step 9 has two: the demo
+   approval and the go/no-go decision.
 3. **Status Table** (medium and large projects): step, name, role,
    deliverable with its template number, sign-off owner, target date,
    status, notes. For small projects, write "Not used for this project."
@@ -274,14 +275,14 @@ decision.
 
 For **Step 6: Initial Infrastructure**, run **two** go/no-go reviews:
 
-1. **Cost sign-off, before building.** When the DevOps Engineer brings the
+1. **Cost sign-off, before anything is set up.** When the DevOps Engineer brings the
    Cost Sign-Off Sheet, ask the stakeholders to approve the expected cost,
    the approved spending limit, and who pays. Record it in the decision
    log as its own row (for example, "6 Initial Infrastructure: cost
    sign-off"), with the approved limit in the reason. Until this is
-   recorded, the Next Action must say that nothing that costs money may
-   be created.
-2. **Final sign-off, before Step 7.** After the setup is built and tested,
+   recorded, the Next Action must say that nothing that costs money, and
+   nothing on the live servers, may be set up.
+2. **Final sign-off, before Step 7.** After the local environment is set up and checked,
    review the System Infrastructure Document as usual. Before recommending
    Go, check that the setup matches the approved Cost Sign-Off Sheet. If
    expected costs have gone over the approved limit, send the project back
@@ -291,9 +292,17 @@ If real costs later go over the approved limit, treat the updated Cost
 Sign-Off Sheet as a new cost sign-off: record it, and don't let the extra
 spending continue until it is approved.
 
+For **Step 9: Release**, record the **demo approval** as its own decision
+row (for example, "9 Release: demo approved"), after the stakeholders have
+tried the working software on the local environment. Until it is
+recorded, the Next Action must say that nothing may be moved to the live
+servers. If the stakeholders ask for changes at the demo, record a Go back
+to the right step instead. Later, the Release Readiness Review gets its
+own go/no-go row as usual.
+
 After Step 6's final sign-off, the DevOps Engineer stays involved. When a
 later step needs an infrastructure change (for
-example, a test environment for Step 7 or a change for Step 9), route it to
+example, a change to the local environment for Step 7, or the move to the live servers in Step 9), route it to
 the Initial Infrastructure chat, and treat the updated System
 Infrastructure Document like any other revised deliverable: record it and
 get it signed off.

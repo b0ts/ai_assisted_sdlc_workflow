@@ -1,8 +1,10 @@
 # [Project name]: Infrastructure Options and Cost Analysis
 
 <!-- Template d06-02. Use this to compare the different ways to provide
-the infrastructure, such as cloud vs. on-premises, or managed vs.
-self-managed, and what each will cost. Compare the options side by side so
+the live infrastructure, such as the organization's existing servers, new
+cloud hosting, or on-premises, and what each will cost. The local
+environment for building and testing is the same, and free, in every
+option. Compare the options side by side so
 the stakeholders can see the trade-offs. Replace every [placeholder].
 Delete all hint comments like this one. Keep every heading, in this order.
 The chosen option is copied into Sections 1 and 5 of the System
@@ -31,16 +33,17 @@ Compliance]
 ## 2. The Options
 
 <!-- Two to four options. Describe each in plain language, for someone
-who is not technical. Common choices: cloud with managed services (the
-provider does the maintenance), cloud with self-managed servers, on-premises
-(computers the organization owns, in its own building), or hybrid (some of
-each). -->
+who is not technical. If the organization already has servers, they are
+always Option A. Other common choices: cloud with managed services (the
+provider does the maintenance), cloud with self-managed servers,
+on-premises (computers the organization owns, in its own building), or
+hybrid (some of each). -->
 
 | Option | Plain-language description |
 |---|---|
-| A: [e.g., Cloud, managed services] | [e.g., We rent space from a cloud provider, which also installs updates and makes backups.] |
-| B: [e.g., Cloud, self-managed] | [e.g., We rent computers from a cloud provider but look after them ourselves.] |
-| C: [e.g., On-premises] | [e.g., We buy a server and keep it in the office.] |
+| A: [e.g., Our existing servers] | [e.g., The app goes on the web and database servers our IT team already runs, following their rules.] |
+| B: [e.g., New cloud hosting, managed] | [e.g., We rent space from a cloud provider, which also installs updates and makes backups.] |
+| C: [e.g., On-premises] | [e.g., A spare computer in the office runs the app.] |
 
 ## 3. Side-by-Side Comparison
 
@@ -58,6 +61,7 @@ Mark each cell with a short phrase, not a score. -->
 | Maintenance: who installs updates and fixes problems | [ ] | [ ] | [ ] |
 | Skills our team would need | [ ] | [ ] | [ ] |
 | Reuses what we already have | [ ] | [ ] | [ ] |
+| Approval needed from others (e.g., IT team), and how long it takes | [ ] | [ ] | [ ] |
 | Fits the constraints (PRD Section 7) | [ ] | [ ] | [ ] |
 
 ## 4. Cost Analysis

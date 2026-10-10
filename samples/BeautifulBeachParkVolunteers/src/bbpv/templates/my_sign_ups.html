@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% set title = "My sign-ups" %}
+{% block content %}
+<h1>My sign-ups</h1>
+{% for row in rows %}
+<div class="card">
+  <strong>{{ row.title }}</strong>
+  <div class="slot">
+    <span>{{ row.date|short_day }}<br><span class="places">{{ row|slot_time }}</span></span>
+    <a class="btn inline secondary" href="/sign-ups/{{ row.signup_id }}/cancel" aria-label="Cancel {{ row.title }}, {{ row.date|day_label }}, {{ row|hours }}">Cancel</a>
+  </div>
+</div>
+{% else %}
+<p>You haven't signed up for anything yet. <a href="/slots">See the open slots</a></p>
+{% endfor %}
+{% endblock %}

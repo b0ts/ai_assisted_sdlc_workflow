@@ -75,4 +75,4 @@ None known.
 | Version | Date | Change | Reason | Approved by |
 |---|---|---|---|---|
 | 1.0 | 2026-12-11 | First draft | — | Park Manager (D12, 2026-12-11) |
-| 1.1 | 2027-01-21 | Release date set; release checks added to Quality Checks | Finalized in Step 9 | Park Manager (D15, 2027-01-21) |
+| 1.1 | 2027-01-21 | Release date set; release checks added to Quality Checks | Finalized in Step 9 | Park Manager (D16, 2027-01-21) |

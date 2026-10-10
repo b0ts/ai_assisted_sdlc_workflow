@@ -4,16 +4,19 @@
 · **Last updated:** 2026-10-07 · **Status:** Approved
 · **Owner:** DevOps Engineer (Initial Infrastructure chat)
 
-> **Sample document.** BeautifulBeachPark, its people, "SampleCloud," and
-> "SampleMail" are made up, and **every price is made up for
-> illustration**.
+> **Sample document.** BeautifulBeachPark, its city, its people, and Parks
+> IT are made up, and **every price is made up for illustration**. This
+> sheet shows that a Cost Sign-Off Sheet is still needed when going live
+> costs nothing new: it records the approved plan, and what would make it
+> cost more.
 
 ## 1. What Is Being Approved
 
-**Option:** A: Cloud, managed services
+**Option:** A: The city's existing servers
 
-**In one sentence:** Monthly SampleCloud hosting and SampleMail email for
-the volunteer app's test system now, and its live system from Step 9.
+**In one sentence:** The volunteer app is built and demonstrated on a free
+local environment, then goes live on the servers Parks IT already runs,
+after the stakeholders approve the demo.
 
 **Source:** d06-02 v1.0, 2026-10-05
 
@@ -22,38 +25,38 @@ the volunteer app's test system now, and its live system from Step 9.
 | Cost | Amount |
 |---|---|
 | Up-front | $0 (estimate) |
-| Expected per month | $40 (estimate, once both systems run: $35 hosting, $5 email) |
-| First-year total | $480 (estimate) |
-| Three-year total | $1,440 (estimate) |
-| Volunteer time per month | About 1 hour |
+| Expected per month | $0 new spending (estimate; the servers and email service are already paid for by Parks IT) |
+| First-year total | $0 (estimate) |
+| Three-year total | $0 (estimate) |
+| Staff or volunteer time per month | About 1 hour from Parks IT |
 
 ## 3. Spending Limit and Alerts
 
 | Item | Value |
 |---|---|
-| Approved monthly limit | $60 (the hosting estimate in d02-01) |
-| Budget alert set at | $50 per month |
-| Alert goes to | Volunteer Program Manager |
-| If the limit is reached | Stop adding services; prepare version 1.1 of this sheet |
+| Approved monthly limit | $0 new spending. Any new cost needs a new version of this sheet. |
+| Budget alert set at | Not needed: no new spending |
+| Alert goes to | Volunteer Program Manager, if Parks IT ever announces a charge |
+| If the limit is reached | Stop; prepare version 1.1 of this sheet, comparing Option B in d06-02 |
 
 ## 4. Who Pays
 
 | Item | Value |
 |---|---|
-| Paid from | Park volunteer program budget |
-| Account owner | Volunteer Program Manager (a second owner is still to be named: Issue I2) |
+| Paid from | Not needed; Parks IT's existing budget covers the servers and email |
+| Account owner | Volunteer Program Manager, as the park's contact for Parks IT (a second contact is still to be named: Issue I2) |
 
 ## 5. Price Check
 
 | Item | Value |
 |---|---|
 | Prices checked on | 2026-10-05 |
-| Checked using | Made up for this sample (a real project uses each provider's price calculator) |
+| Checked using | Email from Parks IT confirming no charge to departments for small apps (made up for this sample) |
 | Based on | Up to 500 volunteers, under 2 GB of data, about 2,000 emails a month |
 
 ## 6. Review Again If
 
-- Monthly costs reach $50 (the alert)
+- Parks IT starts charging departments for its servers or email
 - More than 500 volunteers sign up, or emails go over 2,000 a month
 - Phase 2 adds text-message reminders, which charge for every message
 

@@ -26,7 +26,7 @@ document. -->
 | Source System Infrastructure Document | [d06-01, version, date] |
 | Infrastructure sign-off | [Decision ID and date from the Tracking Checklist, e.g., D10, YYYY-MM-DD] |
 | Phase covered | [e.g., Phase 1: UC-1 to UC-5, or "all"] |
-| Test environment | [From d06-01 Section 4, e.g., "Test (made-up data only)"] |
+| Test environment | [From d06-01 Section 4, e.g., "Local (made-up data only); the full suite runs again on the live servers in Step 9"] |
 | Where the tests live | [e.g., `tests/`] |
 | Number of tests | [Total, e.g., "42: 9 happy path, 18 expected failure, 12 bounds, 3 monkey"] |
 | Plan in one sentence | [e.g., "Every use case is tested for its normal path, its refusals, and its limits, plus random-input checks on every form."] |

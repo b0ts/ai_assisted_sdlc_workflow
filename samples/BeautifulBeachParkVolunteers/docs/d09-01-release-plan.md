@@ -4,10 +4,12 @@
 · **Last updated:** 2027-01-21 · **Status:** Released
 · **Owner:** Release Manager (Release chat)
 
-> **Sample document.** BeautifulBeachPark, its people, "SampleCloud," and
-> "SampleMail" are made up, and every number is made up for illustration.
-> Section 7 shows a stress test that failed and how it was fixed; Section 8
-> shows a manual check that failed, which led to the No-Go in d09-02 v1.0.
+> **Sample document.** BeautifulBeachPark, its city, its people, and Parks
+> IT are made up, and every number is made up for illustration. Section 1.1
+> shows the stakeholder demo on the local copy; Section 6 shows the move to
+> Parks IT's servers; Section 7 shows a stress test that failed during the
+> private pilot and how it was fixed; Section 8 shows a manual check that
+> failed, which led to the No-Go in d09-02 v1.0.
 
 ## 1. Overview
 
@@ -18,11 +20,23 @@
 | Source Implementation Record | d08-01 v1.0, 2026-12-11 |
 | Source Release Notes | d08-03 v1.0, 2026-12-11 |
 | Implementation sign-off | D12, 2026-12-11 |
-| Latest test result | 38 of 38 pass (d07-02, Run 13) |
+| Latest test result | 38 of 38 pass locally (d07-02, Run 4), and on Parks IT's servers (Run 6) |
 | Planned release date | 2027-01-23 (Saturday), the spring volunteer newsletter |
 | Hard deadline, if any | 2027-03-01, the start of spring planting season |
 | Release type | Small: one new web app, used by one park, with no other products depending on it |
-| Plan in one sentence | Put the app live quietly for coordinators to post the spring tasks, then open it to volunteers with the newsletter. |
+| Live servers | The city's existing servers, run by Parks IT (d06-01 v1.3) |
+| Plan in one sentence | Demo on the laptop, move to Parks IT's servers, pilot with test accounts, then let coordinators post the spring tasks before opening the app to volunteers with the newsletter. |
+
+### 1.1 Stakeholder Demo
+
+| Item | Details |
+|---|---|
+| Date and place | 2026-12-18, park office, on the Volunteer Program Manager's laptop (the local environment) |
+| Who tried it | Park Manager and Volunteer Program Manager (stakeholders); two coordinators (consulted) |
+| Version shown | 1.0, the version that passed d07-02 Run 4 |
+| Script | Each person took a role with a made-up account: a coordinator posted "Demo Beach Cleanup" (UC-1); the Park Manager created a volunteer account and signed up (UC-2, UC-3), then canceled (UC-4); the coordinator viewed the roster, sent a message, and blocked a volunteer (UC-5 to UC-7). Everyone checked the pretend inbox for the emails. |
+| What they said | Approved, with no changes. One coordinator asked to edit a posted task; that isn't in the PRD, so it was logged for Phase 2 (I4). |
+| Demo approval | D13, 2026-12-18. Parks IT's security review was booked the same day. |
 
 ## 2. Inputs
 
@@ -30,8 +44,8 @@
 |---|---|---|
 | Product Requirements Document | d03-01 v1.1 | Success measures (Section 2); UC-3 reminders are a Must-have; up to 500 volunteers |
 | Software Design Specification | d04-01 v1.1 | Under 2 seconds on a phone; Security & Compliance (Section 11) |
-| System Infrastructure Document | d06-01 v1.1 (v1.3 after the requests in Section 14) | Production planned for Step 9; second account owner needed (I2) |
-| Cost Sign-Off Sheet | d06-03 v1.0 | $60 monthly limit, alert at $50 |
+| System Infrastructure Document | d06-01 v1.1 (v1.3 after the requests in Section 14) | Live server requirements (Section 5.1); production on Parks IT's servers planned for Step 9; second contact needed (I2) |
+| Cost Sign-Off Sheet | d06-03 v1.0 | $0 new spending |
 | Test Plan | d07-01 v1.0 | Section 3 leaves real email delivery and other browsers to Step 9 |
 | Implementation Record, Developer Guide, Release Notes | d08-01, d08-02, d08-03 v1.0 | Known issues: none |
 
@@ -39,9 +53,9 @@
 
 | Item | Change | Affects | Can it be undone? |
 |---|---|---|---|
-| The app | First version, in the new production environment | Volunteers, coordinators, the System Administrator | Yes: take it offline (Section 9) |
+| The app | First version, on Parks IT's servers | Volunteers, coordinators, the System Administrator | Yes: take it offline (Section 9) |
 | Park website | A new "Volunteer" link to the app | Park website visitors | Yes: remove the link |
-| Email | SampleMail starts sending to real inboxes | Volunteers | Yes: turn sending off |
+| Email | The city email service starts sending to real inboxes | Volunteers | Yes: Parks IT turns sending off |
 
 **Who is affected:** volunteers, coordinators, and the park office. No
 other system or product depends on the app.
@@ -55,6 +69,15 @@ other system or product depends on the app.
 | Stages | **Stage 1** (2027-01-22): the app is live at its address, but not linked from the park website. Coordinators get the address directly and post the spring tasks. **Stage 2** (2027-01-23, 9:00): the newsletter goes out and the website link appears. |
 | Move to the next stage when | Stage 1 has no rollback trigger, and at least 10 spring tasks are posted |
 
+### 4.1 Private Pilot
+
+| Item | Details |
+|---|---|
+| Who takes part | Two coordinators, three park office staff, and the DevOps chat, with `example.test` test accounts |
+| Dates | 2027-01-13 to 2027-01-21, on Parks IT's servers, not linked from anywhere |
+| What they do | Use every screen; post real-looking tasks; sign up, cancel, message, and block; the stress test (Section 7), manual checks (Section 8), and rollback practice (Section 9) |
+| Test accounts removed by | DevOps chat with Parks IT, 2027-01-21; checked on S-10 and in the roster of every task (MC-4) |
+
 ## 5. Feature Flags
 
 None in version 1.0. This is the app's first release, so with a flag off
@@ -65,17 +88,20 @@ release text-message reminders behind a feature flag, so they can be
 turned on for a few volunteers first, and off at once if costs rise
 (request to the Tracking chat, Section 14).
 
-## 6. Production Environment
+## 6. Move to the Live Servers
 
 | Item | Ready? | Checked by and date |
 |---|---|---|
-| Production environment built | Yes | DevOps chat, 2027-01-12; Volunteer Program Manager reviewed the preview |
-| Secrets in the secret store (never in files) | Yes | DevOps chat, 2027-01-12 |
-| Backups running, and a restore tested | Yes | DevOps chat, 2027-01-13: restored a backup to the test environment |
-| Monitoring and alerts on, going to a person | Yes | Volunteer Program Manager received a test alert, 2027-01-13 |
-| Budget alert set below the approved limit | Yes | $50 alert confirmed in SampleCloud billing, 2027-01-13 |
-| Second account owner (Issue I2) | Yes | Board treasurer added, 2027-01-07 (D13) |
-| Version in production matches Run 13 | Yes | Release chat, 2027-01-15 |
+| Parks IT approved the move (security review) | Yes | Parks IT, 2027-01-07, two weeks after booking |
+| Software installed on Parks IT's servers, following the Developer Guide (d08-02 Section 5.1) | Yes | Parks IT, Tuesday 2027-01-12, with the DevOps chat; Volunteer Program Manager watched |
+| Every automated test passes on Parks IT's servers | Yes | d07-02 Run 5, 2027-01-12, against a test database; Run 6 after the connection change, 2027-01-15 |
+| Real email service connected | Yes | Parks IT, 2027-01-12 |
+| Secrets in Parks IT's secret store (never in files) | Yes | Parks IT, 2027-01-12 |
+| Backups running, and a restore tested | Yes | Parks IT, 2027-01-13: restored a backup to a spare database |
+| Monitoring and alerts on, going to a person | Yes | Volunteer Program Manager received a test alert from Parks IT, 2027-01-13 |
+| Budget alert | Not needed | $0 new spending (d06-03) |
+| Second contact for Parks IT (Issue I2) | Yes | Board treasurer added, 2027-01-07 (D14) |
+| Version on Parks IT's servers matches the demo and Run 4 | Yes | Release chat, 2027-01-15 |
 
 ## 7. Stress Test
 
@@ -83,16 +109,16 @@ turned on for a few volunteers first, and off at once if costs rise
 |---|---|
 | Busiest moment expected | Newsletter at 9:00 on a Saturday: up to 300 volunteers in the first 10 minutes, most on phones |
 | Test load | 500 pretend volunteers over 10 minutes, including 150 tapping "Confirm" at the same moment |
-| Where it runs | Production, before any real users, with made-up `example.test` accounts only, deleted afterward |
+| Where it runs | Parks IT's servers during the private pilot, before any real users, with made-up `example.test` accounts only, deleted afterward; on a weekday evening Parks IT chose |
 | Tool | An open-source load-testing tool, run by the DevOps chat |
-| Passes if | Error pages for under 1 in 1,000 requests; Open Slots under 2 seconds; no slot over-filled; spend for the test under $5 |
+| Passes if | Error pages for under 1 in 1,000 requests; Open Slots under 2 seconds; no slot over-filled; no effect on Parks IT's other websites |
 
 **Results:**
 
 | Run | Date | Load | Errors | Slowest page | Pass? | Notes |
 |---|---|---|---|---|---|---|
-| 1 | 2027-01-14 | 500 over 10 min; 150 at once | 6 in 100 during the 150 | 9 seconds | No | The smallest database plan accepts 20 connections at once, and the app opened a new one for every request. Volunteer 21 onward got an error page. No slot was over-filled. Request 1 sent to the DevOps chat. |
-| 2 | 2027-01-15 | Same | 0 | 1.6 seconds | Yes | After d06-01 v1.2: the app shares a pool of 15 connections. No extra monthly cost. The test cost $2. |
+| 1 | 2027-01-14 | 500 over 10 min; 150 at once | 6 in 100 during the 150 | 9 seconds | No | Parks IT allows each app 20 database connections at once (d06-01 Section 5.1). Parks IT runs 4 copies of the app to share the load, and each copy kept its own pool of 15, so up to 60 were asked for. Volunteer 21 onward got an error page. No slot was over-filled. The local environment runs one copy, which is why the tests didn't catch it. Request 1 sent to the DevOps chat. |
+| 2 | 2027-01-15 | Same | 0 | 1.6 seconds | Yes | After d06-01 v1.2: `DB_POOL_SIZE` set to 4, so the 4 copies use at most 16 connections. No code change; no cost. |
 
 ## 8. Manual Checks
 
@@ -101,7 +127,7 @@ turned on for a few volunteers first, and off at once if costs rise
 | MC-1: Sign-in links and reminders arrive in real inboxes, not spam, at the three email providers park volunteers use most | d07-01 Section 3 | **Fail** 2027-01-18: one provider put reminders in spam. **Pass** 2027-01-21 after request 2. | Volunteer Program Manager, using staff test inboxes |
 | MC-2: The app works in the four most common phone and desktop browsers | d07-01 Section 3 | Pass | Two coordinators, 2027-01-18 |
 | MC-3: The privacy notice and park office contact details are correct | d08-03 Section 7 | Pass | Park Manager, 2027-01-18 |
-| MC-4: Stress-test accounts deleted from production | Section 7 | Pass | DevOps chat, 2027-01-15 |
+| MC-4: Stress-test and pilot accounts deleted from Parks IT's servers | Sections 4.1 and 7 | Pass | DevOps chat with Parks IT, 2027-01-21 |
 
 ## 9. Rollback Plan
 
@@ -109,12 +135,12 @@ turned on for a few volunteers first, and off at once if costs rise
 |---|---|
 | Rollback triggers | (1) Any email address shown to a volunteer or coordinator: **immediately**. (2) Any slot over-filled. (3) Error pages for more than 2% of visitors for 10 minutes. (4) The app unreachable for 15 minutes. |
 | Who decides | Park Manager; backup: Volunteer Program Manager |
-| Who does it | Volunteer Program Manager, with the DevOps chat; backup: Board treasurer (second account owner) |
-| Steps | 1. Replace the website link with a "Sign-ups open soon" notice. 2. In SampleCloud, choose the app, then **Settings**, then turn on **Maintenance page**. 3. Tell coordinators by phone. 4. Record what happened in d09-03. |
+| Who does it | Volunteer Program Manager and Parks IT on-call, with the DevOps chat; backup: Board treasurer (second contact) |
+| Steps | 1. Replace the website link with a "Sign-ups open soon" notice. 2. Call Parks IT on-call, who turn on the maintenance page for the app's address. 3. Tell coordinators by phone. 4. Record what happened in d09-03. |
 | Time to roll back | Under 10 minutes |
 | What happens to data | Accounts and sign-ups stay in the database and return when the app comes back |
-| Roll forward instead when | The cause is a wording or setting change that has been tested in the test environment, and no privacy trigger was reached |
-| Practiced on | 2027-01-16, in the test environment: 6 minutes |
+| Roll forward instead when | The cause is a wording or setting change that has passed every test locally, and no privacy trigger was reached |
+| Practiced on | 2027-01-16, on Parks IT's servers during the pilot, with Parks IT on-call: 6 minutes |
 
 ## 10. Release-Day Schedule
 
@@ -150,7 +176,7 @@ turned on for a few volunteers first, and off at once if costs rise
 
 | Risk | Likelihood | Impact | What we will do |
 |---|---|---|---|
-| More volunteers than expected arrive at 9:00 | Low | High | Stress-tested at 500; a larger database plan stays within the $60 limit if needed |
+| More volunteers than expected arrive at 9:00 | Low | High | Stress-tested at 500; Parks IT can raise the connection limit for the day if asked in advance |
 | Volunteers mistype their email and get no sign-in link | Medium | Low | Park office help sheet (Section 11) |
 
 **Assumptions:**
@@ -165,13 +191,13 @@ turned on for a few volunteers first, and off at once if costs rise
 
 | Request | Sent to | Reason | Outcome |
 |---|---|---|---|
-| 1. Share database connections instead of opening one per request | DevOps chat | Stress test Run 1 failed (Section 7) | d06-01 v1.2, 2027-01-15; Run 2 passed |
-| 2. Add the email sender records the provider asked for to the park's web address | DevOps chat | MC-1 failed: reminders landed in spam at one provider | d06-01 v1.3, 2027-01-20; MC-1 passed 2027-01-21 |
+| 1. Keep the app's database connections under Parks IT's limit of 20 | DevOps chat, carried out by Parks IT | Stress test Run 1 failed (Section 7) | d06-01 v1.2, 2027-01-15; Run 2 passed |
+| 2. Add the email sender records the provider asked for to the app's web address | DevOps chat, carried out by Parks IT | MC-1 failed: reminders landed in spam at one provider | d06-01 v1.3, 2027-01-20; MC-1 passed 2027-01-21 |
 | 3. Use a feature flag for Phase 2 text reminders | Tracking chat, for the Product Manager | Lets a costly feature be turned on gradually and off at once | Logged for Phase 2 |
 
 ## 15. Change Log
 
 | Version | Date | Change | Reason | Approved by |
 |---|---|---|---|---|
-| 1.0 | 2027-01-08 | First version | — | Park Manager (D13, 2027-01-08) |
-| 1.1 | 2027-01-21 | Stress test, manual check, and rollback practice results added; requests 1 to 3 | Results from Mode D | Park Manager (D15, 2027-01-21) |
+| 1.0 | 2027-01-08 | First version: demo results (Section 1.1, D13), then the move, pilot, and release plan | — | Park Manager (D14, 2027-01-08) |
+| 1.1 | 2027-01-21 | Stress test, manual check, and rollback practice results added; requests 1 to 3 | Results from Mode D | Park Manager (D16, 2027-01-21) |
