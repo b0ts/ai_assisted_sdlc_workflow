@@ -4,6 +4,7 @@ Documentation and templates for incorporating AI assistance into the software de
 
 ## Start here
 
+- [Introduction](docs/a01-introduction.md) — start here: what this repo teaches, how it's organized, and the order to read it in
 - [What Is a Software Development Lifecycle Workflow?](docs/a03-what-is-an-sdlc-workflow.md) — a plain-language introduction for non-programmers
 - [Documentation index](docs/README.md) — all how-to guides and the ten step guides
 
@@ -13,7 +14,7 @@ Every file starts with a letter that says what kind of file it is. Steps are num
 
 | Prefix | What it is | Where it lives | Example |
 |---|---|---|---|
-| **a**NN | How-to and background guides | [`docs/`](docs/) | `a03-what-is-an-sdlc-workflow.md` |
+| **a**NN | How-to and background guides | [`docs/`](docs/) | `a01-introduction.md` |
 | **b**NN | Step guides, one per step | [`docs/`](docs/) | `b01-tracking.md` |
 | **c**NN | Predefined prompts: step number, plus a second number if a step needs more than one prompt | [`prompts/`](prompts/) | `c01-tracking-prompt.md` |
 | **d**NN-NN | Templates: step number, then document number | [`templates/`](templates/) | `d01-01-checklist`, `d01-02-gantt` |

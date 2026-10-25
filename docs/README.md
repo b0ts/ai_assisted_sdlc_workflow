@@ -6,6 +6,7 @@ This section covers how AI assistance fits into each step of the software develo
 
 Read these in order if you're new to SDLCs or to working with AI.
 
+- [a01 Introduction](a01-introduction.md) — start here: what this repo teaches, how the folders are organized, and what each section covers
 - [a02 The Multi-AI-Agent Paradigm](a02-multi-ai-agent-paradigm.md) — why several AI personas led by one coordinator give better results than a single chatbot, and how that idea shapes this repo
 - [a03 What Is a Software Development Lifecycle Workflow?](a03-what-is-an-sdlc-workflow.md) — a plain-language introduction: what an SDLC is and the Test-Driven Development (TDD) workflow this repo uses
 - [a04 Steps, Roles, and Deliverables](a04-steps-roles-and-deliverables.md) — the ten steps, who owns each one, and what each produces
