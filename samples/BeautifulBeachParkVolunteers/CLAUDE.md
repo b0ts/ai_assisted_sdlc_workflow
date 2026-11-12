@@ -11,8 +11,7 @@ using a username only.
 This project follows the AI-assisted SDLC workflow at
 https://github.com/b0ts/ai_assisted_sdlc_workflow. Each step's chat has its own
 role, inputs, and outputs; see that repo's `docs/` folder for the step guides.
-It is that repo's sample project, and the decisions behind it are recorded in
-the repo's `redesign-plan.md`.
+It is that repo's sample project.
 
 ## Where things go
 
