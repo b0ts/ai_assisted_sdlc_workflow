@@ -19,11 +19,11 @@
 | Item | Details |
 |---|---|
 | Product | BeautifulBeachPark Volunteers |
-| Test Plan | d07-01 v1.1 |
-| Test environment | Local (made-up data only), d06-01 v1.1 Section 4 |
-| Total tests | 38 |
-| Latest run | Run 6, 2027-01-15, on Parks IT's servers (Run 4, 2026-12-08, locally) |
-| Latest result | 38 pass, 0 fail, 0 blocked |
+| Test Plan | d07-01 v1.7 |
+| Test environment | Local (made-up data only), d06-01 Section 4; Claude's cloud workspace for full-length runs from Run 13 |
+| Total tests | 74 |
+| Latest run | Run 24, 2026-11-12, at full length (on Parks IT's servers, in the story: Run 6, 2027-01-15) |
+| Latest result | 74 pass, 0 fail, 0 blocked |
 
 ## 2. What the Results Mean
 
@@ -42,8 +42,8 @@
 | 2 | 2026-12-07 | Implementation chat | The whole app written in one session (d08-01 B-1 to B-10) | 0 | 38 | 0 |
 | 3 | 2026-12-07 | Implementation chat | TC-1: the SDET corrected how the tests open the app (Section 6). Monkey tests shortened for a quick check. | 37 | 1 | 0 |
 | 4 | 2026-12-08 | Implementation chat | TC-2: the SDET corrected three false alarms in T-MK-01 (Section 6), then ran it with several random seeds. Full length: 1,000 inputs per field; 5 minutes of random taps. | 38 | 0 | 0 |
-| 5 | 2027-01-12 | DevOps chat, with Parks IT | Moved to Parks IT's servers after the demo approval (Step 9); run against a test database there | 38 | 0 | 0 |
-| 6 | 2027-01-15 | DevOps chat, with Parks IT | Shared database connections (d06-01 v1.2) | 38 | 0 | 0 |
+| 5 | 2027-01-12 | DevOps chat, with Parks IT | Moved to Parks IT's servers after the demo approval (Step 9); run against a test database there (story; with the 74 tests of Run 24) | 74 | 0 | 0 |
+| 6 | 2027-01-15 | DevOps chat, with Parks IT | Shared database connections (d06-01 v1.2) (story) | 74 | 0 | 0 |
 | 7 | 2026-10-25 | SDET (Claude) | Round 1: 13 new tests and the a.m./p.m. time format (d07-01 v1.2), run against the old code. Quick tests only. The new tests failed for the right reasons; for example, one sign-in link signed in twice (R-1), and 12 sign-in emails were sent where 10 is the limit (R-6). Most older tests failed only on the new time format. | 14 | 33 | 0 |
 | 8 | 2026-10-25 | Software Engineer (Claude) | Round 1 fixes in `src/` (d08-01 Section 5). Full length. | 50 | 1 | 0 |
 | 9 | 2026-10-25 | Software Engineer (Claude) | TC-3: the SDET corrected a false alarm in T-MK-01 (Section 6). Full length, new random seeds; also the 47 quick tests on the project owner's Mac (2 browser tests skipped there) | 51 | 0 | 0 |
@@ -68,7 +68,7 @@ xychart-beta
     title "Tests passing, run by run"
     x-axis [Run 1, Run 2, Run 3, Run 4, Run 5, Run 6, Run 7, Run 8, Run 9, Run 10, Run 11, Run 12, Run 13, Run 14, Run 15, Run 16, Run 17, Run 18, Run 19, Run 20, Run 21, Run 22, Run 23, Run 24]
     y-axis "Tests passing" 0 --> 74
-    bar [0, 0, 37, 38, 38, 38, 14, 50, 51, 56, 58, 12, 68, 68, 64, 69, 65, 70, 66, 71, 0, 74, 74, 74]
+    bar [0, 0, 37, 38, 74, 74, 14, 50, 51, 56, 58, 12, 68, 68, 64, 69, 65, 70, 66, 71, 0, 74, 74, 74]
 ```
 
 ## 4. Results by Test (Latest Run)

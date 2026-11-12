@@ -71,7 +71,7 @@
 | D10 | 2026-10-09 | 6 Initial Infrastructure | Go to Test Creation | Park Manager | d06-01 v1.0 approved; local environment set up; Parks IT confirmed the live server requirements |
 | D11 | 2026-10-16 | 7 Test Creation | Go to Implementation | Park Manager | Test Plan d07-01 v1.0 approved; 38 of 38 tests failing for the right reason (d07-02) |
 | D12 | 2026-11-12 | 8 Implementation | Go to Release | Park Manager | d08-01 v1.4, d08-02 v1.4, and d08-03 approved; 74 of 74 tests pass at full length (d07-02 v1.7, Run 24); every screen matches its mockup; three review rounds done in order (Codex and Claude Code code reviews, d08-04; polishing, d08-06, with its changes code-reviewed; a hands-on review by someone who had never seen the app, d08-05), every finding decided |
-| D13 | 2026-12-18 | 9 Release | Demo approved | Park Manager, Volunteer Program Manager | Both tried the app on the local copy with two coordinators (d09-01 Section 1.1); no changes asked for; the move to Parks IT's servers may begin |
+| D13 | 2026-11-12 | 9 Release | Demo approved | Park Manager | The Park Manager tried the reviewed app on the local copy, scene by scene, in every role (d09-01 v1.2, Section 1.1): "Looks good - approved to go live." No changes |
 | D14 | 2027-01-08 | 9 Release | Release Plan approved | Park Manager | d09-01 v1.0; Parks IT approved the move; Board treasurer named second contact for Parks IT (I2) |
 | D15 | 2027-01-19 | 9 Release | No-Go; fix first (Option A) | Park Manager, Volunteer Program Manager | d09-02 v1.0: reminders landing in spam at one provider (HS-6, HS-10); newsletter date kept only if fixed by 2027-01-21 |
 | D16 | 2027-01-21 | 9 Release | Go | Park Manager, Volunteer Program Manager | d09-02 v1.1: every hard stop passes; d09-01 v1.1 and d08-03 v1.1 approved |
@@ -84,7 +84,7 @@
 | I1 | 2026-09-15 | 4 Design | Text-message reminders need a paid texting service | Monthly cost the budget doesn't cover | Product Manager | Resolved (D5) |
 | I2 | 2026-10-08 | 6 Initial Infrastructure | Only one person is Parks IT's contact for the app | No one to approve changes if they leave | Volunteer Program Manager | Resolved (D14) |
 | I3 | 2027-01-18 | 9 Release | Reminder emails land in spam at one email provider | Volunteers miss reminders; empty slots | DevOps Engineer | Resolved (d06-01 v1.3; D16) |
-| I4 | 2027-01-27 | 9 Release | Coordinators can't edit a posted task (not in the PRD) | Wrong dates need the park office to fix | Product Manager | Open: Phase 2 request, for Step 10 |
+| I4 | 2027-01-27 | 9 Release | Coordinators can't edit a posted task; since UC-8 they can delete it and post it again | Wrong dates need the park office to fix | Product Manager | Open: Phase 2 request, for Step 10 |
 
 ## 6. Open Questions
 
