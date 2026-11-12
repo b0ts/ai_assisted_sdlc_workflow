@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% set title = w.SCREEN.finish_sign_in_title %}
+{% block content %}
+<h1>{{ w.SCREEN.finish_sign_in_title }}</h1>
+<p>{{ w.SCREEN.finish_sign_in_text }}</p>
+<form method="post" action="{{ action }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <button class="btn" type="submit">{{ w.SCREEN.finish_sign_in_button }}</button>
+</form>
+{% endblock %}

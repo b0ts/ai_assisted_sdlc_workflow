@@ -1,7 +1,7 @@
 # BeautifulBeachPark Volunteers: Implementation Record
 
-**Document:** d08-01 · **Step:** 8, Implementation · **Version:** 1.1
-· **Last updated:** 2026-10-25 · **Status:** In review: round 1 closed; round 2 (Claude Code) next
+**Document:** d08-01 · **Step:** 8, Implementation · **Version:** 1.2
+· **Last updated:** 2026-11-11 · **Status:** In review: rounds 1 and 2 closed; round 3 (hands-on) next
 · **Owner:** Software Engineer (Implementation chat)
 
 > **Sample document.** BeautifulBeachPark, its city, its people, and Parks
@@ -25,7 +25,7 @@
 | Phase covered | Phase 1: UC-1 to UC-7, email reminders |
 | Where the code lives | `src/` |
 | Built with | Claude Code, working in the project folder, using the local environment only |
-| Latest test result | 58 of 58 pass at full length (Run 11, 2026-10-26, after the third pass of round 1 fixes) |
+| Latest test result | 70 of 70 pass at full length (Run 18, 2026-11-11, after the round 2 fixes, R2-14, and R2-17) |
 | Build in one sentence | Claude Code wrote the whole app in one session, in the order of the Build Plan, then ran the tests; the runs found two problems in the tests, which the SDET fixed, and all 38 passed. |
 
 ## 2. Inputs
@@ -85,6 +85,13 @@ could build the whole app before the first run.
 | 9 | 2026-10-25 | TC-3 fixed by the SDET; full length | 51 of 51 |
 | 10 | 2026-10-26 | Second pass after Codex's re-review: 5 new tests first (d07-01 1.3), then: reminders claimed one at a time and fixed 5-minute retries with expiry (R-2); every word on the pages moved into `wording.py` (R-5); the email limit counted after recording, with the account locked (R-6); failure reasons with no address (R-14); a page sends only its own email, waiting at most 5 seconds (R-15) | 56 of 56 |
 | 11 | 2026-10-26 | Third pass after Codex's second re-review: the time words moved into `wording.py` (R-5); a page waits at most 5 seconds in all, the send finishing in the background (R-15); T-SEC-08 runs its two requests side by side (R-17) | 58 of 58 |
+| 12 | 2026-11-11 | Round 2: documents updated (PRD 1.3, Spec 1.3, d05-01 1.3, d06-01 1.5, d08-02 1.3), then 10 new tests and TC-4 (d07-01 1.5), run against the old code | 12 of 64 quick tests: every test that signs in failed, because opening a link still signed in (R2-4); each other new test failed for its own reason |
+| 13 | 2026-11-11 | Round 2 fixes: a line break counts as one character (R2-1); an email already in use gets the same reply, and its owner a sign-in link (R2-2); the sign-in and create-account pages answer straight away and send in the background (R2-3); a "Finish signing in" page with a "Sign in" button (R2-4); no database connection held while sending (R2-5, and round 1's R-18); the email service's certificate checked, with `SMTP_CA_FILE` (R2-6); Waitress named and installed (R2-7); `CHECK_FORM_TOKENS` so T-SEC-12 can test the form tokens (R2-8); blocking cancels upcoming sign-ups (R2-9) | 68 of 68, with one warning in the test helper |
+| 14 | 2026-11-11 | A background sender is listed only once it has started; full length | 68 of 68 |
+| 15 | 2026-11-11 | Re-review R2-14 decided Fix: PRD UC-2 step 4 and 4a, Spec DD-13, d05-01 flow; T-02-07 added and TC-5 (d07-01 1.6), run against the old code | 64 of 65 quick tests: T-02-07 failed for the right reason |
+| 16 | 2026-11-11 | R2-14 fix: Create Account saves only an account request (new `account_requests` table); the account is made at "Sign in"; a queued email can go to a request's encrypted address (`outbox.to_encrypted`); `clean-up` removes expired requests. Full length | 69 of 69 |
+| 17 | 2026-11-11 | Re-review 2 R2-17 decided Fix: Spec Section 6 and DD-13; T-02-08 added (d07-01 1.6), run against the old code | 65 of 66 quick tests: T-02-08 failed for the right reason |
+| 18 | 2026-11-11 | R2-17 fix: an email may have several account requests, each link working until one becomes the account, then the rest are removed; on PostgreSQL the email's lookup key is locked so the daily limit holds. Full length | 70 of 70 |
 
 (Runs 5 and 6, on Parks IT's servers in Step 9, are in d07-02. Runs 7 to
 9 happened for real on 2026-10-25; the sample's story is set around
@@ -138,7 +145,7 @@ instead of an error page.
 | Ready to move | Every row of d06-01 Section 5.1: Python 3.12, PostgreSQL 16, every setting from an environment variable, the reminder job as a command Parks IT's scheduler can run | Pass | Software Engineer chat, 2026-12-09 |
 | Licenses | Every library in d08-02 Section 7 | Pass: all open-source licenses that allow this use | Volunteer Program Manager, 2026-12-10 |
 | Round 1: independent code review | Codex (OpenAI), prompt c08-02, read-only: report [`d08-04-code-review-codex.md`](d08-04-code-review-codex.md) | Ready after the Must-fix items: 5 Must fix, 6 Should fix, 2 Question. Codex noted it saw an earlier review's summary in this table. **Decided:** 8 Fix (R-1 to R-6, R-9, R-10), 3 Accept as is (R-7, R-8, R-11), 2 Questions answered Yes (R-12, R-13). **Fixed and tested** (Runs 7 to 9, 51 of 51). **Re-review 1** (Mode E, report v1.1): 7 Fixed; 3 Partly fixed (R-2: overlapping reminder runs, retry timing; R-5: some template text; R-6: the limit under simultaneous requests); new R-14 (Must fix: an email error can hold the address) and R-15 (Should fix: pages send the whole queue), both decided Fix. **Second pass fixed and tested** (Run 10, 56 of 56). **Re-review 2** (report v1.2): R-2, R-6, R-14 Fixed; R-5 (a.m., p.m., and "to" still written in the code) and R-15 (the 5-second wait is per step, not in total) partly fixed; new R-16 (Should fix: a queued notice can arrive after a cancel; **Accept as is**) and R-17 (Should fix: T-SEC-08 could hang on PostgreSQL; **Fix**). Stop rule set by the Park Manager: a round ends when no Must-fix finding is left open. **Third pass fixed and tested** (Run 11, 58 of 58). **Re-review 3** (report v1.3, 2026-11-11): R-5, R-15, R-17 Fixed; every Fix confirmed. New R-18 (Should fix: slow background sends can tie up database connections) goes to the Future Version list under the stop rule. **Round 1 closed, 2026-11-11** | Codex, 2026-10-25; decisions by the Park Manager, 2026-10-25 |
-| Round 2: independent code review | A new Claude Code session, prompt c08-02 and `/security-review`: report `d08-04-code-review-claude.md` | Next: round 1 closed on 2026-11-11. (An early Claude Code review was run on 2026-10-25, before the reviews were put in order; it's kept for the record as [`d08-04-code-review-claude-trial.md`](d08-04-code-review-claude-trial.md). Its two Must-fix items match Codex's R-2 and R-3. The round 2 reviewer mustn't read it.) | — |
+| Round 2: independent code review | A new Claude Code session (Claude Opus 5.5), prompt c08-02, read-only: report [`d08-04-code-review-claude.md`](d08-04-code-review-claude.md) | Ready after the Must-fix items: 1 Must fix (a line break counts as 2 characters on the server, so a message or description under the limit can be refused), 7 Should fix, 2 Question, 3 Note. Tests weren't run by the reviewer. Decided 2026-11-11: all 8 Fix; R2-9 and R2-10 Yes. Fixed in Runs 12 to 14 (68 of 68). Re-review 1 (2026-11-11): 9 of 10 fixed; R2-2 partly fixed. New: R2-14 **Must fix** (a second try with the same username still shows whether an email has an account), Notes R2-15 and R2-16. Decided: R2-14 Fix (account made only at "Sign in"), R2-15 do it, R2-16 no notice. Fixed in Runs 15 and 16 (69 of 69). Re-review 2 (2026-11-11): R2-14 and R2-2 fixed; **no Must fix open, so round 2 is closed** (stop rule). New Should fix R2-17 (the first of two Create Account emails stopped working): decided Fix, fixed in Runs 17 and 18 (70 of 70). Re-review 3 (2026-11-11): R2-17 fixed; one Note (R2-18, Spec Change Log), done. **Round 2 closed, 2026-11-12** | Claude Code (new session), 2026-11-11; decisions by the Park Manager, 2026-11-11 |
 | Round 3: hands-on review | A person uses the running app (prompt c08-03): report [`d08-05-hands-on-review.md`](d08-05-hands-on-review.md) | Not yet: starts when round 2 is settled. The session plan is ready | — |
 
 > The three review rounds run one after another: each round's findings
@@ -152,6 +159,8 @@ instead of an error page.
 | TC-1 | All | Run 2: every test failed because the tests opened the app over plain HTTP and the app redirected them to HTTPS, as Spec 11.1 requires | **Test wrong, code right.** The shared setup should open the app at its `https://` address; T-SEC-02 keeps checking plain HTTP on purpose. | `tests/conftest.py` fixed; no expected result changed (d07-01 v1.1). Run 3: 37 of 38. |
 | TC-2 | T-MK-01 | Run 3: flagged a coordinator's own earlier title, which happened to be an email address, as an email "shown"; counted `&lt;` as four characters; and, with another random seed, flagged " 1YY1" although the app saved it as `1YY1` | **Test wrong, code right.** Text the coordinator typed may reappear; titles are measured as people read them; usernames are checked as saved. No one else's email may appear, and nothing saved may break a rule, as before. | `tests/test_monkey.py` fixed (d07-01 v1.1). Run 4: 38 of 38. |
 | TC-3 | T-MK-01 | Run 8: flagged a volunteer's email "shown" after sending a message. "Send" now returns to My Tasks (d05-01 v1.2), where a random S-7 title, `test_vol_01@example.test`, appeared again | **Test wrong, code right.** As in TC-2, text the coordinator typed may reappear; the S-9 check now allows the S-7 titles too. | `tests/test_monkey.py` fixed (d07-01 v1.2). Run 9: 51 of 51. |
+| TC-4 | Shared setup, T-02-01, T-SEC-05, T-SEC-06, T-EM-01, T-EM-07, T-07-01, browser tests | Round 2 decisions changed what the tests must do: opening a sign-in link no longer signs in (R2-4); the sign-in page no longer waits for its email (R2-3); the block confirm box has new wording (R2-9) | **Tests changed to follow approved documents** (PRD 1.3, Spec 1.3, d05-01 1.3). They press "Sign in" on the page the link opens; the test client waits for emails sent in the background; T-EM-07 uses S-9 | d07-01 v1.5. Run 14: 68 of 68 |
+| TC-5 | T-02-02 | Re-review finding R2-14: an account now exists only once its owner presses "Sign in" (PRD v1.3, UC-2 step 4), so T-02-02's second try no longer met a taken username | **Test changed to follow the approved PRD.** It signs in from the first link before trying the username again | d07-01 v1.6. Run 16: 69 of 69 |
 
 ## 9. Requests Sent Back
 
@@ -166,7 +175,7 @@ They are considered in Step 10 (Maintenance).
 
 | Finding | From | What it is |
 |---|---|---|
-| R-18 | Round 1, re-review 3 (Codex) | When the email service is slow, background sends hold database connections, so several at once could slow other pages |
+| ~~R-18~~ | Round 1, re-review 3 (Codex) | When the email service is slow, background sends hold database connections, so several at once could slow other pages. **Taken off the list 2026-11-11:** round 2 found it too (R2-5), and the Park Manager chose Fix; fixed in Run 13 (Spec DD-12) |
 
 ## 10. Risks, Assumptions, and Open Questions
 
@@ -196,3 +205,4 @@ They are considered in Step 10 (Maintenance).
 |---|---|---|---|---|
 | 1.0 | 2026-12-11 | First version | — | Park Manager (D12, 2026-12-11) |
 | 1.1 | 2026-10-25 | Round 1: decisions, fixes, Runs 7 to 9, TC-3 | Round 1 code review (Codex) | Waiting for Codex's re-review, then the Park Manager |
+| 1.2 | 2026-11-11 | Round 2: decisions, fixes, Runs 12 to 18, TC-4, TC-5; R2-14, R2-17; R-18 fixed and taken off the Future Version list | Round 2 code review (Claude Code) | Waiting for Claude Code's re-review, then the Park Manager |

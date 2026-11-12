@@ -5,7 +5,7 @@ from collections import deque
 
 from conftest import (
     MSG, TASK, TEST_EMAIL_RE, body, dump_database, elements, form_fields, mails_to, new_client,
-    run_command, sign_in_link, target_of, text,
+    run_command, sign_in_link, target_of, text, use_link,
 )
 
 SKIP_WHILE_CRAWLING = ("/sign-out", "/static/")
@@ -142,7 +142,7 @@ def test_t_sec_05_sign_in_reply_never_reveals_who_has_an_account(app, inbox, clo
     link = sign_in_link(mails_to(inbox, "test_vol_01@example.test")[0])
     clock.advance(days=1)
     since = len(inbox)
-    resp = new_client(app).get(link, follow_redirects=True)
+    resp = use_link(new_client(app), link, follow_redirects=True)
     assert MSG["link_expired"] in text(resp)
     assert len(mails_to(inbox, "test_vol_01@example.test", since)) == 1, "no new link was sent"
 
@@ -166,11 +166,11 @@ def test_t_sec_06_a_sign_in_link_never_works_twice_at_once(app, inbox):
     def just_before_delete(conn, cursor, statement, params, context, executemany):
         if armed[0] and statement.lstrip().upper().startswith("DELETE FROM SIGN_IN_LINKS"):
             armed[0] = False
-            replies["second"] = second.get(link)
+            replies["second"] = second.post(link)
 
     sa.event.listen(engine, "before_cursor_execute", just_before_delete)
     try:
-        replies["first"] = first.get(link)
+        replies["first"] = first.post(link)
     finally:
         sa.event.remove(engine, "before_cursor_execute", just_before_delete)
 
@@ -244,3 +244,138 @@ def test_t_sec_08_the_limit_holds_for_requests_at_the_same_moment(app, inbox, cl
     assert not started[0].is_alive(), "the second request never finished"
     assert not errors, f"the second request failed: {errors[0]!r}"
     assert len(mails_to(inbox, "test_vol_01@example.test")) == 10, "not exactly 10 sign-in emails in a day"
+
+
+def test_t_sec_09_opening_a_link_doesnt_use_it_up(app, inbox):
+    """EF · Spec 7, DD-11; d05-01 v1.3, UX-7; round 2, R2-4
+
+    Email systems that check links open them before the person does. Opening
+    the link must only show the "Finish signing in" page; the "Sign in"
+    button signs in and uses the link up.
+    """
+    run_command(app, "create-account", "test_vol_01", "test_vol_01@example.test", "--role", "volunteer")
+    new_client(app).post("/sign-in", data={"email": "test_vol_01@example.test"})
+    link = sign_in_link(mails_to(inbox, "test_vol_01@example.test")[-1])
+
+    scanner = new_client(app)
+    for _ in range(2):  # a link checker may open it more than once
+        page = scanner.get(link)
+        assert page.status_code == 200
+        assert MSG["finish_heading"] in text(page) and MSG["finish_text"] in text(page)
+        assert target_of(page, "Sign in") == link or any(
+            el["tag"] == "button" and el["form"] is not None and el["form"].get("action") == link
+            for el in elements(page).elements
+        ), "the page has no 'Sign in' button for this link"
+    assert scanner.get("/my-sign-ups").status_code in (302, 303), "opening the link signed in"
+
+    person = new_client(app)
+    resp = person.post(link)
+    assert resp.status_code in (302, 303), "the 'Sign in' button didn't sign in"
+    assert person.get("/my-sign-ups").status_code == 200
+    assert MSG["link_invalid"] in text(new_client(app).post(link, follow_redirects=True)), "the link worked twice"
+
+
+def test_t_sec_10_sign_in_and_create_account_take_the_same_time(app, inbox):
+    """EF · PRD UC-2 AC5; Spec 7, DD-10; round 2, R2-2, R2-3
+
+    With a slow email service, the reply for an email with an account comes
+    back as fast as for one without, so timing can't show who has an account.
+    """
+    import time
+
+    run_command(app, "create-account", "test_vol_01", "test_vol_01@example.test", "--role", "volunteer")
+    inbox.slow = 1
+    client = new_client(app, wait=False)
+
+    def timed(path, data):
+        started = time.monotonic()
+        resp = client.post(path, data=data, follow_redirects=True)
+        return time.monotonic() - started, resp
+
+    known_t, known = timed("/sign-in", {"email": "test_vol_01@example.test"})
+    unknown_t, unknown = timed("/sign-in", {"email": "nobody@example.test"})
+    used_t, used = timed("/create-account", {"username": "test_vol_02", "email": "test_vol_01@example.test",
+                                              "privacy_accepted": "yes"})
+    fresh_t, fresh = timed("/create-account", {"username": "test_vol_03", "email": "test_vol_03@example.test",
+                                               "privacy_accepted": "yes"})
+    assert text(known) == text(unknown) and text(used) == text(fresh)
+    for name, waited in (("sign-in, known", known_t), ("sign-in, unknown", unknown_t),
+                         ("create account, email in use", used_t), ("create account, new", fresh_t)):
+        assert waited < 0.5, f"{name}: the page waited {waited:.2f} seconds for the email service"
+
+    from conftest import wait_for_emails
+    wait_for_emails(app)
+    assert len(mails_to(inbox, "test_vol_01@example.test")) == 2, "the emails weren't sent in the background"
+    assert len(mails_to(inbox, "test_vol_03@example.test")) == 1
+
+
+def test_t_sec_11_the_email_service_certificate_is_checked(clock, inbox, db_url, monkeypatch):
+    """EF · Spec 11.1; d06-01 v1.5, 7.1; round 2, R2-6"""
+    import smtplib
+    import ssl
+
+    from conftest import make_app
+
+    used = {}
+
+    class FakeSMTP:
+        def __init__(self, host, port, timeout=None):
+            used["host"] = host
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+        def starttls(self, context=None, **kw):
+            used["context"] = context
+
+        def login(self, user, password):
+            pass
+
+        def send_message(self, msg):
+            used["sent"] = True
+
+    monkeypatch.setattr(smtplib, "SMTP", FakeSMTP)
+    app = make_app(clock, None, db_url, EMAIL_SERVICE="smtp", SMTP_HOST="mail.example.test", SMTP_PORT="587")
+    run_command(app, "create-account", "test_vol_01", "test_vol_01@example.test", "--role", "volunteer")
+    new_client(app).post("/sign-in", data={"email": "test_vol_01@example.test"})
+
+    assert used.get("sent"), "no email reached the (pretend) email service"
+    context = used.get("context")
+    assert isinstance(context, ssl.SSLContext), "the connection isn't checked: no certificate settings were given"
+    assert context.verify_mode == ssl.CERT_REQUIRED and context.check_hostname, "the certificate isn't checked"
+
+
+def test_t_sec_12_forms_without_their_token_are_refused(clock, inbox, db_url):
+    """EF · Spec 11.1 (forged form submissions); round 2, R2-8
+
+    The other tests turn this protection off (tests/README.md). This one
+    turns it on and checks that it works.
+    """
+    import re
+
+    from conftest import make_app
+
+    app = make_app(clock, inbox, db_url, CHECK_FORM_TOKENS=True)
+    run_command(app, "create-account", "test_vol_01", "test_vol_01@example.test", "--role", "volunteer")
+    client = new_client(app)
+
+    forged = client.post("/sign-in", data={"email": "test_vol_01@example.test"})
+    assert forged.status_code == 400, "a sign-in form without its token was accepted"
+    assert client.post("/create-account", data={"username": "test_vol_02", "email": "test_vol_02@example.test",
+                                                "privacy_accepted": "yes"}).status_code == 400
+    assert not inbox, "a form without its token sent an email"
+
+    page = client.get("/sign-in")
+    token = re.search(r'name="csrf_token" value="([^"]+)"', page.get_data(as_text=True))
+    assert token, "the sign-in form has no token"
+    resp = client.post("/sign-in", data={"email": "test_vol_01@example.test", "csrf_token": token[1]})
+    assert resp.status_code == 200
+    link = sign_in_link(mails_to(inbox, "test_vol_01@example.test")[-1])
+
+    assert client.post(link).status_code == 400, "the 'Sign in' button worked without its token"
+    page = client.get(link)
+    token = re.search(r'name="csrf_token" value="([^"]+)"', page.get_data(as_text=True))
+    assert client.post(link, data={"csrf_token": token[1]}).status_code in (302, 303)

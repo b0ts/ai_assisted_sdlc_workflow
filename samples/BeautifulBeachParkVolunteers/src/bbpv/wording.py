@@ -35,8 +35,8 @@ NOT_ALLOWED = "Not allowed. Please contact the park office if you think this is 
 
 def block_confirm(username):
     return (
-        f"Block {username}? They won't be able to sign up for any slots. "
-        "Only the System Administrator can undo this."
+        f"Block {username}? Their upcoming sign-ups will be canceled, and they won't be able "
+        "to sign up for any slots. Only the System Administrator can undo this."
     )
 
 
@@ -162,6 +162,10 @@ SCREEN = {
     "demo_notice": "Emails aren't really sent.",
     "open_pretend_inbox": "Open the pretend inbox",
     "demo_notice_end": "to find your sign-in link.",
+    # S-1 Finish signing in (d05-01 v1.3, UX-7)
+    "finish_sign_in_title": "Finish signing in",
+    "finish_sign_in_text": "One more step: select Sign in to finish signing in.",
+    "finish_sign_in_button": "Sign in",
     # S-2 Create Account
     "create_account_title": "Create an account",
     "username_label": "Username",

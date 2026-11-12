@@ -1,7 +1,7 @@
 # BeautifulBeachPark Volunteers: System Infrastructure Document
 
-**Document:** d06-01 · **Step:** 6, Initial Infrastructure · **Version:** 1.4
-· **Last updated:** 2026-10-25 · **Status:** Approved
+**Document:** d06-01 · **Step:** 6, Initial Infrastructure · **Version:** 1.5
+· **Last updated:** 2026-11-11 · **Status:** Approved
 · **Owner:** DevOps Engineer (Initial Infrastructure chat)
 
 **Diagrams included:** Deployment Diagram (required).
@@ -79,7 +79,7 @@ needs only settings, not rewriting.
 | Language and version | Python 3.12 | Parks IT, 2026-10-03 |
 | Database type and version | PostgreSQL 16, one database per app | Parks IT, 2026-10-03 |
 | Database connections | At most 20 at once per app | Parks IT, 2026-10-03 |
-| How software is installed and started | Parks IT installs a tagged version from the park's Git repository, following the Developer Guide; started as a service | Parks IT, 2026-10-03 |
+| How software is installed and started | Parks IT installs a tagged version from the park's Git repository, following the Developer Guide; started as a service. v1.5: the app runs under the Waitress production web server (4 threads, to match `DB_POOL_SIZE` 4), behind Parks IT's web server; never Flask's development server | Parks IT, 2026-10-03 (Waitress: to confirm with Parks IT) |
 | How settings and secrets are given to the app | Environment variables; secrets from Parks IT's secret store | Parks IT, 2026-10-03 |
 | How email is sent | City email service, from `no-reply` at the app's web address | Parks IT, 2026-10-03 |
 | Scheduled jobs | Parks IT's scheduler runs a command once a day; v1.4 also asks for `send-emails` every 5 minutes | Parks IT, 2026-10-03 (every 5 minutes: to confirm with Parks IT) |
@@ -132,7 +132,7 @@ service, never to a browser.
 |---|---|---|---|
 | User's browser | App server | HTTPS over the internet; plain HTTP turned off | Yes |
 | App server and reminder job | Database | Parks IT's private network | Yes |
-| App server and reminder job | City email service | Parks IT's private network | Yes |
+| App server and reminder job | City email service | Parks IT's private network | Yes; v1.5: the app also checks the email service's certificate (`SMTP_CA_FILE` if Parks IT uses its own certificate authority) |
 
 ### 7.2 Who Can Change the Infrastructure
 
@@ -256,3 +256,4 @@ None.
 | 1.2 | 2027-01-15 | Production set up on Parks IT's servers; database connections kept under Parks IT's limit (`DB_POOL_SIZE` 4 per copy, 16 in all) | Demo approved (D13); stress test Run 1 failed (Step 9) | Park Manager |
 | 1.3 | 2027-01-20 | Email sender records added; second contact for Parks IT | Manual check MC-1 failed (Step 9); Issue I2 | Park Manager |
 | 1.4 | 2026-10-25 | Two more scheduled jobs (`send-emails` every 5 minutes, `clean-up` daily) and the `PARK_TIMEZONE` setting | Round 1 code review (Codex), findings R-2, R-3, R-10; Spec v1.2 | Park Manager, 2026-10-25 |
+| 1.5 | 2026-11-11 | Waitress production web server named; certificate check on the email service connection | Round 2 code review (Claude Code), findings R2-6 and R2-7; Spec v1.3 | Park Manager, 2026-11-11 |

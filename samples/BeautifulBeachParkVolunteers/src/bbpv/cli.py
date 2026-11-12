@@ -135,6 +135,7 @@ def register(app):
             conn.execute(db.slots.delete().where(db.slots.c.task_id.in_(old_tasks)))
             tasks = conn.execute(db.tasks.delete().where(db.tasks.c.date < cutoff)).rowcount
             conn.execute(db.sign_in_links.delete().where(db.sign_in_links.c.expires < now))
+            conn.execute(db.account_requests.delete().where(db.account_requests.c.expires < now))
             conn.execute(db.sign_in_emails.delete().where(db.sign_in_emails.c.sent < now - dt.timedelta(hours=24)))
         click.echo(f"Removed {tasks} task(s) dated before {cutoff.isoformat()}, with {signups} sign-up(s).")
 

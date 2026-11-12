@@ -1,7 +1,7 @@
 # BeautifulBeachPark Volunteers: UI/UX Document
 
-**Document:** d05-01 · **Step:** 5, User Experience · **Version:** 1.2
-· **Last updated:** 2026-10-25 · **Status:** Approved
+**Document:** d05-01 · **Step:** 5, User Experience · **Version:** 1.3
+· **Last updated:** 2026-11-11 · **Status:** Approved
 · **Owner:** UI/UX Designer (User Experience chat)
 
 **Screens included:** 10 screens covering 7 use cases. User flow for every
@@ -55,7 +55,7 @@ use case (required); wireframe and mockup for every screen (required).
 
 | Screen | Name | Purpose | Seen by | Use cases | Requests it uses |
 |---|---|---|---|---|---|
-| S-1 | Sign In | Get a one-time sign-in link | Everyone | All (sign-in) | Send sign-in link, Sign in |
+| S-1 | Sign In | Get a one-time sign-in link; finish signing in from the link (v1.3) | Everyone | All (sign-in) | Send sign-in link, Open sign-in link, Sign in |
 | S-2 | Create Account | Choose a username; read the privacy notice | Volunteer | UC-2 | Create account |
 | S-3 | Open Slots | Browse tasks and open one-hour slots | Volunteer | UC-3 | List open slots |
 | S-4 | Confirm Sign-Up | Check the slot and confirm | Volunteer | UC-3 | Sign up |
@@ -85,10 +85,13 @@ flowchart LR
 flowchart LR
     S1["S-1: Sign In"] -->|"taps Create an account"| S2["S-2: Create Account"]
     S2 -->|"reads notice, taps Create account"| S1b["S-1: Check your email"]
+    S1b -->|"opens the emailed link, taps Sign in (v1.3)"| S3["S-3: Open Slots"]
     S2 -.->|"username taken"| S2
+    S1b -.->|"username taken first by someone else"| S2
 ```
 
-**Steps:** 2 taps, plus a username and email.
+**Steps:** 3 taps, plus a username and email. The account is made when the
+volunteer taps "Sign in" on the page the emailed link opens (v1.3).
 
 ### UC-3: Sign up for a slot
 
@@ -159,6 +162,21 @@ flowchart LR
 ```
 
 **Notes:** No passwords, so there's nothing to forget (Spec DD-3).
+
+**Finish signing in (v1.3, UX-7).** The link in the email opens this
+state of S-1. Nothing happens until the person selects "Sign in", so an
+email system that opens links to check them can't use the link up (Spec
+DD-11).
+
+```text
+┌─────────────────────────────┐
+│ BeautifulBeachPark          │
+│ Finish signing in           │
+│ One more step: select Sign  │
+│ in to finish signing in.    │
+│ [         Sign in         ] │
+└─────────────────────────────┘
+```
 
 ### S-2: Create Account
 
@@ -287,7 +305,9 @@ three slot rows; "Add another slot" adds one more, up to 10 (PRD UC-1).
 └─────────────────────────────┘
 ```
 
-**Notes:** The counter updates as the coordinator types. "Send" returns to
+**Notes:** The counter updates as the coordinator types. A line break
+counts as one character, on the counter and when the message is checked
+(v1.3). "Send" returns to
 the roster with "Message sent."; "Yes, block" also returns to the roster,
 with "Blocked." (Section 6).
 
@@ -337,6 +357,10 @@ each message, so tests can match them exactly.
 | S-2 | Username taken | "That username is taken. Please try another." |
 | S-2 | Username breaks the rules | "Usernames are 3 to 20 letters, numbers, or underscores." |
 | S-2 | Email blocked (reason not given) | "We couldn't create this account. Please contact the park office." |
+| S-2 | Email already has an account (v1.3) | The same reply as a new account: S-1 with "Check your email. If you have an account, we've sent you a sign-in link." |
+| S-1 | Finish signing in: heading (v1.3) | "Finish signing in" |
+| S-1 | Finish signing in: text (v1.3) | "One more step: select Sign in to finish signing in." |
+| S-1 | Finish signing in: button (v1.3) | "Sign in" |
 | S-5 | Signed up | "You're signed up! We've emailed you the details." (v1.2) |
 | S-3 | Last place taken first | "Sorry, this slot was just taken. Here are other open times." |
 | S-3 | Already signed up | "You're already signed up for this slot." |
@@ -345,7 +369,7 @@ each message, so tests can match them exactly.
 | S-7 | Places out of range | "Each slot needs 1 to 20 volunteers." |
 | S-7 | Title too long | "Titles can be up to 60 characters." |
 | S-8 | Empty roster | "No one has signed up yet." |
-| S-8 | Block confirm box | "Block BigHeartedGuy? They won't be able to sign up for any slots. Only the System Administrator can undo this." |
+| S-8 | Block confirm box (v1.3) | "Block BigHeartedGuy? Their upcoming sign-ups will be canceled, and they won't be able to sign up for any slots. Only the System Administrator can undo this." |
 | S-8 | Blocked | "Blocked." |
 | S-9 | Sent | "Message sent." |
 | S-9 | Too long | "Messages can be up to 500 characters." |
@@ -449,6 +473,7 @@ Every screen serves at least one use case.
 | UX-4 | Block and cancel always ask to confirm | Act immediately, confirm first | Both are hard to undo | 2026-09-28 |
 | UX-5 | Darken the website's turquoise for buttons | Turquoise, Ocean | Turquoise fails contrast with white text (d05-02) | 2026-09-29 |
 | UX-6 | Every time shows a.m. or p.m., and labels include the minutes | Bare 12-hour times, a.m. and p.m. | A morning and an evening slot can't look the same; screen readers say the exact time (round 1, R-13) | 2026-10-25 |
+| UX-7 | The sign-in link opens a "Finish signing in" page with one "Sign in" button | Sign in on opening, one more tap | Email systems that check links can't use them up; one extra tap (round 2, R2-4; Spec DD-11) | 2026-11-11 |
 
 ## 15. Assumptions and Open Questions
 
@@ -476,3 +501,4 @@ Every screen serves at least one use case.
 | 1.0 | 2026-10-01 | First version | — | Park Manager (D8, 2026-10-02) |
 | 1.1 | 2026-10-13 | Added two messages to Section 9: username breaks the rules; title too long | Requested by the SDET (d07-01 Section 12, requests 1 and 2): the tests need exact wording | Park Manager |
 | 1.2 | 2026-10-25 | Times with a.m. and p.m. (UX-6); "Add another slot" up to 10; live message counter; Send and Block return to the roster; new "Signed up" wording and confirmation email; the messages, empty states, and email subjects written in Step 8 added to Section 9; S-3 and S-6 empty states changed to match. Every heading, label, and button from Section 7 and the mockups is also kept in the app's one wording file (re-review, R-5) | Round 1 code review (Codex), findings R-4, R-5, R-9, R-12, R-13; PRD v1.2 | Park Manager, 2026-10-25 |
+| 1.3 | 2026-11-11 | S-1 "Finish signing in" state (UX-7); S-2 gives the "Check your email" reply when the email already has an account, and the account is made at "Sign in" (UC-2 flow); block confirm box says upcoming sign-ups are canceled; a line break counts as one character on S-7 and S-9 | Round 2 code review (Claude Code), findings R2-1, R2-2, R2-4, R2-9, R2-14; Spec v1.3 | Park Manager, 2026-11-11 |

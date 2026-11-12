@@ -57,3 +57,27 @@ def test_t_06_03_counter_and_back_to_the_roster(inbox, beach_task, people):
     assert MSG["sent"] in text(resp)
     assert resp.request.path == roster_path, "Send didn't return to the roster"
     assert "test_vol_01" in text(resp)
+
+
+def test_t_06_04_a_line_break_counts_as_one_character(inbox, beach_task, people):
+    """BC · UC-6 AC2 (PRD v1.3); d05-01 v1.3, S-9 counter; round 2, R2-1
+
+    Browsers send each line break in a form as two characters (CR LF). The
+    counter counts one, so the server must too.
+    """
+    vol = people("test_vol_01")
+    vol.sign_up()
+    path = target_of(beach_task.roster(), "Message test_vol_01")
+
+    message = "\r\n".join(["m" * 70] * 7)  # 490 letters + 6 line breaks = 496 counted
+    message += "m" * 4  # = 500 counted, 506 as sent
+    since = len(inbox)
+    assert MSG["sent"] in text(beach_task.post(path, data={"message": message}))
+    sent = mails_to(inbox, vol.email, since)
+    assert len(sent) == 1
+    assert "m" * 70 + "\n" + "m" * 70 in sent[0]["text"].replace("\r\n", "\n")
+
+    since = len(inbox)
+    resp = beach_task.post(path, data={"message": message + "m"})
+    assert MSG["message_long"] in text(resp)
+    assert not mails_to(inbox, vol.email, since)

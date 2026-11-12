@@ -34,6 +34,7 @@ def _settings_from_environment():
         "SMTP_PORT": os.environ.get("SMTP_PORT", "587"),
         "SMTP_USER": os.environ.get("SMTP_USER"),
         "SMTP_PASSWORD": os.environ.get("SMTP_PASSWORD"),
+        "SMTP_CA_FILE": os.environ.get("SMTP_CA_FILE"),
         "SIGN_IN_LINK_MINUTES": int(os.environ.get("SIGN_IN_LINK_MINUTES", "15")),
         "TRUST_PROXY": _env_bool("TRUST_PROXY", "false"),
         "DB_POOL_SIZE": int(os.environ.get("DB_POOL_SIZE", "15")),
@@ -98,6 +99,7 @@ def create_app(config=None):
     app.extensions["engine"] = db.make_engine(cfg["DATABASE_URL"], cfg["DB_POOL_SIZE"])
     app.extensions["vault"] = EmailVault(cfg["EMAIL_ENCRYPTION_KEY"])
     app.extensions["pretend_inbox"] = []
+    app.extensions["email_senders"] = set()  # emails being sent in the background (Spec DD-10)
     db.metadata.create_all(app.extensions["engine"])
 
     _add_request_hooks(app)
@@ -132,7 +134,9 @@ def _add_request_hooks(app):
     @app.before_request
     def check_form_token():
         """Requests that change something must come from one of our own forms."""
-        if app.config.get("TESTING") or request.method != "POST":
+        # Off in tests, unless a test turns it on to check it (T-SEC-12; round 2, R2-8)
+        checking = app.config.get("CHECK_FORM_TOKENS", not app.config.get("TESTING"))
+        if not checking or request.method != "POST":
             return
         sent = request.form.get("csrf_token", "")
         if not sent or not secrets.compare_digest(sent, session.get("csrf_token", "")):

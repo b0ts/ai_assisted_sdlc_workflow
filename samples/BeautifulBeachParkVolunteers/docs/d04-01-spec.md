@@ -1,7 +1,7 @@
 # BeautifulBeachPark Volunteers: Software Design Specification (Spec)
 
-**Document:** d04-01 · **Step:** 4, Design · **Version:** 1.2
-· **Last updated:** 2026-10-25 · **Status:** Approved
+**Document:** d04-01 · **Step:** 4, Design · **Version:** 1.3
+· **Last updated:** 2026-11-11 · **Status:** Approved
 · **Owner:** Software Architect (Design chat)
 
 **Diagrams included:** System Overview; UML Sequence Diagram for every use
@@ -78,12 +78,13 @@ flowchart LR
 | Item (entity) | What it holds | Personal information? | Kept for how long | Use cases |
 |---|---|---|---|---|
 | Account | Username (3 to 20 letters, numbers, or underscores), role, email (encrypted) | Yes: email | Until the account is deleted | UC-2 to UC-7 |
-| Task | Title (up to 60 characters), description (up to 1,000 characters), date, posted by; 1 to 10 slots | No | 12 months after its date, then removed by the daily clean-up | UC-1 |
+| Task | Title (up to 60 characters), description (up to 1,000 characters; a line break counts as one), date, posted by; 1 to 10 slots | No | 12 months after its date, then removed by the daily clean-up | UC-1 |
 | Slot | Task, start time, end time (exactly one hour later), places needed (1 to 20), places left | No | With its task | UC-1, UC-3, UC-4, UC-5 |
 | Sign-up | Slot, username, time signed up | No | With its slot | UC-3, UC-4, UC-5 |
 | Block list entry | Scrambled (hashed) copy of the standardized email, blocked by, date | Yes, but scrambled | Until the System Administrator removes it | UC-2, UC-3, UC-7 |
 | Queued email | Account, subject and text (encrypted), when to try next, attempts, when it expires, and a short reason for the last failure (never an address or the email service's own reply) | Yes: a sign-in email holds a sign-in link, so the text is encrypted | Until it's sent, or until it expires: a sign-in email with its link, a confirmation or reminder when the slot starts, a message after 3 days | UC-2, UC-3, UC-6 |
-| Sign-in email count | Scrambled (hashed) copy of the email, time sent | Yes, but scrambled | 24 hours | All (sign-in) |
+| Account request (v1.3) | Username, email (encrypted), its two scrambled copies, a scrambled copy of the link, when it expires. An email may have several at once (each email's link keeps working); when one becomes an account, the others are removed (round 2 re-review 2, R2-17) | Yes: email (encrypted) | Until the volunteer signs in from the link (then it becomes an account), or until it expires (15 minutes; the daily clean-up removes it) | UC-2 |
+| Sign-in email count | Scrambled (hashed) copy of the email, time sent | Yes, but scrambled | Counted for 24 hours; deleted by the daily clean-up once older than 24 hours, so kept up to about 48 hours (round 2, R2-10) | All (sign-in) |
 
 **Standardized email:** before checking the block list, the server writes
 the email in lowercase and removes dots and any "+" tag before the "@," so
@@ -93,9 +94,10 @@ the email in lowercase and removes dots and any "+" tag before the "@," so
 
 | Request | From → To | Sends | Returns when it works | Returns when it fails | Use cases |
 |---|---|---|---|---|---|
-| Send sign-in link | Client → Server | Email | "Check your email" (always, so no one can test which emails exist; after 10 emails to one address in 24 hours, no more are sent) | — | All (sign-in) |
-| Sign in | Client → Server | Link from the email | Signed in | "This link has expired" | All (sign-in) |
-| Create account | Client → Server | Username, email, privacy notice accepted | Account created | "That username is taken"; "We couldn't create this account" | UC-2 |
+| Send sign-in link | Client → Server | Email | "Check your email" (always, and straight away: the email is sent in the background, so neither the words nor the time taken show which emails exist (DD-10); after 10 emails to one address in 24 hours, no more are sent) | — | All (sign-in) |
+| Open sign-in link | Client → Server | Link from the email | A "Finish signing in" page with a "Sign in" button. Nothing is used up, so an email system that checks links can't spend it (DD-11) | "This link isn't valid" | All (sign-in) |
+| Sign in | Client → Server | The "Sign in" button on that page | Signed in; the link is used up. For an account request, the account is made first (DD-13) | "This link has expired" (and a new one is sent); "This link isn't valid"; for an account request, "That username is taken" if someone took it first | All (sign-in), UC-2 |
+| Create account | Client → Server | Username, email, privacy notice accepted | "Check your email": an account request is saved and a sign-in link sent; the account is made only when "Sign in" is pressed (DD-13). If the email already has an account, a sign-in link goes to its owner. The same reply either way, straight away (DD-10) | "That username is taken"; "We couldn't create this account" (blocked email) | UC-2 |
 | Post task | Client → Server | Title, description, date, slots (1 to 10), places per slot | Task saved | "Each slot must be one hour"; "Each slot needs 1 to 20 volunteers"; "A task can have up to 10 slots"; "Descriptions can be up to 1,000 characters"; "Not allowed" | UC-1 |
 | List open slots | Client → Server | Date (optional) | Slots, with places left | "No open slots" | UC-3 |
 | Sign up | Client → Server | Slot | "You're signed up!", and a confirmation email | "Sorry, this slot was just taken"; "You're already signed up for this slot"; "Not allowed" | UC-3 |
@@ -103,8 +105,8 @@ the email in lowercase and removes dots and any "+" tag before the "@," so
 | Cancel sign-up | Client → Server | Sign-up | Canceled | "This slot has already started"; "Not allowed" | UC-4 |
 | Get roster | Client → Server | Slot | Usernames only | "No one has signed up yet" | UC-5 |
 | List my tasks | Client → Server | — | The coordinator's tasks, with every slot (full or not) and places filled | "Not allowed" | UC-1, UC-5 |
-| Message volunteer | Client → Server | Username, message | "Message sent" | "Messages can be up to 500 characters" | UC-6 |
-| Block volunteer | Client → Server | Username | "Blocked" | "Not allowed" | UC-7 |
+| Message volunteer | Client → Server | Username, message | "Message sent" | "Messages can be up to 500 characters" (a line break counts as one) | UC-6 |
+| Block volunteer | Client → Server | Username | "Blocked"; the volunteer's upcoming sign-ups are canceled and their places given back | "Not allowed" | UC-7 |
 | Undo block | Client → Server | Username | "Block removed" | "Not allowed" | UC-7 |
 | List blocked volunteers | Client → Server | — | Usernames (or "account deleted"), blocked by, and date; never emails | "Not allowed" | UC-7 |
 | Send email | Server → Email service | To, subject, text | Accepted | Kept in the queue and retried every 5 minutes until accepted or expired | UC-2, UC-3, UC-6 |
@@ -160,10 +162,18 @@ sequenceDiagram
     C->>S: Create account
     S->>DB: Is the username taken? Is the standardized email on the block list?
     DB-->>S: Answers
-    alt Username free, email not blocked
-        S->>DB: Save account (email encrypted)
-        S->>E: Send sign-in link
-        S-->>C: Account created
+    alt Username free, email not blocked, email has no account
+        S->>DB: Save an account request (email encrypted); no account yet
+        S-->>C: "Check your email" (straight away)
+        S->>E: Send sign-in link (in the background)
+        C-->>V: "Check your email to sign in"
+        V->>C: Opens the link, chooses "Sign in"
+        C->>S: Sign in
+        S->>DB: Use up the request; save the account, if the username is still free
+        S-->>C: Signed in (or "That username is taken")
+    else Email already has an account
+        S-->>C: "Check your email" (the same reply, straight away)
+        S->>E: Send a sign-in link to the account's owner (in the background)
         C-->>V: "Check your email to sign in"
     else Username taken
         S-->>C: "That username is taken"
@@ -289,6 +299,7 @@ sequenceDiagram
     K->>C: Chooses "Block" next to a username and confirms
     C->>S: Block volunteer
     S->>DB: Add a scrambled copy of the standardized email to the block list
+    S->>DB: Cancel the volunteer's upcoming sign-ups and give their places back (same step)
     DB-->>S: Saved
     S-->>C: "Blocked"
     C-->>K: Shows "Blocked" (never the email)
@@ -325,7 +336,7 @@ sequenceDiagram
 | Block list | Coordinators add; only the System Administrator removes | Scrambled (hashed) copy only, so it is kept even if the account is deleted |
 | Sign-ups and rosters | Volunteers see their own; coordinators see usernames | Server checks the role on every request |
 | Queued emails | The application server only | Subject and text stored encrypted; deleted once sent; a sign-in email is dropped when its link expires; failure reasons and logs never hold an address (round 1, R-14) |
-| Everything | — | HTTPS (encrypted connections) only; plain HTTP is turned off |
+| Everything | — | HTTPS (encrypted connections) only; plain HTTP is turned off. The connection to the email service is encrypted, and the app checks the service's certificate (round 2, R2-6). Every form that changes something carries a token against forged submissions |
 
 **Sign-in and permissions:** Everyone signs in with a one-time link sent to
 their email, so there are no passwords to lose or steal. Volunteers can
@@ -406,10 +417,14 @@ classDiagram
 | DD-3 | Sign in with a one-time email link | Passwords, email link | No passwords to forget or protect | 2026-09-19 |
 | DD-4 | Keep emails encrypted, and a hashed copy for the block list | Plain email, encrypted email | Emails never seen; blocks still work after deletion | 2026-09-19 |
 | DD-5 | Take the last place in a single database step | Check then save, single step | A slot can never be over-filled | 2026-09-22 |
-| DD-6 | Every email goes through a queue in the database, saved in the same step as the change it's about. The page that queued it tries to send it once, waiting at most 5 seconds in all (the sending carries on in the background if the service is slow); the 5-minute job sends the rest and retries failures every 5 minutes until accepted or expired. Each reminder is claimed before it's queued. Known limit: if the app stops just after the email service accepts an email, that one email can be sent twice | Send straight away, queue first | No email is lost when the email service is down; the sign-in reply stays the same; pages never wait for other people's emails; two reminder runs never send a reminder twice (round 1, R-2, R-15) | 2026-10-25 |
+| DD-6 | Every email goes through a queue in the database, saved in the same step as the change it's about. The page that queued it tries to send it once, waiting at most 5 seconds in all (the sending carries on in the background if the service is slow; the sign-in and create-account pages don't wait at all, DD-10); the 5-minute job sends the rest and retries failures every 5 minutes until accepted or expired. Each reminder is claimed before it's queued. Known limit: if the app stops just after the email service accepts an email, that one email can be sent twice | Send straight away, queue first | No email is lost when the email service is down; the sign-in reply stays the same; pages never wait for other people's emails; two reminder runs never send a reminder twice (round 1, R-2, R-15) | 2026-10-25 |
 | DD-7 | A sign-in link is used up in a single database step; only the request that removes it signs in | Check then remove, single step | A link can never sign in twice (round 1, R-1) | 2026-10-25 |
 | DD-8 | The park's time zone is a setting (`PARK_TIMEZONE`), and every "now" uses park time | Server's own clock, a park setting | "Tomorrow" and cancellation cutoffs stay right on any server (round 1, R-10) | 2026-10-25 |
 | DD-9 | At most 10 sign-in emails per address in 24 hours, counted by a scrambled copy of the email. Each request records its email first and counts after, with the account locked, so requests at the same moment can't slip past | No limit, a limit per address | No one can flood an inbox or use up the city's 3,000 emails a month (round 1, R-6; PRD 6) | 2026-10-25 |
+| DD-10 | The sign-in and create-account pages answer straight away and send their email in the background; they never wait for the email service | Wait up to 5 seconds, answer at once | The time taken can't show whether an email has an account (round 2, R2-2, R2-3) | 2026-11-11 |
+| DD-11 | Opening a sign-in link shows a page with a "Sign in" button; only pressing it uses the link up (DD-7 still applies to the button) | Use up on opening, use up on the button | Email systems that open every link to check it can't spend a volunteer's link (round 2, R2-4) | 2026-11-11 |
+| DD-13 | Create account saves only an account request; the account is made, and the username taken, when "Sign in" is pressed on the emailed link. A queued email can go to a request's encrypted address (no account yet). Every request's link works until one of them becomes the account (R2-17) | Make the account at once, make it at sign-in | Nothing changes until the email's owner signs in, so no number of tries can show who has an account (round 2 re-review, R2-14) | 2026-11-11 |
+| DD-12 | An email is sent with no database connection held: the app reads what it needs, lets the connection go, then sends | Hold the connection while sending, let it go first | A slow email service can't use up the app's few database connections (round 1, R-18; round 2, R2-5) | 2026-11-11 |
 
 ## 14. Risks
 
@@ -445,3 +460,4 @@ classDiagram
 | 1.0 | 2026-09-25 | First version | — | Park Manager |
 | 1.1 | 2026-09-30 | Added the "List my tasks" and "List blocked volunteers" requests | Requested by the UI/UX Designer (d05-01 Section 16): screens S-6 and S-10 had no request to use | Park Manager (with D7) |
 | 1.2 | 2026-10-25 | Email queue with retries (DD-6), one-step sign-in links (DD-7), park time zone (DD-8), sign-in email limit (DD-9), sign-up confirmation email, 12-month clean-up job, task limits | Round 1 code review (Codex), findings R-1 to R-4, R-6, R-10, R-12; PRD v1.2 | Park Manager, 2026-10-25 |
+| 1.3 | 2026-11-11 | Account made only at sign-in (DD-13); sign-in replies straight away (DD-10); a "Sign in" button page for sign-in links (DD-11); emails sent with no database connection held (DD-12); create account gives the same reply when the email has an account; blocking cancels upcoming sign-ups; certificate check for the email service; line breaks count as one character; sign-in counts kept up to about 48 hours | Round 2 code review (Claude Code), findings R2-1 to R2-6, R2-9, R2-10, R2-14, R2-17 (an email may have several account requests); PRD v1.3 | Park Manager, 2026-11-11 |

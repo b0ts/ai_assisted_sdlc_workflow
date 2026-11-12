@@ -33,6 +33,12 @@ def engine():
     return current_app.extensions["engine"]
 
 
+def one_line_break(value):
+    """Browsers send each line break as two characters; count it as one, as the
+    on-screen counter does (PRD v1.3, UC-1 and UC-6; round 2, R2-1)."""
+    return value.replace("\r\n", "\n").replace("\r", "\n")
+
+
 def vault():
     return current_app.extensions["vault"]
 
@@ -147,23 +153,34 @@ MESSAGE_KEEP_DAYS = 3        # a coordinator's message is dropped if it can't be
 SIGN_IN_EMAILS_PER_DAY = 10  # PRD 6, Email limits; Spec DD-9
 
 
-def queue_email(conn, account_id, subject_and_text, expires=None):
-    """Save an email to send, in the same step as the change it's about. Returns its id."""
+def queue_email(conn, account_id, subject_and_text, expires=None, to_encrypted=None):
+    """Save an email to send, in the same step as the change it's about. Returns its id.
+    An account request's email has no account yet: it goes to `to_encrypted` (Spec DD-13)."""
     subject, text = subject_and_text
     v = vault()
     return conn.execute(db.outbox.insert().values(
-        account_id=account_id, subject_encrypted=v.encrypt_text(subject), text_encrypted=v.encrypt_text(text),
+        account_id=account_id, to_encrypted=to_encrypted,
+        subject_encrypted=v.encrypt_text(subject), text_encrypted=v.encrypt_text(text),
         created=now(), send_after=now(), attempts=0, expires=expires)).inserted_primary_key[0]
 
 
-def deliver(conn, row, timeout):
-    """The only place an email address is decrypted, and only to send to it."""
-    account = conn.execute(sa.select(db.accounts.c.email_encrypted).where(
-        db.accounts.c.id == row["account_id"])).first()
-    if account is None:
+def deliver(row, timeout):
+    """The only place an email address is decrypted, and only to send to it.
+
+    The address is read with a short database step that ends before sending
+    starts, so no connection is held while the email service works (Spec DD-12;
+    round 1, R-18; round 2, R2-5).
+    """
+    if row["account_id"] is None:
+        to_encrypted = row["to_encrypted"]
+    else:
+        with engine().connect() as conn:
+            to_encrypted = conn.execute(sa.select(db.accounts.c.email_encrypted).where(
+                db.accounts.c.id == row["account_id"])).scalar()
+    if to_encrypted is None:
         return
     v = vault()
-    mail.send(v.decrypt(account.email_encrypted), v.decrypt_text(row["subject_encrypted"]),
+    mail.send(v.decrypt(to_encrypted), v.decrypt_text(row["subject_encrypted"]),
               v.decrypt_text(row["text_encrypted"]), timeout=timeout)
 
 
@@ -210,8 +227,7 @@ def send_due_emails(ids=None, timeout=20):
                 ).values(send_after=now() + dt.timedelta(minutes=RETRY_MINUTES))).rowcount
             if claimed != 1:
                 continue  # another copy of the app has it
-            with eng.connect() as conn:
-                deliver(conn, row, timeout)
+            deliver(row, timeout)
         except Exception as e:  # the email service is down, or refused it: try again in 5 minutes
             reason = safe_error(e)
             with eng.begin() as conn:
@@ -228,26 +244,56 @@ def send_due_emails(ids=None, timeout=20):
     return sent, waiting
 
 
+_senders_lock = threading.Lock()
+
+
+def _start_sending(ids):
+    """Send these queued emails on a background thread, and return the thread.
+
+    The thread is kept in app.extensions["email_senders"] until it ends, so the
+    tests can wait for it (tests/README.md).
+    """
+    app = current_app._get_current_object()
+    senders = app.extensions["email_senders"]
+    listed = threading.Event()
+
+    def send():
+        try:
+            with app.app_context():
+                try:
+                    send_due_emails(ids)
+                except Exception as e:
+                    app.logger.warning("Couldn't send queued email: %s", safe_error(e))
+        finally:
+            listed.wait()  # only ever listed once started, and always removed
+            with _senders_lock:
+                senders.discard(worker)
+
+    worker = threading.Thread(target=send, daemon=True)
+    worker.start()
+    with _senders_lock:
+        senders.add(worker)
+    listed.set()
+    return worker
+
+
 def send_now(*ids):
     """Send the email(s) this page just queued, waiting at most EMAIL_SEND_TIMEOUT
     seconds in all (Spec DD-6; R-15). The sending carries on in the background if
     the email service is slow; anything that fails stays queued for the 5-minute job.
     """
     ids = [i for i in ids if i is not None]
-    if not ids:
-        return
-    app = current_app._get_current_object()
+    if ids:
+        _start_sending(ids).join(timeout=current_app.config["EMAIL_SEND_TIMEOUT"])
 
-    def send():
-        with app.app_context():
-            try:
-                send_due_emails(ids)
-            except Exception as e:
-                app.logger.warning("Couldn't send queued email: %s", safe_error(e))
 
-    worker = threading.Thread(target=send, daemon=True)
-    worker.start()
-    worker.join(timeout=app.config["EMAIL_SEND_TIMEOUT"])
+def send_in_background(*ids):
+    """Send the email(s) without waiting at all: the sign-in and create-account
+    pages answer straight away, so the time taken can't show whether an email
+    has an account (Spec DD-10; round 2, R2-2, R2-3)."""
+    ids = [i for i in ids if i is not None]
+    if ids:
+        _start_sending(ids)
 
 
 def send_sign_in_link(conn, account):
@@ -258,15 +304,7 @@ def send_sign_in_link(conn, account):
     requests at the same moment can never both slip past the limit (R-6).
     """
     conn.execute(sa.select(db.accounts.c.id).where(db.accounts.c.id == account["id"]).with_for_update())
-    conn.execute(db.sign_in_emails.insert().values(email_lookup=account["email_lookup"], sent=now()))
-    in_last_day = conn.execute(sa.select(sa.func.count()).select_from(db.sign_in_emails).where(
-        db.sign_in_emails.c.email_lookup == account["email_lookup"],
-        db.sign_in_emails.c.sent > now() - dt.timedelta(hours=24))).scalar()
-    if in_last_day > SIGN_IN_EMAILS_PER_DAY:
-        conn.execute(db.sign_in_emails.delete().where(
-            db.sign_in_emails.c.email_lookup == account["email_lookup"],
-            db.sign_in_emails.c.id == sa.select(sa.func.max(db.sign_in_emails.c.id)).where(
-                db.sign_in_emails.c.email_lookup == account["email_lookup"]).scalar_subquery()))
+    if not _one_more_sign_in_email(conn, account["email_lookup"]):
         return None
     token = secrets.token_urlsafe(24)
     minutes = current_app.config["SIGN_IN_LINK_MINUTES"]
@@ -275,6 +313,46 @@ def send_sign_in_link(conn, account):
         token_hash=token_hash(token), account_id=account["id"], expires=expires))
     link = f"{current_app.config['BASE_URL'].rstrip('/')}/sign-in/{token}"
     return queue_email(conn, account["id"], w.sign_in_email(account["username"], minutes, link), expires=expires)
+
+
+def _one_more_sign_in_email(conn, lookup):
+    """Record one more sign-in email for this address, unless it has had 10 in the last
+    24 hours (Spec DD-9). The caller holds a lock on the address first: its account row,
+    or its account request row."""
+    conn.execute(db.sign_in_emails.insert().values(email_lookup=lookup, sent=now()))
+    in_last_day = conn.execute(sa.select(sa.func.count()).select_from(db.sign_in_emails).where(
+        db.sign_in_emails.c.email_lookup == lookup,
+        db.sign_in_emails.c.sent > now() - dt.timedelta(hours=24))).scalar()
+    if in_last_day > SIGN_IN_EMAILS_PER_DAY:
+        conn.execute(db.sign_in_emails.delete().where(
+            db.sign_in_emails.c.email_lookup == lookup,
+            db.sign_in_emails.c.id == sa.select(sa.func.max(db.sign_in_emails.c.id)).where(
+                db.sign_in_emails.c.email_lookup == lookup).scalar_subquery()))
+        return False
+    return True
+
+
+def request_account(conn, username, email_encrypted, lookup, block_key):
+    """Save an account request and queue its sign-in link (Spec DD-13). The account is made
+    only when "Sign in" is pressed. Earlier requests for the same email keep working until
+    one of them is used (R2-17). Returns the queued email's id, or None when the daily limit
+    is reached."""
+    if conn.dialect.name == "postgresql":
+        # No account row to lock yet: lock this email's lookup key instead, so two requests
+        # at the same moment can't both slip past the limit (DD-9). SQLite already lets
+        # only one change happen at a time.
+        conn.execute(sa.text("SELECT pg_advisory_xact_lock(hashtext(:key))"), {"key": lookup})
+    token = secrets.token_urlsafe(24)
+    minutes = current_app.config["SIGN_IN_LINK_MINUTES"]
+    expires = now() + dt.timedelta(minutes=minutes)
+    if not _one_more_sign_in_email(conn, lookup):
+        return None
+    conn.execute(db.account_requests.insert().values(
+        token_hash=token_hash(token), username=username, email_encrypted=email_encrypted,
+        email_lookup=lookup, email_block_key=block_key, expires=expires))
+    link = f"{current_app.config['BASE_URL'].rstrip('/')}/sign-in/{token}"
+    return queue_email(conn, None, w.sign_in_email(username, minutes, link), expires=expires,
+                       to_encrypted=email_encrypted)
 
 
 def is_blocked(conn, account):
@@ -310,20 +388,32 @@ def sign_in():
                     db.accounts.c.email_lookup == vault().lookup_key(email))).mappings().first()
                 if account is not None:
                     queued = send_sign_in_link(conn, account)
-            send_now(queued)
-        # The same reply whether or not the account exists, the limit is reached, or the
-        # email service is down (Spec DD-3, DD-6, DD-9; T-SEC-05, T-SEC-07, T-EM-01)
+            send_in_background(queued)
+        # The same reply, straight away, whether or not the account exists, the limit is
+        # reached, or the email service is down (Spec DD-3, DD-6, DD-9, DD-10; T-SEC-05,
+        # T-SEC-07, T-SEC-10, T-EM-01)
         return render_template("sign_in.html", banner=("info", w.CHECK_EMAIL))
     return render_template("sign_in.html")
 
 
-@bp.route("/sign-in/<token>")
+@bp.route("/sign-in/<token>", methods=["GET", "POST"])
 def use_sign_in_link(token):
+    if request.method == "GET":
+        # Opening the link only shows the "Sign in" button: email systems that open
+        # links to check them can't use it up (Spec DD-11; d05-01 UX-7; round 2, R2-4)
+        with engine().connect() as conn:
+            exists = conn.execute(sa.select(db.sign_in_links.c.token_hash).where(
+                db.sign_in_links.c.token_hash == token_hash(token))).first() or conn.execute(
+                sa.select(db.account_requests.c.token_hash).where(
+                    db.account_requests.c.token_hash == token_hash(token))).first()
+        if exists is None:
+            return render_template("sign_in.html", banner=("error", w.LINK_INVALID)), 400
+        return render_template("sign_in_finish.html", action=request.path)
     with engine().begin() as conn:
         link = conn.execute(db.sign_in_links.select().where(
             db.sign_in_links.c.token_hash == token_hash(token))).mappings().first()
         if link is None:
-            return render_template("sign_in.html", banner=("error", w.LINK_INVALID)), 400
+            return _finish_account_request(token)
         # Use the link up in a single step: only the request that removes it may sign in (Spec DD-7)
         used = conn.execute(db.sign_in_links.delete().where(
             db.sign_in_links.c.token_hash == link["token_hash"])).rowcount
@@ -334,6 +424,57 @@ def use_sign_in_link(token):
         expired = link["expires"] < now()
         if expired:
             queued = send_sign_in_link(conn, account)
+    if expired:
+        send_now(queued)
+        return render_template("sign_in.html", banner=("error", w.LINK_EXPIRED))
+    session.clear()
+    session.permanent = True
+    session["account_id"] = account["id"]
+    return redirect(home_for(account))
+
+
+def _finish_account_request(token):
+    """"Sign in" on a new account's link: make the account now (Spec DD-13; R2-14)."""
+    try:
+        with engine().begin() as conn:
+            request_row = conn.execute(db.account_requests.select().where(
+                db.account_requests.c.token_hash == token_hash(token))).mappings().first()
+            if request_row is None:
+                return render_template("sign_in.html", banner=("error", w.LINK_INVALID)), 400
+            # Use the request up in a single step: only the request that removes it goes on (DD-7)
+            used = conn.execute(db.account_requests.delete().where(
+                db.account_requests.c.token_hash == request_row["token_hash"])).rowcount
+            if used != 1:
+                return render_template("sign_in.html", banner=("error", w.LINK_INVALID)), 400
+            r = request_row
+            if r["expires"] < now():
+                queued = request_account(conn, r["username"], r["email_encrypted"], r["email_lookup"],
+                                         r["email_block_key"])
+                expired = True
+            else:
+                expired = False
+                if conn.execute(sa.select(db.block_list.c.id).where(
+                        db.block_list.c.email_block_key == r["email_block_key"])).first():
+                    return render_template("create_account.html", form={}, error=w.COULDNT_CREATE,
+                                           error_field=None), 403
+                account = conn.execute(db.accounts.select().where(
+                    db.accounts.c.email_lookup == r["email_lookup"])).mappings().first()
+                if account is None:
+                    if conn.execute(sa.select(db.accounts.c.id).where(
+                            db.accounts.c.username_key == r["username"].lower())).first():
+                        return render_template("create_account.html", form={}, error=w.USERNAME_TAKEN,
+                                               error_field="username"), 409  # UC-2 4a
+                    account_id = conn.execute(db.accounts.insert().values(
+                        username=r["username"], username_key=r["username"].lower(), role="volunteer",
+                        email_encrypted=r["email_encrypted"], email_lookup=r["email_lookup"],
+                        email_block_key=r["email_block_key"], created=now())).inserted_primary_key[0]
+                    account = {"id": account_id, "role": "volunteer"}
+                # The account exists now: the email's other requests stop working (R2-17)
+                conn.execute(db.account_requests.delete().where(
+                    db.account_requests.c.email_lookup == r["email_lookup"]))
+    except sa.exc.IntegrityError:  # the username was taken at the same moment (UC-2 4a)
+        return render_template("create_account.html", form={}, error=w.USERNAME_TAKEN,
+                               error_field="username"), 409
     if expired:
         send_now(queued)
         return render_template("sign_in.html", banner=("error", w.LINK_EXPIRED))
@@ -373,15 +514,19 @@ def create_account():
         lookup = v.lookup_key(form["email"])
         blocked = conn.execute(sa.select(db.block_list.c.id).where(
             db.block_list.c.email_block_key == block_key)).first()
-        in_use = conn.execute(sa.select(db.accounts.c.id).where(db.accounts.c.email_lookup == lookup)).first()
-        if blocked or in_use:
+        if blocked:
             return again(w.COULDNT_CREATE, None)  # never says why (UC-2 3b)
-        account_id = conn.execute(db.accounts.insert().values(
-            username=form["username"], username_key=form["username"].lower(), role="volunteer",
-            email_encrypted=v.encrypt(form["email"]), email_lookup=lookup, email_block_key=block_key,
-            created=now())).inserted_primary_key[0]
-        queued = send_sign_in_link(conn, {"id": account_id, "username": form["username"], "email_lookup": lookup})
-    send_now(queued)
+        owner = conn.execute(db.accounts.select().where(db.accounts.c.email_lookup == lookup)).mappings().first()
+        if owner is not None:
+            # The same reply as a new account; the owner gets a sign-in link instead,
+            # so no one can find out who has an account (PRD v1.3, UC-2 3c; round 2, R2-2)
+            queued = send_sign_in_link(conn, owner)
+        else:
+            # No account yet: only a request, made into an account at "Sign in", so no
+            # number of tries can show who has an account (Spec DD-13; R2-14)
+            queued = request_account(conn, form["username"], v.encrypt(form["email"]), lookup, block_key)
+    # Straight away, and the same either way (Spec DD-10)
+    send_in_background(queued)
     return render_template("sign_in.html", banner=("info", w.CHECK_EMAIL))
 
 
@@ -555,7 +700,7 @@ def my_tasks():
 def _read_task_form():
     form = {
         "title": request.form.get("title", ""),
-        "description": request.form.get("description", ""),
+        "description": one_line_break(request.form.get("description", "")),
         "date": request.form.get("date", ""),
     }
     starts = request.form.getlist("slot_start")
@@ -673,7 +818,7 @@ def message_volunteer(username):
     slot = request.values.get("slot", "")
     if request.method == "GET":
         return render_template("message_volunteer.html", volunteer=volunteer, text="", back=back, slot=slot)
-    text = request.form.get("message", "")
+    text = one_line_break(request.form.get("message", ""))
     if len(text) > 500:
         return render_template("message_volunteer.html", volunteer=volunteer, text=text, back=back, slot=slot,
                                error=w.MESSAGE_LONG), 400
@@ -706,6 +851,18 @@ def block_volunteer(username):
             conn.execute(db.block_list.insert().values(
                 email_block_key=volunteer["email_block_key"], username=volunteer["username"],
                 blocked_by=g.user["username"], blocked_on=now().date()))
+        # Cancel their upcoming sign-ups and give the places back, in the same step;
+        # with no sign-up, no reminder is sent (PRD v1.3, UC-7; round 2, R2-9)
+        upcoming = conn.execute(
+            sa.select(db.signups.c.id, db.signups.c.slot_id)
+            .join(db.slots, db.slots.c.id == db.signups.c.slot_id)
+            .where(db.signups.c.account_id == volunteer["id"], db.slots.c.starts > now())
+        ).all()
+        for signup in upcoming:
+            gone = conn.execute(db.signups.delete().where(db.signups.c.id == signup.id)).rowcount
+            if gone:
+                conn.execute(db.slots.update().where(db.slots.c.id == signup.slot_id)
+                             .values(places_left=db.slots.c.places_left + 1))
     flash(w.BLOCKED, "success")
     return redirect(back)
 

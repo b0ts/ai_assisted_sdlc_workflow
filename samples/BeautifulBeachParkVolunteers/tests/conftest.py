@@ -54,6 +54,9 @@ MSG = {
     "no_sign_ups": "You haven't signed up for anything yet.",
     "no_tasks": "You haven't posted any upcoming tasks.",
     "link_invalid": "This link isn't valid. Please ask for a new one below.",
+    # Added in d05-01 v1.3 (round 2 rework)
+    "finish_heading": "Finish signing in",
+    "finish_text": "One more step: select Sign in to finish signing in.",
 }
 
 ALL_REFUSALS = [
@@ -67,8 +70,8 @@ ALL_REFUSALS = [
 
 def block_confirm_wording(username):
     return (
-        f"Block {username}? They won't be able to sign up for any slots. "
-        "Only the System Administrator can undo this."
+        f"Block {username}? Their upcoming sign-ups will be canceled, and they won't be able "
+        "to sign up for any slots. Only the System Administrator can undo this."
     )
 
 
@@ -290,16 +293,42 @@ def run_command(app, *args):
     return result.output
 
 
-def new_client(app, scheme="https"):
-    """A browser session that visits https://volunteers.example.test (or http:// for T-SEC-02)."""
+def wait_for_emails(app, timeout=30):
+    """Wait until the emails the app is sending in the background have been tried.
+
+    The sign-in and create-account pages answer straight away and send their
+    email in the background (Spec DD-10, round 2). The app keeps those senders
+    in app.extensions["email_senders"] (see tests/README.md).
+    """
+    import time
+
+    senders = app.extensions.get("email_senders")
+    if senders is None:
+        return
+    deadline = time.monotonic() + timeout
+    for worker in list(senders):
+        worker.join(timeout=max(0, deadline - time.monotonic()))
+
+
+def new_client(app, scheme="https", wait=True):
+    """A browser session that visits https://volunteers.example.test (or http:// for T-SEC-02).
+
+    After each request it waits for any email the page is sending in the
+    background, so a test can look in the inbox straight away. Timing tests
+    pass wait=False (T-EM-07, T-SEC-10).
+    """
     client = app.test_client()
     base_url = f"{scheme}://volunteers.example.test"
     plain_open = client.open
+    client.wait_for_emails = wait
 
     def open_with_base_url(*args, **kwargs):
         if args and isinstance(args[0], str):
             kwargs.setdefault("base_url", base_url)
-        return plain_open(*args, **kwargs)
+        resp = plain_open(*args, **kwargs)
+        if client.wait_for_emails:
+            wait_for_emails(app)
+        return resp
 
     client.open = open_with_base_url
     return client
@@ -315,12 +344,19 @@ def sign_in_link(mail):
     return match.group(0)
 
 
+def use_link(client, link, **kw):
+    """Open a sign-in link and press "Sign in" on the page it opens (d05-01 v1.3, UX-7)."""
+    page = client.get(link)
+    assert page.status_code == 200, f"the sign-in link didn't open its page: {page.status_code}"
+    return client.post(link, **kw)
+
+
 def sign_in(client, inbox, email):
     since = len(inbox)
     client.post("/sign-in", data={"email": email})
     sent = mails_to(inbox, email, since)
     assert sent, f"no sign-in email arrived for {email}"
-    resp = client.get(sign_in_link(sent[-1]), follow_redirects=True)
+    resp = use_link(client, sign_in_link(sent[-1]), follow_redirects=True)
     assert resp.status_code == 200, f"sign-in link failed for {email}: {resp.status_code}"
     return resp
 
