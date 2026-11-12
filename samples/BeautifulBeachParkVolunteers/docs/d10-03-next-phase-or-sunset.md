@@ -8,6 +8,7 @@
 > IT are made up, and every number and price is made up for
 > illustration. This sample recommends a new phase. A sunset is shown only
 > as an option that was considered.
+> Aligned on 2026-11-12 with the real app as reviewed in Step 8.
 
 ## 1. Overview
 
@@ -26,7 +27,7 @@
 | Database connections at 14 of 16 on Earth Day | d10-02 Section 5; M-3 | The busiest day already reaches the limit |
 | 468 accounts against a design for 500; about 800 expected this summer | d10-02 Section 5 | The PRD's size limit will be passed by June |
 | Parks IT will charge from July for apps past their limits | d10-02 Section 6 | Going live cost nothing new; growing past Parks IT's limits will not |
-| "Edit a posted task" still the top request | R-2; Issue I4 | A need the PRD didn't include |
+| "Edit a posted task" still the top request | R-2; Issue I4 | Deleting and re-posting (UC-8) works, but loses the sign-ups; editing is still needed |
 | Text reminders requested by volunteers | d10-02 Section 8; PRD Phase 2 | A planned feature is now wanted |
 | Every success measure met | d10-02 Section 7 | The product works; retiring it would lose that |
 
@@ -50,7 +51,7 @@ with the short-term fixes in d10-02 Recommendations 1 and 2.
 | Item | Details |
 |---|---|
 | Problems the new phase must solve | Support 1,000 volunteers and 300 at once (M-3); keep monthly costs within a new approved limit |
-| Known requests carried forward | R-2 / I4 (edit a posted task); text reminders (PRD Phase 2) |
+| Known requests carried forward | R-2 / I4 (edit a posted task); text reminders (PRD Phase 2); the Future Version list from Step 8 (R2-19, d10-01 Section 5.1) |
 | What keeps running meanwhile | Phase 1, with monthly maintenance and the short-term fixes in d10-02 |
 | Starts at | Step 2: Feasibility, with a new one-pager (d02-01) for Phase 2 |
 
