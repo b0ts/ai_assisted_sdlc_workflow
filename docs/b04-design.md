@@ -2,6 +2,8 @@
 
 **Role:** Software Architect · **Prompt:** [c04](../prompts/c04-design-prompt.md) · **Templates:** d04-01 to d04-02
 
+> **Building your own app?** See [Building Your Own App, Step 4](a10-building-your-own-app.md#step-4-design) for what to do in this step for your project.
+
 ## Executive Summary
 
 At the end of [Step 3: Requirements](b03-requirements.md), we know **what**

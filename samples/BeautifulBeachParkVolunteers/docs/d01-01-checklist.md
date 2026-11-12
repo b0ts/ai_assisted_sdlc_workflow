@@ -51,7 +51,7 @@
 | 5 | User Experience | UI/UX Designer | UI/UX Document (d05-01); Style Guide (d05-02) | Park Manager | 2026-10-03 | Approved | |
 | 6 | Initial Infrastructure | DevOps Engineer | Cost Sign-Off Sheet (d06-03); System Infrastructure Document (d06-01); Options (d06-02) | Park Manager | 2026-10-09 | Approved | City's existing servers (Parks IT); $0 new spending (D9) |
 | 7 | Test Creation | SDET | Test Plan (d07-01); Test Results Log (d07-02); tests in `tests/` | Park Manager | 2026-10-16 | Approved | 38 tests, all failing for the right reason; d05-01 and d06-01 updated to v1.1 for the tests |
-| 8 | Implementation | Software Engineer | Working software in `src/`; Implementation Record (d08-01); Developer Guide (d08-02); Release Notes (d08-03); runs added to d07-02 | Park Manager | 2026-12-15 | Approved | 38 of 38 tests pass (Run 4); person's code review done |
+| 8 | Implementation | Software Engineer | Working software in `src/`; Implementation Record (d08-01); Developer Guide (d08-02); Release Notes (d08-03); runs added to d07-02 | Park Manager | 2026-12-15 | Approved | 38 of 38 tests pass (Run 4); two AI code reviews and a hands-on review done, every finding decided |
 | 9 | Release | Release Manager | Release Plan (d09-01); Release Readiness Review (d09-02); Release Notes finalized (d08-03 v1.1); Release Efficacy Document (d09-03); the live app | Park Manager | 2027-02-15 | Approved | Demo approved (D13); moved to Parks IT's servers; live 2027-01-23 after one No-Go (D15); no rollback |
 | 10 | Maintenance | SRE / Maintenance Engineer | Maintenance Log (d10-01); Maintenance Status Reports (d10-02); Next Phase or Sunset Recommendation (d10-03), when needed | Volunteer Program Manager | Ongoing | Not started | |
 
@@ -70,7 +70,7 @@
 | D9 | 2026-10-07 | 6 Initial Infrastructure | Cost sign-off | Park Manager, Volunteer Program Manager | Option A, the city's existing servers run by Parks IT; $0 new spending (d06-03 v1.0) |
 | D10 | 2026-10-09 | 6 Initial Infrastructure | Go to Test Creation | Park Manager | d06-01 v1.0 approved; local environment set up; Parks IT confirmed the live server requirements |
 | D11 | 2026-10-16 | 7 Test Creation | Go to Implementation | Park Manager | Test Plan d07-01 v1.0 approved; 38 of 38 tests failing for the right reason (d07-02) |
-| D12 | 2026-12-11 | 8 Implementation | Go to Release | Park Manager | d08-01, d08-02, and d08-03 v1.0 approved; 38 of 38 tests pass (d07-02 v1.1, Run 4); every screen matches its mockup; person's code review passed |
+| D12 | 2026-12-11 | 8 Implementation | Go to Release | Park Manager | d08-01, d08-02, and d08-03 v1.0 approved; 38 of 38 tests pass (d07-02 v1.1, Run 4); every screen matches its mockup; two AI code reviews and a hands-on review done (d08-04, d08-05), every finding decided |
 | D13 | 2026-12-18 | 9 Release | Demo approved | Park Manager, Volunteer Program Manager | Both tried the app on the local copy with two coordinators (d09-01 Section 1.1); no changes asked for; the move to Parks IT's servers may begin |
 | D14 | 2027-01-08 | 9 Release | Release Plan approved | Park Manager | d09-01 v1.0; Parks IT approved the move; Board treasurer named second contact for Parks IT (I2) |
 | D15 | 2027-01-19 | 9 Release | No-Go; fix first (Option A) | Park Manager, Volunteer Program Manager | d09-02 v1.0: reminders landing in spam at one provider (HS-6, HS-10); newsletter date kept only if fixed by 2027-01-21 |

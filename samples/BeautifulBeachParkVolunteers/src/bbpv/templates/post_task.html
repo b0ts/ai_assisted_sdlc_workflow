@@ -1,31 +1,34 @@
 {% extends "base.html" %}
-{% set title = "Post a task" %}
+{% set title = w.SCREEN.post_task_title %}
 {% block content %}
-<h1>Post a task</h1>
-{% if error %}<div class="banner error" role="alert"><strong>Problem:</strong> {{ error }}</div>{% endif %}
+<h1>{{ w.SCREEN.post_task_title }}</h1>
+{% if error %}{% set kind, text = "error", error %}{% include "_banner.html" %}{% endif %}
 <form method="post" action="/tasks/new">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-  <label for="title">Title</label>
+  <label for="title">{{ w.SCREEN.title_label }}</label>
   <input id="title" class="field" name="title" value="{{ form.title or '' }}" required aria-describedby="title-hint">
-  <p class="small" id="title-hint">Up to 60 characters.</p>
-  <label for="description">Description</label>
+  <p class="small" id="title-hint">{{ w.SCREEN.title_hint }}</p>
+  <label for="description">{{ w.SCREEN.description_label }}</label>
   <textarea id="description" class="field" name="description">{{ form.description or '' }}</textarea>
-  <label for="date">Date</label>
+  <label for="date">{{ w.SCREEN.date_label }}</label>
   <input id="date" class="field" type="date" name="date" value="{{ form.date or '' }}" required>
-  <h2>Slots</h2>
-  <p class="small">Each slot is one hour, with 1 to 20 volunteers. Leave unused rows empty.</p>
+  <h2>{{ w.SCREEN.slots_heading }}</h2>
+  <p class="small">{{ w.SCREEN.slots_hint }}</p>
   {% for i in range(rows) %}
   {% set r = form.rows[i] if i < form.rows|length else {} %}
   <div class="slot-row">
-    <div><label for="start{{ i }}">Slot {{ i + 1 }} starts</label>
+    <div><label for="start{{ i }}">{{ w.slot_start_label(i + 1) }}</label>
       <input id="start{{ i }}" class="field slot-start" type="time" step="900" name="slot_start" value="{{ r.start or '' }}"></div>
-    <div><label for="end{{ i }}">Ends</label>
+    <div><label for="end{{ i }}">{{ w.SCREEN.ends_label }}</label>
       <input id="end{{ i }}" class="field slot-end" type="time" name="slot_end" value="{{ r.end or '' }}" readonly></div>
-    <div><label for="places{{ i }}">Volunteers needed</label>
+    <div><label for="places{{ i }}">{{ w.SCREEN.places_label }}</label>
       <input id="places{{ i }}" class="field" type="number" min="1" max="20" name="places" value="{{ r.places or '' }}"></div>
   </div>
   {% endfor %}
-  <button class="btn" type="submit">Post task</button>
+  {% if rows < max_rows %}
+  <button class="btn secondary" type="submit" name="add_slot" value="yes" formnovalidate>{{ w.SCREEN.add_slot_button }}</button>
+  {% endif %}
+  <button class="btn" type="submit">{{ w.SCREEN.post_button }}</button>
 </form>
 <script>
   // Every slot is one hour (UX-3): the end time follows the start time.

@@ -2,7 +2,7 @@
 
 import datetime as dt
 
-from conftest import MSG, TASK, TODAY, TOMORROW, text
+from conftest import MSG, TASK, TODAY, TOMORROW, slot_time, text
 
 
 def test_t_04_01_cancel_reopens_a_place(beach_task, people):
@@ -15,7 +15,7 @@ def test_t_04_01_cancel_reopens_a_place(beach_task, people):
 
     vol.post(path, data={"confirm": "yes"})
     assert TASK not in text(vol.get("/my-sign-ups"))
-    assert "9:00 – 10:00 2 places left" in text(vol.open_slots())
+    assert f"{slot_time('09:00', '10:00')} 2 places left" in text(vol.open_slots())
 
 
 def test_t_04_02_only_your_own_sign_ups(beach_task, people):

@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% set title = "Block a volunteer" %}
+{% set title = w.SCREEN.block_title %}
 {% block content %}
-<h1>Block a volunteer</h1>
+<h1>{{ w.SCREEN.block_title }}</h1>
 <p>{{ w.block_confirm(volunteer.username) }}</p>
-<form method="post" action="/volunteers/{{ volunteer.username }}/block">
+<form method="post" action="/volunteers/{{ volunteer.username }}/block{% if slot %}?slot={{ slot }}{% endif %}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
   <input type="hidden" name="confirm" value="yes">
-  <button class="btn danger" type="submit">Yes, block</button>
+  <button class="btn danger" type="submit">{{ w.SCREEN.yes_block }}</button>
 </form>
-<a class="btn secondary" href="/my-tasks">Don't block</a>
+<a class="btn secondary" href="{{ back }}">{{ w.SCREEN.dont_block }}</a>
 {% endblock %}

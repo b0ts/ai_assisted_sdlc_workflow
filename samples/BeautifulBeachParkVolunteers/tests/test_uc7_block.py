@@ -48,3 +48,15 @@ def test_t_07_03_admin_undoes_a_block(beach_task, people, admin):
 
     assert MSG["unblocked"] in text(admin.post(path))
     assert MSG["signed_up"] in text(vol4.sign_up())
+
+
+def test_t_07_04_block_returns_to_the_roster(beach_task, people):
+    """HP · d05-01 v1.2, UC-7 flow; round 1, R-9"""
+    vol4 = people("test_vol_04")
+    vol4.sign_up()
+    roster_path = beach_task.roster_path()
+    path = target_of(beach_task.roster(), "Block test_vol_04")
+
+    resp = beach_task.post(path, data={"confirm": "yes"})
+    assert MSG["blocked"] in text(resp)
+    assert resp.request.path == roster_path, "'Yes, block' didn't return to the roster"

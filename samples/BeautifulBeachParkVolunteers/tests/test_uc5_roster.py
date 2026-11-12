@@ -1,6 +1,6 @@
 """UC-5: View a roster (Test Plan Section 7)."""
 
-from conftest import MSG, TASK, slot_label, target_of, text
+from conftest import MSG, TASK, slot_label, slot_time, target_of, text
 
 
 def test_t_05_01_roster_lists_usernames(beach_task, people):
@@ -36,7 +36,7 @@ def test_t_05_04_full_slots_still_reachable(beach_task, people):
     people("test_vol_02").sign_up()
 
     tasks = beach_task.get("/my-tasks")
-    assert "9:00 – 10:00 2 of 2 (Full)" in text(tasks)
+    assert f"{slot_time('09:00', '10:00')} 2 of 2 (Full)" in text(tasks)
     path = target_of(tasks, f"Roster for {TASK}, {slot_label('09:00', '10:00')}")
     assert path, "the full slot has no 'Roster' link"
     assert beach_task.get(path).status_code == 200

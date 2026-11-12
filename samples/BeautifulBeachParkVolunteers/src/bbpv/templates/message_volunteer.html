@@ -1,14 +1,22 @@
 {% extends "base.html" %}
-{% set title = "Message a volunteer" %}
+{% set title = w.SCREEN.message_title %}
 {% block content %}
-<h1>Message {{ volunteer.username }}</h1>
-{% if error %}<div class="banner error" role="alert"><strong>Problem:</strong> {{ error }}</div>{% endif %}
-<form method="post" action="/volunteers/{{ volunteer.username }}/message">
+<h1>{{ w.message_heading(volunteer.username) }}</h1>
+{% if error %}{% set kind, text = "error", error %}{% include "_banner.html" %}{% endif %}
+<form method="post" action="/volunteers/{{ volunteer.username }}/message{% if slot %}?slot={{ slot }}{% endif %}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-  <label for="message">Message</label>
-  <textarea id="message" class="field" name="message" maxlength="500" required aria-describedby="message-hint">{{ text }}</textarea>
-  <p class="small" id="message-hint">Up to 500 characters. {{ volunteer.username }} gets it by email from the park's no-reply address. Neither of you sees the other's email.</p>
-  <button class="btn" type="submit">Send</button>
+  <label for="message">{{ w.SCREEN.message_label }}</label>
+  <textarea id="message" class="field" name="message" maxlength="500" required aria-describedby="message-count message-hint">{{ text }}</textarea>
+  <p class="small" id="message-count" aria-live="polite" data-wording="{{ w.counter('{n}') }}">{{ w.counter(text|length) }}</p>
+  <p class="small" id="message-hint">{{ w.message_hint(volunteer.username) }}</p>
+  <button class="btn" type="submit">{{ w.SCREEN.send_button }}</button>
 </form>
-<a class="btn secondary" href="/my-tasks">Back to my tasks</a>
+<a class="btn secondary" href="{{ back }}">{{ w.SCREEN.back_to_roster }}</a>
+<script>
+  // The live counter (d05-01 v1.2, S-9). Without JavaScript it shows the count when the page loads.
+  (function () {
+    var box = document.getElementById("message"), count = document.getElementById("message-count");
+    box.addEventListener("input", function () { count.textContent = count.dataset.wording.replace("{n}", box.value.length); });
+  })();
+</script>
 {% endblock %}

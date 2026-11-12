@@ -2,6 +2,8 @@
 
 **Role:** DevOps Engineer · **Prompt:** [c06](../prompts/c06-initial-infrastructure-prompt.md) · **Templates:** d06-01 to d06-03
 
+> **Building your own app?** See [Building Your Own App, Step 6](a10-building-your-own-app.md#step-6-initial-infrastructure) for what to do in this step for your project.
+
 ## Executive Summary
 
 At the end of [Step 5: User Experience](b05-user-experience.md), we know

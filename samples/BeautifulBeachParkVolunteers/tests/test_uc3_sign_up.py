@@ -3,7 +3,7 @@
 import threading
 
 from conftest import (
-    DAY_AFTER, MSG, TASK, mails_to, new_client, run_command, sign_in, slot_label, target_of, text,
+    DAY_AFTER, MSG, TASK, TOMORROW, mails_to, new_client, run_command, sign_in, slot_label, slot_time, target_of, text,
 )
 
 
@@ -12,7 +12,7 @@ def test_t_03_01_sign_up(beach_task, people):
     vol = people("test_vol_01")
     resp = vol.sign_up()
     assert MSG["signed_up"] in text(resp)
-    assert "9:00 – 10:00 1 place left" in text(vol.open_slots())
+    assert f"{slot_time('09:00', '10:00')} 1 place left" in text(vol.open_slots())
 
 
 def test_t_03_02_last_place_shows_full(beach_task, people):
@@ -22,7 +22,7 @@ def test_t_03_02_last_place_shows_full(beach_task, people):
     assert MSG["signed_up"] in text(vol2.sign_up())
 
     page = vol2.open_slots()
-    assert "9:00 – 10:00 Full" in text(page)
+    assert f"{slot_time('09:00', '10:00')} Full" in text(page)
     assert target_of(page, f"Sign up for {TASK}, {slot_label('09:00', '10:00')}") is None
 
 
@@ -66,7 +66,7 @@ def test_t_03_04_never_over_filled_at_the_same_moment(app, inbox, coord, people)
         winners = [u for u, r in replies.items() if MSG["signed_up"] in r]
         assert len(winners) == 1, f"round {round_no}: {len(winners)} volunteers got the last place"
         tasks = text(coord.get("/my-tasks"))
-        assert f"{title} 9:00 – 10:00 1 of 1" in tasks, f"round {round_no}: places filled is wrong"
+        assert f"{title} {slot_time('09:00', '10:00')} 1 of 1" in tasks, f"round {round_no}: places filled is wrong"
 
 
 def test_t_03_05_already_signed_up(beach_task, people):
@@ -103,3 +103,27 @@ def test_t_03_07_reminder_the_day_before(app, inbox, beach_task, people):
     assert len(to_vol1) == 1
     assert TASK in to_vol1[0]["subject"] + to_vol1[0]["text"]
     assert not mails_to(inbox, vol2.email, since)
+
+
+def test_t_03_08_confirmation_email_straight_after_signing_up(app, inbox, clock, beach_task, people):
+    """HP · UC-3 main flow step 3, AC5 (PRD v1.2); round 1, R-4"""
+    vol1 = people("test_vol_01")
+    since = len(inbox)
+    vol1.sign_up(TASK)
+    sent = mails_to(inbox, vol1.email, since)
+    assert len(sent) == 1, "no confirmation email straight after signing up"
+    mail = sent[0]["subject"] + " " + sent[0]["text"]
+    assert TASK in mail
+    assert f"{TOMORROW.strftime('%B')} {TOMORROW.day}" in mail
+    assert slot_time("09:00", "10:00") in mail
+
+    # After the 6 p.m. reminder run, a sign-up for tomorrow still gets an email straight away.
+    clock.advance(hours=6)  # 6 p.m.
+    run_command(app, "send-reminders")
+    clock.advance(hours=1)  # 7 p.m.
+    vol2 = people("test_vol_02")
+    since = len(inbox)
+    vol2.sign_up(TASK, "10:00", "11:00")
+    sent = mails_to(inbox, vol2.email, since)
+    assert len(sent) == 1, "a late sign-up for tomorrow got no email"
+    assert slot_time("10:00", "11:00") in sent[0]["subject"] + " " + sent[0]["text"]

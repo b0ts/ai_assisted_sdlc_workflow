@@ -1,7 +1,7 @@
 # BeautifulBeachPark Volunteers: Software Design Specification (Spec)
 
-**Document:** d04-01 · **Step:** 4, Design · **Version:** 1.1
-· **Last updated:** 2026-09-30 · **Status:** Approved
+**Document:** d04-01 · **Step:** 4, Design · **Version:** 1.2
+· **Last updated:** 2026-10-25 · **Status:** Approved
 · **Owner:** Software Architect (Design chat)
 
 **Diagrams included:** System Overview; UML Sequence Diagram for every use
@@ -69,19 +69,21 @@ flowchart LR
 |---|---|---|---|
 | Client | Shows slots, rosters, and forms; never receives an email address | Web pages (HTML, CSS, JavaScript) | UC-1 to UC-7 |
 | Application server | Checks every rule: one-hour slots, places left, who may do what, the block list | Python web service (e.g., Flask) | UC-1 to UC-7 |
-| Reminder job | Once a day, emails volunteers whose slot is tomorrow | Scheduled task on the application server | UC-3 |
+| Scheduled jobs | Once a day, emails volunteers whose slot is tomorrow; every 5 minutes, sends queued emails and retries failed ones; once a day, removes tasks 12 months after their date | Scheduled tasks on the application server | UC-1, UC-3 |
 | Database | Stores accounts, tasks, slots, sign-ups, and the block list | Relational database (e.g., PostgreSQL) | UC-1 to UC-7 |
-| Email service | Sends sign-in links, reminders, and relayed messages | Email-sending service (exact service chosen in Step 6) | UC-2, UC-3, UC-6 |
+| Email service | Sends sign-in links, sign-up confirmations, reminders, and relayed messages | Email-sending service (exact service chosen in Step 6) | UC-2, UC-3, UC-6 |
 
 ## 6. Data
 
 | Item (entity) | What it holds | Personal information? | Kept for how long | Use cases |
 |---|---|---|---|---|
 | Account | Username (3 to 20 letters, numbers, or underscores), role, email (encrypted) | Yes: email | Until the account is deleted | UC-2 to UC-7 |
-| Task | Title (up to 60 characters), description, date, posted by | No | 12 months after its date | UC-1 |
+| Task | Title (up to 60 characters), description (up to 1,000 characters), date, posted by; 1 to 10 slots | No | 12 months after its date, then removed by the daily clean-up | UC-1 |
 | Slot | Task, start time, end time (exactly one hour later), places needed (1 to 20), places left | No | With its task | UC-1, UC-3, UC-4, UC-5 |
 | Sign-up | Slot, username, time signed up | No | With its slot | UC-3, UC-4, UC-5 |
 | Block list entry | Scrambled (hashed) copy of the standardized email, blocked by, date | Yes, but scrambled | Until the System Administrator removes it | UC-2, UC-3, UC-7 |
+| Queued email | Account, subject and text (encrypted), when to try next, attempts, when it expires, and a short reason for the last failure (never an address or the email service's own reply) | Yes: a sign-in email holds a sign-in link, so the text is encrypted | Until it's sent, or until it expires: a sign-in email with its link, a confirmation or reminder when the slot starts, a message after 3 days | UC-2, UC-3, UC-6 |
+| Sign-in email count | Scrambled (hashed) copy of the email, time sent | Yes, but scrambled | 24 hours | All (sign-in) |
 
 **Standardized email:** before checking the block list, the server writes
 the email in lowercase and removes dots and any "+" tag before the "@," so
@@ -91,12 +93,12 @@ the email in lowercase and removes dots and any "+" tag before the "@," so
 
 | Request | From → To | Sends | Returns when it works | Returns when it fails | Use cases |
 |---|---|---|---|---|---|
-| Send sign-in link | Client → Server | Email | "Check your email" (always, so no one can test which emails exist) | — | All (sign-in) |
+| Send sign-in link | Client → Server | Email | "Check your email" (always, so no one can test which emails exist; after 10 emails to one address in 24 hours, no more are sent) | — | All (sign-in) |
 | Sign in | Client → Server | Link from the email | Signed in | "This link has expired" | All (sign-in) |
 | Create account | Client → Server | Username, email, privacy notice accepted | Account created | "That username is taken"; "We couldn't create this account" | UC-2 |
-| Post task | Client → Server | Title, description, date, slots, places per slot | Task saved | "Each slot must be one hour"; "Each slot needs 1 to 20 volunteers"; "Not allowed" | UC-1 |
+| Post task | Client → Server | Title, description, date, slots (1 to 10), places per slot | Task saved | "Each slot must be one hour"; "Each slot needs 1 to 20 volunteers"; "A task can have up to 10 slots"; "Descriptions can be up to 1,000 characters"; "Not allowed" | UC-1 |
 | List open slots | Client → Server | Date (optional) | Slots, with places left | "No open slots" | UC-3 |
-| Sign up | Client → Server | Slot | "You're signed up!" | "Sorry, this slot was just taken"; "You're already signed up for this slot"; "Not allowed" | UC-3 |
+| Sign up | Client → Server | Slot | "You're signed up!", and a confirmation email | "Sorry, this slot was just taken"; "You're already signed up for this slot"; "Not allowed" | UC-3 |
 | List my sign-ups | Client → Server | — | The volunteer's own sign-ups | — | UC-4 |
 | Cancel sign-up | Client → Server | Sign-up | Canceled | "This slot has already started"; "Not allowed" | UC-4 |
 | Get roster | Client → Server | Slot | Usernames only | "No one has signed up yet" | UC-5 |
@@ -105,7 +107,7 @@ the email in lowercase and removes dots and any "+" tag before the "@," so
 | Block volunteer | Client → Server | Username | "Blocked" | "Not allowed" | UC-7 |
 | Undo block | Client → Server | Username | "Block removed" | "Not allowed" | UC-7 |
 | List blocked volunteers | Client → Server | — | Usernames (or "account deleted"), blocked by, and date; never emails | "Not allowed" | UC-7 |
-| Send email | Server → Email service | To, subject, text | Accepted | Retried later | UC-2, UC-3, UC-6 |
+| Send email | Server → Email service | To, subject, text | Accepted | Kept in the queue and retried every 5 minutes until accepted or expired | UC-2, UC-3, UC-6 |
 
 ## 8. Use Case Coverage
 
@@ -192,8 +194,10 @@ sequenceDiagram
     S->>DB: Take one place, only if one is left (one sign-up at a time)
     alt A place was taken for this volunteer
         DB-->>S: Saved; places left goes down by one
+        S->>DB: Queue a confirmation email (in the same step)
         S-->>C: "You're signed up!"
         C-->>V: Shows the confirmation
+        S->>E: Send the confirmation email
     else Last place was just taken by someone else
         DB-->>S: No places left
         S-->>C: "Sorry, this slot was just taken"
@@ -308,7 +312,7 @@ sequenceDiagram
 | Reliability | Available 99% of the time | Nightly database backups, and hosting that restarts the app if it stops (exact setup in Step 6) |
 | Accessibility | WCAG 2.1 AA | Client built to WCAG 2.1 AA; screen detail in Step 5 |
 | Devices and browsers | Current phone and desktop browsers | Web app; one version for every device |
-| Languages | English only in Phase 1 | All wording kept in one place, so other languages can be added later |
+| Languages | English only in Phase 1 | All wording kept in one place (one wording file): messages, emails, and every heading, label, and button, so other languages can be added later |
 | Privacy and data | Username and email only; emails never shown | See Section 11 |
 
 ## 11. Security & Compliance
@@ -320,6 +324,7 @@ sequenceDiagram
 | Volunteer email | The application server only; the System Administrator through the database | Stored encrypted; never sent to the client; sent only to the email service |
 | Block list | Coordinators add; only the System Administrator removes | Scrambled (hashed) copy only, so it is kept even if the account is deleted |
 | Sign-ups and rosters | Volunteers see their own; coordinators see usernames | Server checks the role on every request |
+| Queued emails | The application server only | Subject and text stored encrypted; deleted once sent; a sign-in email is dropped when its link expires; failure reasons and logs never hold an address (round 1, R-14) |
 | Everything | — | HTTPS (encrypted connections) only; plain HTTP is turned off |
 
 **Sign-in and permissions:** Everyone signs in with a one-time link sent to
@@ -334,7 +339,7 @@ Administrator can undo a block.
 |---|---|---|---|
 | Task titles and descriptions | Written by park coordinators | Yes | The park owns them |
 | Open-source code libraries | Public package sites | Yes | Follow each license; keep a list in `src/` |
-| Code and text written by AI | The workflow's AI chats | Yes | Reviewed by a person before it goes live |
+| Code and text written by AI | The workflow's AI chats | Yes | Two independent AI code reviews and a person's hands-on review, with a person deciding on every finding, before it goes live |
 
 ### 11.3 Laws and Rules
 
@@ -351,8 +356,10 @@ Administrator can undo a block.
 
 - Only made-up sample data is ever pasted into AI chats; real emails never
   are.
-- AI-written code is checked by automated tests, and by a person, before
-  release.
+- AI-written code is checked by automated tests, by two independent AI
+  code reviews (from tools that didn't write it), and by a person's
+  hands-on review of the running app, with a person deciding on every
+  finding, before release.
 
 ## 12. Situational Diagrams
 
@@ -399,12 +406,16 @@ classDiagram
 | DD-3 | Sign in with a one-time email link | Passwords, email link | No passwords to forget or protect | 2026-09-19 |
 | DD-4 | Keep emails encrypted, and a hashed copy for the block list | Plain email, encrypted email | Emails never seen; blocks still work after deletion | 2026-09-19 |
 | DD-5 | Take the last place in a single database step | Check then save, single step | A slot can never be over-filled | 2026-09-22 |
+| DD-6 | Every email goes through a queue in the database, saved in the same step as the change it's about. The page that queued it tries to send it once, waiting at most 5 seconds in all (the sending carries on in the background if the service is slow); the 5-minute job sends the rest and retries failures every 5 minutes until accepted or expired. Each reminder is claimed before it's queued. Known limit: if the app stops just after the email service accepts an email, that one email can be sent twice | Send straight away, queue first | No email is lost when the email service is down; the sign-in reply stays the same; pages never wait for other people's emails; two reminder runs never send a reminder twice (round 1, R-2, R-15) | 2026-10-25 |
+| DD-7 | A sign-in link is used up in a single database step; only the request that removes it signs in | Check then remove, single step | A link can never sign in twice (round 1, R-1) | 2026-10-25 |
+| DD-8 | The park's time zone is a setting (`PARK_TIMEZONE`), and every "now" uses park time | Server's own clock, a park setting | "Tomorrow" and cancellation cutoffs stay right on any server (round 1, R-10) | 2026-10-25 |
+| DD-9 | At most 10 sign-in emails per address in 24 hours, counted by a scrambled copy of the email. Each request records its email first and counts after, with the account locked, so requests at the same moment can't slip past | No limit, a limit per address | No one can flood an inbox or use up the city's 3,000 emails a month (round 1, R-6; PRD 6) | 2026-10-25 |
 
 ## 14. Risks
 
 | Risk | Likelihood | Impact | What we'll do about it |
 |---|---|---|---|
-| Email service is down | Low | Medium | Retry later; sign-ups are still saved |
+| Email service is down | Low | Medium | Emails wait in the queue and are retried every 5 minutes; sign-ups are still saved (DD-6) |
 | Reminder emails land in spam | Medium | Medium | Send from the park's own address; the DevOps Engineer sets this up |
 | Some older volunteers won't use the app | Medium | Low | Coordinators can keep the paper sheet for a while |
 
@@ -433,3 +444,4 @@ classDiagram
 |---|---|---|---|---|
 | 1.0 | 2026-09-25 | First version | — | Park Manager |
 | 1.1 | 2026-09-30 | Added the "List my tasks" and "List blocked volunteers" requests | Requested by the UI/UX Designer (d05-01 Section 16): screens S-6 and S-10 had no request to use | Park Manager (with D7) |
+| 1.2 | 2026-10-25 | Email queue with retries (DD-6), one-step sign-in links (DD-7), park time zone (DD-8), sign-in email limit (DD-9), sign-up confirmation email, 12-month clean-up job, task limits | Round 1 code review (Codex), findings R-1 to R-4, R-6, R-10, R-12; PRD v1.2 | Park Manager, 2026-10-25 |

@@ -1,26 +1,26 @@
 {% extends "base.html" %}
-{% set title = "Blocked volunteers" %}
+{% set title = w.SCREEN.blocked_title %}
 {% block content %}
-<h1>Blocked volunteers</h1>
-<p class="small">Usernames only. Only you, the System Administrator, can undo a block.</p>
+<h1>{{ w.SCREEN.blocked_title }}</h1>
+<p class="small">{{ w.SCREEN.blocked_hint }}</p>
 {% if rows %}
 <table>
-  <tr><th scope="col">Username</th><th scope="col">Blocked by</th><th scope="col">Date</th><th scope="col"><span class="small">Action</span></th></tr>
+  <tr><th scope="col">{{ w.SCREEN.col_username }}</th><th scope="col">{{ w.SCREEN.col_blocked_by }}</th><th scope="col">{{ w.SCREEN.col_date }}</th><th scope="col"><span class="small">{{ w.SCREEN.col_action }}</span></th></tr>
   {% for r in rows %}
   <tr>
-    <td>{{ r.username or "(account deleted)" }}</td>
+    <td>{{ r.username or w.SCREEN.account_deleted }}</td>
     <td>{{ r.blocked_by }}</td>
     <td>{{ r.blocked_on.isoformat() }}</td>
     <td>{% if r.username %}
       <form method="post" action="/blocked/{{ r.username }}/undo">
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-        <button class="btn inline secondary" type="submit" aria-label="Undo block for {{ r.username }}">Undo block</button>
+        <button class="btn inline secondary" type="submit" aria-label="{{ w.undo_block_label(r.username) }}">{{ w.SCREEN.undo_block_button }}</button>
       </form>
-      {% else %}<span class="small">Stays blocked</span>{% endif %}</td>
+      {% else %}<span class="small">{{ w.SCREEN.stays_blocked }}</span>{% endif %}</td>
   </tr>
   {% endfor %}
 </table>
 {% else %}
-<p>No one is blocked.</p>
+<p>{{ w.NO_BLOCKS }}</p>
 {% endif %}
 {% endblock %}

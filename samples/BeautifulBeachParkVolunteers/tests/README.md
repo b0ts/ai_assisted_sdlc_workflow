@@ -35,7 +35,7 @@ Everything runs on your own computer, at no cost. No real emails are sent.
 3. Run `pytest -m "not monkey and not browser"` while building. This skips
    the two long monkey tests and the two browser tests, and takes under a
    minute.
-4. Before sign-off, run plain `pytest` to run all 38.
+4. Before sign-off, run plain `pytest` to run all 58.
 
 Or ask Claude Code: "Run the tests in this project and summarize which pass
 and which fail."
@@ -69,7 +69,8 @@ SDET chat (Test Plan Section 11); don't change the tests.
 | `TESTING` | `True` | Turn off request forgery tokens (CSRF) if the app uses them |
 | `DATABASE_URL` | A SQLite file, or `TEST_DATABASE_URL` | Store everything there, creating the tables if they're missing |
 | `CLOCK` | A function returning the current park time (a `datetime` with no time zone) | Use it for **every** "now": slot started, tomorrow's reminders, link expiry |
-| `TEST_INBOX` | An empty Python list | Instead of sending email, append one dictionary per email: `{"to", "from", "subject", "text"}` |
+| `TEST_INBOX` | An empty list | Instead of sending email, append one dictionary per email: `{"to", "from", "subject", "text"}`. When a test sets `inbox.down = True`, `append` raises an error, like an email service that is down: the app must keep the email and send it later (T-EM tests). When it sets `inbox.reject = True`, `append` raises the mail library's "recipient refused" error, which names the address (T-EM-04). `inbox.slow = 3` makes each email take 3 seconds (T-EM-07) |
+| `PARK_TIMEZONE` | Left out (T-QR-03 passes a zone, with no `CLOCK`) | Without `CLOCK`, use the time in this zone for every "now" |
 | `SECRET_KEY` | A test-only value | Sign sessions and sign-in links |
 | `BASE_URL` | `https://volunteers.example.test` | Start the links in emails with it |
 | `FORCE_HTTPS` | Left out (browser tests pass `False`) | By default, send any `http://` request to `https://` (T-SEC-02) |
@@ -86,7 +87,9 @@ command runner.
 |---|---|
 | `create-account USERNAME EMAIL --role volunteer\|coordinator\|admin` | Creates an account (how coordinator and admin accounts are made) |
 | `delete-account USERNAME` | Deletes an account; its block list entry stays (T-SEC-03) |
-| `send-reminders` | The reminder job: emails everyone signed up for a slot tomorrow |
+| `send-reminders` | The reminder job: emails everyone signed up for a slot tomorrow, once each, even if it runs twice |
+| `send-emails` | Sends queued emails and retries ones that failed (T-EM tests) |
+| `clean-up` | Removes tasks dated more than 12 months ago, with their slots and sign-ups (T-DATA-01) |
 
 ### Screens and addresses
 
@@ -97,19 +100,20 @@ page, so everything works without JavaScript.
 |---|---|---|
 | S-1 Sign In | `GET/POST /sign-in` (field `email`); the emailed link is `/sign-in/<token>` | |
 | S-2 Create Account | `GET/POST /create-account` (fields `username`, `email`, checkbox `privacy_accepted`) | |
-| S-3 Open Slots | `GET /slots` | Each slot shows its time, then its places: `9:00 – 10:00` (en dash), then `2 places left`, `1 place left`, or `Full`. Each open slot has a link to S-4 with `aria-label="Sign up for <title>, 9 to 10"` |
+| S-3 Open Slots | `GET /slots` | Each slot shows its time, then its places: `9:00 – 10:00 a.m.` (en dash), then `2 places left`, `1 place left`, or `Full`. Each open slot has a link to S-4 with `aria-label="Sign up for <title>, 9:00 to 10:00 a.m."` |
 | S-4 Confirm Sign-Up | `GET /slots/<id>/confirm`; confirming is `POST /slots/<id>/sign-up` | |
-| S-5 My Sign-Ups | `GET /my-sign-ups` | Each sign-up has a link to its cancel page with `aria-label="Cancel <title>, April 21, 9 to 10"` |
+| S-5 My Sign-Ups | `GET /my-sign-ups` | Each sign-up has a link to its cancel page with `aria-label="Cancel <title>, April 21, 9:00 to 10:00 a.m."` |
 | Cancel confirm | `GET/POST /sign-ups/<id>/cancel` | The page has a "Yes, cancel" button |
-| S-6 My Tasks | `GET /my-tasks` | A table row per slot: title, time, `2 of 2` (plus `(Full)` when full), and a link with `aria-label="Roster for <title>, 9 to 10"` |
-| S-7 Post a Task | `GET/POST /tasks/new` | Fields `title`, `description`, `date` (`2027-04-21`), and for each slot `slot_start`, `slot_end` (`09:00`), `places`, repeated in order |
+| S-6 My Tasks | `GET /my-tasks` | A table row per slot: title, time, `2 of 2` (plus `(Full)` when full), and a link with `aria-label="Roster for <title>, 9:00 to 10:00 a.m."` |
+| S-7 Post a Task | `GET/POST /tasks/new` | Fields `title`, `description`, `date` (`2027-04-21`), and for each slot `slot_start`, `slot_end` (`09:00`), `places`, repeated in order. Three rows to start; the "Add another slot" button is `<button name="add_slot">`, and posting with it shows the form again with one more row, up to 10, saving nothing |
 | S-8 Roster | `GET /slots/<id>/roster` | Links with `aria-label="Message <username>"` and `aria-label="Block <username>"` |
-| S-9 Message | `GET/POST /volunteers/<username>/message` (field `message`) | |
-| Block confirm | `GET/POST /volunteers/<username>/block` | Shows the d05-01 confirm wording |
+| S-9 Message | `GET/POST /volunteers/<username>/message` (field `message`) | Shows `0 of 500 characters`. Sending returns to the roster the link came from, with "Message sent." |
+| Block confirm | `GET/POST /volunteers/<username>/block` | Shows the d05-01 confirm wording. "Yes, block" returns to the roster the link came from, with "Blocked." |
 | S-10 Blocked Volunteers | `GET /blocked`; undo is `POST /blocked/<username>/undo` from a form whose button has `aria-label="Undo block for <username>"` | |
 
-Times in labels use the 12-hour clock without "a.m." or "p.m.", as in the
-mockups: a 1:00 p.m. slot is `1:00 – 2:00` and `1 to 2`.
+Times use the 12-hour clock with "a.m." or "p.m." (d05-01 v1.2, UX-6): a
+1:00 p.m. slot is `1:00 – 2:00 p.m.` and `1:00 to 2:00 p.m.`; an 11:30
+slot is `11:30 a.m. – 12:30 p.m.`.
 
 ### Messages
 
@@ -123,15 +127,16 @@ this is wrong."
 | File | Tests |
 |---|---|
 | `conftest.py` | Shared setup: the app, the test inbox, the clock, test accounts, and helpers |
-| `test_uc1_post_task.py` | T-01-01 to T-01-05 |
+| `test_uc1_post_task.py` | T-01-01 to T-01-07 |
 | `test_uc2_create_account.py` | T-02-01 to T-02-05 |
-| `test_uc3_sign_up.py` | T-03-01 to T-03-07 |
+| `test_uc3_sign_up.py` | T-03-01 to T-03-08 |
 | `test_uc4_cancel.py` | T-04-01 to T-04-03 |
 | `test_uc5_roster.py` | T-05-01 to T-05-04 |
-| `test_uc6_message.py` | T-06-01, T-06-02 |
-| `test_uc7_block.py` | T-07-01 to T-07-03 |
-| `test_security.py` | T-SEC-01 to T-SEC-05 |
+| `test_uc6_message.py` | T-06-01 to T-06-03 |
+| `test_uc7_block.py` | T-07-01 to T-07-04 |
+| `test_security.py` | T-SEC-01 to T-SEC-08 |
 | `test_quality.py` | T-QR-01, T-QR-02 (browser) |
+| `test_operations.py` | T-EM-01 to T-EM-07, T-DATA-01, T-QR-03, T-WD-01 to T-WD-03 (added in v1.2 to v1.4) |
 | `test_monkey.py` | T-MK-01, T-MK-02 (monkey) |
 
 All test data is made up: usernames like `test_vol_01` and emails ending in

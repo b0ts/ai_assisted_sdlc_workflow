@@ -2,6 +2,8 @@
 
 **Role:** UI/UX Designer · **Prompt:** [c05](../prompts/c05-user-experience-prompt.md) · **Templates:** d05-01 to d05-02
 
+> **Building your own app?** See [Building Your Own App, Step 5](a10-building-your-own-app.md#step-5-user-experience) for what to do in this step for your project.
+
 ## Executive Summary
 
 At the end of [Step 4: Design](b04-design.md), we know **what** the product

@@ -41,6 +41,12 @@ class EmailVault:
     def decrypt(self, token):
         return self._fernet.decrypt(token.encode()).decode("utf-8", "surrogatepass")
 
+    def encrypt_text(self, text):
+        """For queued emails: the text exactly as written."""
+        return self._fernet.encrypt(text.encode("utf-8", "surrogatepass")).decode()
+
+    decrypt_text = decrypt
+
     def _hash(self, text):
         return hmac.new(self._hash_key, text.encode("utf-8", "surrogatepass"), hashlib.sha256).hexdigest()
 

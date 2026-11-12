@@ -54,3 +54,6 @@ is an alternative.
   diagrams
 - [Unified Modeling Language (Wikipedia)](https://en.wikipedia.org/wiki/Unified_Modeling_Language):
   a plain introduction to UML
+
+**Next:** [Step 1: Tracking](b01-tracking.md)
+starts the ten step guides, beginning with the chat that tracks the whole project.

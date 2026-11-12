@@ -145,3 +145,102 @@ def test_t_sec_05_sign_in_reply_never_reveals_who_has_an_account(app, inbox, clo
     resp = new_client(app).get(link, follow_redirects=True)
     assert MSG["link_expired"] in text(resp)
     assert len(mails_to(inbox, "test_vol_01@example.test", since)) == 1, "no new link was sent"
+
+
+def test_t_sec_06_a_sign_in_link_never_works_twice_at_once(app, inbox):
+    """EF · Spec 11.1, DD-3, DD-7; round 1, R-1
+
+    The second use of the link is made at the worst moment: after the first
+    request has read the link, just before it removes it.
+    """
+    import sqlalchemy as sa
+
+    run_command(app, "create-account", "test_vol_01", "test_vol_01@example.test", "--role", "volunteer")
+    first, second = new_client(app), new_client(app)
+    first.post("/sign-in", data={"email": "test_vol_01@example.test"})
+    link = sign_in_link(mails_to(inbox, "test_vol_01@example.test")[-1])
+
+    engine = app.extensions["engine"]
+    replies, armed = {}, [True]
+
+    def just_before_delete(conn, cursor, statement, params, context, executemany):
+        if armed[0] and statement.lstrip().upper().startswith("DELETE FROM SIGN_IN_LINKS"):
+            armed[0] = False
+            replies["second"] = second.get(link)
+
+    sa.event.listen(engine, "before_cursor_execute", just_before_delete)
+    try:
+        replies["first"] = first.get(link)
+    finally:
+        sa.event.remove(engine, "before_cursor_execute", just_before_delete)
+
+    assert "second" in replies, "the test couldn't reach the moment it checks"
+    signed_in = [name for name, resp in replies.items() if resp.status_code in (302, 303)]
+    assert len(signed_in) == 1, f"the same link signed in {len(signed_in)} times"
+
+
+def test_t_sec_07_at_most_ten_sign_in_emails_a_day(app, inbox, clock):
+    """BC · PRD 6, Email limits (v1.2); Spec DD-9; round 1, R-6"""
+    run_command(app, "create-account", "test_vol_01", "test_vol_01@example.test", "--role", "volunteer")
+    client = new_client(app)
+    replies = []
+    for _ in range(12):
+        resp = client.post("/sign-in", data={"email": "test_vol_01@example.test"}, follow_redirects=True)
+        replies.append(text(resp))
+        clock.advance(minutes=5)
+    assert len(mails_to(inbox, "test_vol_01@example.test")) == 10
+    assert all(r == replies[0] for r in replies), "the reply changed once the limit was reached"
+    assert MSG["check_email"] in replies[-1]
+
+    clock.advance(hours=24)
+    client.post("/sign-in", data={"email": "test_vol_01@example.test"})
+    assert len(mails_to(inbox, "test_vol_01@example.test")) == 11, "the limit didn't reset after 24 hours"
+
+
+def test_t_sec_08_the_limit_holds_for_requests_at_the_same_moment(app, inbox, clock):
+    """BC · PRD 6, Email limits; Spec DD-9; round 1 re-review, R-6 and R-17
+
+    With 9 emails sent, two requests arrive at once: the second starts at the
+    worst moment, after the first has begun, just before it records its email.
+    The two run side by side, each with a bounded wait, so the test can never
+    hang, even on PostgreSQL, where the second waits for the first's lock.
+    """
+    import threading
+
+    import sqlalchemy as sa
+
+    run_command(app, "create-account", "test_vol_01", "test_vol_01@example.test", "--role", "volunteer")
+    first, second = new_client(app), new_client(app)
+    for _ in range(9):
+        first.post("/sign-in", data={"email": "test_vol_01@example.test"})
+        clock.advance(minutes=1)
+    assert len(mails_to(inbox, "test_vol_01@example.test")) == 9
+
+    engine = app.extensions["engine"]
+    armed, errors, started = [True], [], []
+
+    def second_request():
+        try:
+            second.post("/sign-in", data={"email": "test_vol_01@example.test"})
+        except Exception as e:  # reported below, never left hanging
+            errors.append(e)
+
+    def second_request_now(conn, cursor, statement, params, context, executemany):
+        if armed[0] and statement.lstrip().upper().startswith("INSERT INTO SIGN_IN_EMAILS"):
+            armed[0] = False
+            t = threading.Thread(target=second_request, daemon=True)
+            started.append(t)
+            t.start()
+            t.join(timeout=1)  # give it a head start; it may be waiting for this request's lock
+
+    sa.event.listen(engine, "before_cursor_execute", second_request_now)
+    try:
+        first.post("/sign-in", data={"email": "test_vol_01@example.test"})
+    finally:
+        sa.event.remove(engine, "before_cursor_execute", second_request_now)
+
+    assert started, "the test couldn't reach the moment it checks"
+    started[0].join(timeout=30)
+    assert not started[0].is_alive(), "the second request never finished"
+    assert not errors, f"the second request failed: {errors[0]!r}"
+    assert len(mails_to(inbox, "test_vol_01@example.test")) == 10, "not exactly 10 sign-in emails in a day"

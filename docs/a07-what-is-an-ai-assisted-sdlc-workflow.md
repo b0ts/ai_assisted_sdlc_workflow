@@ -165,3 +165,6 @@ each numbered the same way.
   step's deliverable for one made-up project
 - [Prompt Engineering](a06-prompt-engineering.md): how to choose and write
   the kind of prompt each chat needs
+
+**Next:** [Implementing an AI-Assisted SDLC Workflow](a08-implementing-an-ai-assisted-sdlc-workflow.md)
+sets up your computer, Claude, and GitHub for your own project.

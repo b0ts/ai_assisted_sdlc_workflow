@@ -1,7 +1,7 @@
 # BeautifulBeachPark Volunteers: UI/UX Document
 
-**Document:** d05-01 · **Step:** 5, User Experience · **Version:** 1.1
-· **Last updated:** 2026-10-13 · **Status:** Approved
+**Document:** d05-01 · **Step:** 5, User Experience · **Version:** 1.2
+· **Last updated:** 2026-10-25 · **Status:** Approved
 · **Owner:** UI/UX Designer (User Experience chat)
 
 **Screens included:** 10 screens covering 7 use cases. User flow for every
@@ -196,7 +196,8 @@ before the button can be used.
 ```
 
 **Notes:** A list by day, soonest first, rather than a calendar grid
-(UX-1).
+(UX-1). In the app, every time shows a.m. or p.m. (UX-6): "9:00 – 10:00
+a.m.".
 
 ### S-4: Confirm Sign-Up
 
@@ -211,7 +212,8 @@ before the button can be used.
 └─────────────────────────────┘
 ```
 
-**Notes:** Shows the username others will see, as a privacy reminder.
+**Notes:** Shows the username others will see, as a privacy reminder,
+and says the details will be emailed now and a reminder the day before.
 
 ### S-5: My Sign-Ups
 
@@ -258,7 +260,8 @@ roster (Section 16, request 1).
 ```
 
 **Notes:** The coordinator picks only a start time; the end is always one
-hour later, so a slot can't be the wrong length.
+hour later, so a slot can't be the wrong length. The form starts with
+three slot rows; "Add another slot" adds one more, up to 10 (PRD UC-1).
 
 ### S-8: Roster
 
@@ -284,6 +287,10 @@ hour later, so a slot can't be the wrong length.
 └─────────────────────────────┘
 ```
 
+**Notes:** The counter updates as the coordinator types. "Send" returns to
+the roster with "Message sent."; "Yes, block" also returns to the roster,
+with "Blocked." (Section 6).
+
 ### S-10: Blocked Volunteers (desktop)
 
 ```text
@@ -308,10 +315,10 @@ tokens.
 |---|---|---|---|---|---|
 | S-1: Sign In | [`s-1-sign-in.html`](../assets/mockups/s-1-sign-in.html) | Button reads "Working…" | — | "This link has expired. We've sent a new one." | Shows the "Check your email" state too |
 | S-2: Create Account | [`s-2-create-account.html`](../assets/mockups/s-2-create-account.html) | Button reads "Working…" | — | "That username is taken" under the field | |
-| S-3: Open Slots | [`s-3-open-slots.html`](../assets/mockups/s-3-open-slots.html) | "Loading open slots…" | "No open slots this week. Check back soon!" | "We couldn't load slots. Please try again." | |
+| S-3: Open Slots | [`s-3-open-slots.html`](../assets/mockups/s-3-open-slots.html) | "Loading open slots…" | "There are no open slots right now. Please check again soon." (v1.2: the list isn't limited to one week) | "We couldn't load slots. Please try again." | |
 | S-4: Confirm Sign-Up | [`s-4-confirm-sign-up.html`](../assets/mockups/s-4-confirm-sign-up.html) | Button reads "Working…" | — | Returns to S-3 with the "just taken" banner | |
 | S-5: My Sign-Ups | [`s-5-my-sign-ups.html`](../assets/mockups/s-5-my-sign-ups.html) | "Loading your sign-ups…" | "You haven't signed up for anything yet." | "This slot has already started…" | Shows the success banner |
-| S-6: My Tasks | [`s-6-my-tasks.html`](../assets/mockups/s-6-my-tasks.html) | "Loading your tasks…" | "You haven't posted any tasks yet." | "We couldn't load your tasks. Please try again." | Desktop layout |
+| S-6: My Tasks | [`s-6-my-tasks.html`](../assets/mockups/s-6-my-tasks.html) | "Loading your tasks…" | "You haven't posted any upcoming tasks." (v1.2: past tasks aren't listed) | "We couldn't load your tasks. Please try again." | Desktop layout |
 | S-7: Post a Task | [`s-7-post-a-task.html`](../assets/mockups/s-7-post-a-task.html) | Button reads "Working…" | — | "Each slot needs 1 to 20 volunteers" under the field | |
 | S-8: Roster | [`s-8-roster.html`](../assets/mockups/s-8-roster.html) | "Loading the roster…" | "No one has signed up yet." | "We couldn't load the roster. Please try again." | Shows the block confirm box |
 | S-9: Message a Volunteer | [`s-9-message.html`](../assets/mockups/s-9-message.html) | Button reads "Sending…" | — | "Messages can be up to 500 characters." | |
@@ -330,7 +337,7 @@ each message, so tests can match them exactly.
 | S-2 | Username taken | "That username is taken. Please try another." |
 | S-2 | Username breaks the rules | "Usernames are 3 to 20 letters, numbers, or underscores." |
 | S-2 | Email blocked (reason not given) | "We couldn't create this account. Please contact the park office." |
-| S-5 | Signed up | "You're signed up! We'll email you a reminder the day before." |
+| S-5 | Signed up | "You're signed up! We've emailed you the details." (v1.2) |
 | S-3 | Last place taken first | "Sorry, this slot was just taken. Here are other open times." |
 | S-3 | Already signed up | "You're already signed up for this slot." |
 | S-5 | Slot started | "This slot has already started, so it can't be canceled." |
@@ -345,12 +352,55 @@ each message, so tests can match them exactly.
 | S-10 | Block undone | "Block removed." |
 | Any | Not allowed | "Not allowed. Please contact the park office if you think this is wrong." |
 
+**Added in v1.2.** These were written in Step 8, where this section had
+no wording, and reconciled here after the round 1 code review (finding
+R-5). They're kept, with every other message, in one wording file.
+
+| Where | Situation | Exact wording |
+|---|---|---|
+| S-1 | Link not valid (mistyped or already used) | "This link isn't valid. Please ask for a new one below." |
+| S-2 | Privacy box not ticked | "Please tick the box to show you've read the privacy notice." |
+| S-2 | Email not valid | "Please enter a valid email address." |
+| S-3 | Slot started while deciding | "This slot has already started." |
+| S-3 | No open slots | "There are no open slots right now. Please check again soon." |
+| S-4 | Under the slot | "Signing up as SandyHelps. We'll email you the details now, and a reminder the day before." |
+| S-4 | Under the slot, when it's today or tomorrow (the email sent now is the reminder) | "Signing up as SandyHelps. We'll email you the details now." |
+| S-5 | Canceled | "Your sign-up was canceled. The place is open for someone else." |
+| S-5 | No sign-ups | "You haven't signed up for anything yet." |
+| S-6 | Task posted | "Task posted." |
+| S-6 | No upcoming tasks | "You haven't posted any upcoming tasks." |
+| S-7 | No title | "Please enter a title." |
+| S-7 | Description too long | "Descriptions can be up to 1,000 characters." |
+| S-7 | No date, or an impossible one | "Please choose a date." |
+| S-7 | A slot's time missing | "Please enter each slot's start and end time." |
+| S-7 | No slots | "Please add at least one slot." |
+| S-7 | More than 10 slots | "A task can have up to 10 slots." |
+| S-9 | Empty message | "Please write a message." |
+| S-10 | No one blocked | "No one is blocked." |
+| Any | Page not found | "We couldn't find that page." |
+| Any | Bad request | "Something was wrong with that request. Please go back and try again." |
+| Any | Server error | "Something went wrong on our side. Please try again in a few minutes." |
+
+**Emails (subject lines):**
+
+| Email | Subject |
+|---|---|
+| Sign-in link | "Your BeautifulBeachPark sign-in link" |
+| Sign-up confirmation (v1.2) | "You're signed up: Beach Cleanup, Saturday, October 12, 9:00 – 10:00 a.m." |
+| Reminder | "Reminder: Beach Cleanup tomorrow, 9:00 – 10:00 a.m." |
+| Coordinator message | "A message from a BeautifulBeachPark coordinator" |
+
+**Times (v1.2, UX-6):** every time shows a.m. or p.m., once when both ends
+share it ("9:00 – 10:00 a.m.") and on both ends when they don't ("11:30
+a.m. – 12:30 p.m."). Button labels read the same way, with "to": "Sign up
+for Beach Cleanup, 9:00 to 10:00 a.m.".
+
 ## 10. Accessibility
 
 | Area | Requirement | How the design meets it |
 |---|---|---|
 | Color contrast | WCAG 2.1 AA: at least 4.5 to 1 for normal text | Every text color measured in d05-02; lowest is 4.9 to 1 |
-| Screen readers | Every button and field has a text label | Buttons name the slot, e.g. "Sign up for Beach Cleanup, 9 to 10" |
+| Screen readers | Every button and field has a text label | Buttons name the slot, e.g. "Sign up for Beach Cleanup, 9:00 to 10:00 a.m."; the message counter is announced politely as it changes |
 | Touch targets | Buttons at least 44 by 44 pixels | All buttons 48 px tall |
 | Keyboard use | Every action works without a mouse | Normal links, buttons, and fields only; confirm boxes trap focus until closed |
 | Text size | Still usable at 200% text size | Single-column layout on phones; no fixed heights |
@@ -379,9 +429,9 @@ The park doesn't use Figma, so no Figma files were made.
 
 | Use case (PRD) | Priority | User flow | Screens | Acceptance criteria shown on screen |
 |---|---|---|---|---|
-| UC-1: Post a task | Must have | Section 6, UC-1 | S-6, S-7 | One-hour slots (end time set automatically); 1 to 20 places |
+| UC-1: Post a task | Must have | Section 6, UC-1 | S-6, S-7 | One-hour slots (end time set automatically); 1 to 20 places; up to 10 slots ("Add another slot") |
 | UC-2: Create an account | Must have | Section 6, UC-2 | S-1, S-2 | Username and email only; privacy notice before creating |
-| UC-3: Sign up for a slot | Must have | Section 6, UC-3 | S-3, S-4, S-5 | Places left shown; "Full" at zero |
+| UC-3: Sign up for a slot | Must have | Section 6, UC-3 | S-3, S-4, S-5 | Places left shown; "Full" at zero; S-4 and S-5 say the details are emailed straight away |
 | UC-4: Cancel a sign-up | Must have | Section 6, UC-4 | S-5 | Only your own sign-ups are listed |
 | UC-5: View a roster | Must have | Section 6, UC-5 | S-6, S-8 | Usernames only; empty roster says so |
 | UC-6: Message a volunteer | Should have | Section 6, UC-6 | S-8, S-9 | 500-character counter |
@@ -398,6 +448,7 @@ Every screen serves at least one use case.
 | UX-3 | Coordinators pick only a start time | Start and end times | A slot can never be the wrong length | 2026-09-28 |
 | UX-4 | Block and cancel always ask to confirm | Act immediately, confirm first | Both are hard to undo | 2026-09-28 |
 | UX-5 | Darken the website's turquoise for buttons | Turquoise, Ocean | Turquoise fails contrast with white text (d05-02) | 2026-09-29 |
+| UX-6 | Every time shows a.m. or p.m., and labels include the minutes | Bare 12-hour times, a.m. and p.m. | A morning and an evening slot can't look the same; screen readers say the exact time (round 1, R-13) | 2026-10-25 |
 
 ## 15. Assumptions and Open Questions
 
@@ -424,3 +475,4 @@ Every screen serves at least one use case.
 |---|---|---|---|---|
 | 1.0 | 2026-10-01 | First version | — | Park Manager (D8, 2026-10-02) |
 | 1.1 | 2026-10-13 | Added two messages to Section 9: username breaks the rules; title too long | Requested by the SDET (d07-01 Section 12, requests 1 and 2): the tests need exact wording | Park Manager |
+| 1.2 | 2026-10-25 | Times with a.m. and p.m. (UX-6); "Add another slot" up to 10; live message counter; Send and Block return to the roster; new "Signed up" wording and confirmation email; the messages, empty states, and email subjects written in Step 8 added to Section 9; S-3 and S-6 empty states changed to match. Every heading, label, and button from Section 7 and the mockups is also kept in the app's one wording file (re-review, R-5) | Round 1 code review (Codex), findings R-4, R-5, R-9, R-12, R-13; PRD v1.2 | Park Manager, 2026-10-25 |

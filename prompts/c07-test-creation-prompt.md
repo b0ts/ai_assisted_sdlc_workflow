@@ -8,7 +8,8 @@ project, for any case studies added later, and for your own projects.
 
 1. Make sure **Step 6: Initial Infrastructure** has a recorded **Go**
    (final sign-off) in the Tracking chat, and that the **test environment**
-   (the local environment on your own computer, set up in Step 6) works. The Tracking chat's Next Action should point you here.
+   (the local environment on your own computer, set up in Step 6) works.
+   The Tracking chat's Next Action should point you here.
 2. Start a **new chat** and name it something like `07-test-creation`.
 3. Paste everything below the line into the chat, or attach this file and
    say "Please follow this prompt." Also attach:

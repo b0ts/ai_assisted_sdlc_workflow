@@ -2,6 +2,8 @@
 
 **Role:** Release Manager · **Prompt:** [c09](../prompts/c09-release-prompt.md) · **Templates:** d09-01 to d09-03
 
+> **Building your own app?** See [Building Your Own App, Step 9](a10-building-your-own-app.md#step-9-release) for what to do in this step for your project.
+
 ## Executive Summary
 
 At the end of [Step 8: Implementation](b08-implementation.md), the software

@@ -60,7 +60,7 @@ Use these step names and numbers exactly.
 | 5 | User Experience | UI/UX Designer | PRD + Spec | UI/UX Document with mockups |
 | 6 | Initial Infrastructure | DevOps Engineer | PRD + Spec + UI/UX Document | Cost Sign-Off Sheet (approved before anything is set up); System Infrastructure Document, including where the software will go live and the live servers' requirements; a free local environment; then ongoing DevOps support for steps 7 to 10 |
 | 7 | Test Creation | SDET (Software Development Engineer in Test) | Spec + Infrastructure Document | Test Plan and automated tests |
-| 8 | Implementation | Software Engineer | Spec + Infrastructure + UI/UX Document + tests | Working software that passes every test; Release Notes |
+| 8 | Implementation | Software Engineer, then three independent reviewers, one after another (two AI Code Reviewers, then a person's hands-on review) | Spec + Infrastructure + UI/UX Document + tests | Working software that passes every test; Release Notes; two Code Review Reports (d08-04) and a Hands-On Review Report (d08-05), each finding with a person's decision and every fix re-checked |
 | 9 | Release | Release Manager | Software + Release Notes | Stakeholder demo (local); move to the live servers; private pilot; live release; Release Efficacy Document |
 | 10 | Maintenance | SRE (Site Reliability Engineer) / Maintenance Engineer | Release Efficacy Document; live system | Maintenance Log (ongoing) |
 

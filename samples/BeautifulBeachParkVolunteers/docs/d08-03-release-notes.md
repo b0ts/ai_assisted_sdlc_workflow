@@ -25,9 +25,9 @@
 | Volunteers | Create an account with just a username and your email. Nobody else ever sees your email. | UC-2 |
 | Volunteers | Sign in with a link sent to your email. There's no password to remember. | UC-2 |
 | Volunteers | See every open one-hour slot and how many places are left, and sign up in three taps. | UC-3 |
-| Volunteers | Get a reminder email the day before your slot. | UC-3 |
+| Volunteers | Get an email with the details as soon as you sign up, and a reminder the day before your slot. | UC-3 |
 | Volunteers | See your sign-ups, and cancel one before it starts. | UC-4 |
-| Coordinators | Post a task with one-hour slots, and choose how many volunteers each slot needs (1 to 20). | UC-1 |
+| Coordinators | Post a task with up to 10 one-hour slots, and choose how many volunteers each slot needs (1 to 20). | UC-1 |
 | Coordinators | See all your tasks and slots on one screen, and who has signed up, by username. | UC-5 |
 | Coordinators | Send a short message to a volunteer without seeing their email. | UC-6 |
 | Coordinators | Block a volunteer, so they can't sign up again, even with a new account. | UC-7 |
@@ -54,8 +54,8 @@ None known.
 
 | Check | Result |
 |---|---|
-| Automated tests | 38 of 38 pass |
-| Person's review of the code | Done, 2026-12-10 |
+| Automated tests | 58 of 58 pass (after the round 1 review fixes) |
+| Independent reviews | Two AI code reviews and a hands-on review; every finding decided (d08-04, d08-05) |
 | Privacy | Checked: no email address appears on any screen |
 | Accessibility | Checked against WCAG 2.1 AA |
 | Speed | Slot pages load in under 2 seconds on a phone |

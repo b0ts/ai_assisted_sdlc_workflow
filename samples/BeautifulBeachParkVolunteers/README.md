@@ -23,7 +23,7 @@ park, its website, and its people are all made up.
 ## Status
 
 Every step's documents are filled in (`docs/d01-01` to `d10-03`), and the
-app is real: `src/` holds working code that passes all 38 automated tests
+app is real: `src/` holds working code that passes all 58 automated tests
 in `tests/`. The story told by the documents (the park, its people, Parks
 IT, and the dates) is made up; the code and the test runs are not.
 
@@ -50,8 +50,8 @@ It runs locally, at no cost, and never sends a real email.
    Each time you open a new Terminal window for this project, run
    `source .venv/bin/activate` again; your prompt then starts with
    `(.venv)`.
-3. Run the tests: `pytest -m "not monkey and not browser"` (34 tests, a few
-   seconds), or plain `pytest` for all 38 (about 7 minutes).
+3. Run the tests: `pytest -m "not monkey and not browser"` (54 tests, a few
+   seconds), or plain `pytest` for all 58 (about 7 minutes).
 4. Try the app: in the `src/` folder, run
    `python infrastructure/setup_local.py`, then
    `flask --app bbpv seed-demo`, then `flask --app bbpv run`, and open

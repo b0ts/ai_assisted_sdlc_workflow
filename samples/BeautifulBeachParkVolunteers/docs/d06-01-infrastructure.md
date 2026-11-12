@@ -1,7 +1,7 @@
 # BeautifulBeachPark Volunteers: System Infrastructure Document
 
-**Document:** d06-01 · **Step:** 6, Initial Infrastructure · **Version:** 1.3
-· **Last updated:** 2027-01-20 · **Status:** Approved
+**Document:** d06-01 · **Step:** 6, Initial Infrastructure · **Version:** 1.4
+· **Last updated:** 2026-10-25 · **Status:** Approved
 · **Owner:** DevOps Engineer (Initial Infrastructure chat)
 
 **Diagrams included:** Deployment Diagram (required).
@@ -43,7 +43,7 @@
 | Piece | What it is for | Spec component | Reuse or new |
 |---|---|---|---|
 | Web and application server | Delivers the pages and checks every rule | Client, Application server | Reuse Parks IT's app server; the app itself is new |
-| Scheduled task | Runs the reminder job once a day | Reminder job | Reuse Parks IT's scheduler |
+| Scheduled tasks | Run the daily reminders, the email queue (every 5 minutes), and the daily 12-month clean-up | Scheduled jobs | Reuse Parks IT's scheduler |
 | Database | Stores accounts, tasks, slots, sign-ups, and the block list | Database | New database on Parks IT's existing database server |
 | Email-sending service | Sends sign-in links, reminders, and relayed messages | Email service | Reuse the city email service |
 | Backups | Nightly copies of the database | Spec Section 10, Reliability | Reuse Parks IT's nightly backups |
@@ -60,7 +60,7 @@
 | Piece | Provider or product | Location | Size or plan | Managed by |
 |---|---|---|---|---|
 | Web and application server | Parks IT's app server, behind their web server | City's cloud servers, US region | Shared server; restarted automatically if the app stops | Parks IT |
-| Scheduled task | Parks IT's scheduler | Same | Once a day, 6 p.m. park time | Parks IT |
+| Scheduled tasks | Parks IT's scheduler | Same | `send-reminders` once a day, 6 p.m. park time; `send-emails` every 5 minutes; `clean-up` once a day, 3 a.m. park time (v1.4) | Parks IT |
 | Database | A new database on Parks IT's PostgreSQL server | Same | Shared server, encryption on | Parks IT |
 | Email-sending service | City email service | City | Within Parks IT's limit of 3,000 emails a month per app; sends from the app's no-reply address | Parks IT |
 | Backups | Parks IT's database backups | City's cloud servers | Nightly, kept 30 days | Parks IT |
@@ -82,7 +82,8 @@ needs only settings, not rewriting.
 | How software is installed and started | Parks IT installs a tagged version from the park's Git repository, following the Developer Guide; started as a service | Parks IT, 2026-10-03 |
 | How settings and secrets are given to the app | Environment variables; secrets from Parks IT's secret store | Parks IT, 2026-10-03 |
 | How email is sent | City email service, from `no-reply` at the app's web address | Parks IT, 2026-10-03 |
-| Scheduled jobs | Parks IT's scheduler runs a command once a day | Parks IT, 2026-10-03 |
+| Scheduled jobs | Parks IT's scheduler runs a command once a day; v1.4 also asks for `send-emails` every 5 minutes | Parks IT, 2026-10-03 (every 5 minutes: to confirm with Parks IT) |
+| Park time zone | The app is told the park's time zone (`PARK_TIMEZONE=America/Los_Angeles`), so it doesn't depend on the server's clock setting | Added in v1.4 |
 | Web address and HTTPS | A `volunteers.` address under the park's website; Parks IT provides the certificate | Parks IT, 2026-10-03 |
 | Approval before going live | Parks IT security review, about 2 weeks; changes installed on Tuesday evenings | Parks IT, 2026-10-03 |
 
@@ -171,6 +172,7 @@ are updated by the park through Step 10 (d10-01).
 |---|---|---|---|
 | App is reachable | Down for 5 minutes | Parks IT on-call, then the Volunteer Program Manager | Parks IT's monitoring; email and text |
 | Reminder job | Didn't run on its day | Volunteer Program Manager | Email from Parks IT's scheduler |
+| Email queue | An email still waiting after 1 hour (the email service may be down) | Volunteer Program Manager | `send-emails` reports it; Parks IT's scheduler emails the report |
 | Emails delivered | More than 5% bounce or are marked as spam | Volunteer Program Manager | Email from Parks IT |
 | Emails per month | Reaches 2,500 of the 3,000 limit | Volunteer Program Manager | Email from Parks IT |
 | Database storage | 80% full | Parks IT | Their monitoring |
@@ -253,3 +255,4 @@ None.
 | 1.1 | 2026-10-13 | Local environment catches emails in a pretend inbox the tests can read | Requested by the SDET (Step 7) | Park Manager |
 | 1.2 | 2027-01-15 | Production set up on Parks IT's servers; database connections kept under Parks IT's limit (`DB_POOL_SIZE` 4 per copy, 16 in all) | Demo approved (D13); stress test Run 1 failed (Step 9) | Park Manager |
 | 1.3 | 2027-01-20 | Email sender records added; second contact for Parks IT | Manual check MC-1 failed (Step 9); Issue I2 | Park Manager |
+| 1.4 | 2026-10-25 | Two more scheduled jobs (`send-emails` every 5 minutes, `clean-up` daily) and the `PARK_TIMEZONE` setting | Round 1 code review (Codex), findings R-2, R-3, R-10; Spec v1.2 | Park Manager, 2026-10-25 |

@@ -113,12 +113,13 @@ def test_t_mk_01_random_input_in_every_form(app, inbox, coord, people):
             check_reply(coord.post("/tasks/new", data=data), f"S-7 {field}", typed_so_far)
         assert_rows_follow_rules(coord)
 
-    # S-9: message
+    # S-9: message. Sending returns to the coordinator's tasks (d05-01 v1.2), where
+    # the titles typed on S-7 above appear again (TC-3).
     message_path = "/volunteers/test_vol_01/message"
     for _ in range(INPUTS):
         value = random_value(rng)
         resp = coord.post(message_path, data={"message": value})
-        check_reply(resp, "S-9", [value])
+        check_reply(resp, "S-9", typed_so_far | {value})
         if len(value) > 500:
             assert MSG["sent"] not in text(resp), "sent a message over 500 characters"
 

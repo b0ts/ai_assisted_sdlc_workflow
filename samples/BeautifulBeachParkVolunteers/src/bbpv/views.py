@@ -1,13 +1,15 @@
 """The screens S-1 to S-10 and the requests behind them (Spec Section 7).
 
 Every request checks who is asking (Spec Section 11.1). No page is ever
-given an email address: they are decrypted only in send_email().
+given an email address: they are decrypted only in deliver(), and only to
+send an email. Every email goes through the outbox (Spec DD-6).
 """
 
 import datetime as dt
 import functools
 import re
 import secrets
+import threading
 
 import sqlalchemy as sa
 from flask import Blueprint, current_app, flash, g, redirect, render_template, request, session, url_for
@@ -40,17 +42,29 @@ def now():
 
 
 def clock_time(t):
-    """9:00, 1:00 (12-hour clock, as in the mockups)."""
+    """9:00, 1:30 (12-hour clock)."""
     return f"{t.hour % 12 or 12}:{t.minute:02d}"
 
 
+def _period(t):
+    return w.MORNING if t.hour < 12 else w.EVENING
+
+
+def _span(starts, ends, joiner):
+    """a.m. or p.m. once when both ends share it, on both ends when they don't (d05-01 v1.2, UX-6)."""
+    if _period(starts) == _period(ends):
+        return f"{clock_time(starts)}{joiner}{clock_time(ends)} {_period(ends)}"
+    return f"{clock_time(starts)} {_period(starts)}{joiner}{clock_time(ends)} {_period(ends)}"
+
+
 def slot_time(starts, ends):
-    return f"{clock_time(starts)} – {clock_time(ends)}"
+    """'9:00 – 10:00 a.m.', '11:30 a.m. – 12:30 p.m.'"""
+    return _span(starts, ends, w.RANGE_DASH)
 
 
 def hours_label(starts, ends):
-    """'9 to 10': used in accessible button names (d05-01 Section 10)."""
-    return f"{starts.hour % 12 or 12} to {ends.hour % 12 or 12}"
+    """'9:00 to 10:00 a.m.': used in accessible button names (d05-01 Section 10)."""
+    return _span(starts, ends, w.RANGE_TO)
 
 
 def day_heading(day):
@@ -92,18 +106,15 @@ def _short_day_filter(day):
 
 @bp.app_template_filter("places_text")
 def _places_text(left):
-    if left <= 0:
-        return "Full"
-    return "1 place left" if left == 1 else f"{left} places left"
+    return w.places_text(left)
 
 
 def not_allowed():
-    return render_template("message.html", title="Not allowed", banner=("error", w.NOT_ALLOWED)), 403
+    return render_template("message.html", title=w.TITLE_NOT_ALLOWED, banner=("error", w.NOT_ALLOWED)), 403
 
 
 def page_not_found():
-    return render_template("message.html", title="Not found",
-                           banner=("error", "We couldn't find that page.")), 404
+    return render_template("message.html", title=w.TITLE_NOT_FOUND, banner=("error", w.NOT_FOUND)), 404
 
 
 def signed_in(*roles):
@@ -127,26 +138,143 @@ def home_for(user):
     }.get(user["role"], url_for("main.open_slots"))
 
 
-def send_email(conn, account_id, subject, text):
+# ---------------------------------------------------------------------------
+# Email: queue first, then send (Spec DD-6)
+# ---------------------------------------------------------------------------
+
+RETRY_MINUTES = 5            # a failed email is tried again every 5 minutes (Spec 7, 14)
+MESSAGE_KEEP_DAYS = 3        # a coordinator's message is dropped if it can't be sent in 3 days
+SIGN_IN_EMAILS_PER_DAY = 10  # PRD 6, Email limits; Spec DD-9
+
+
+def queue_email(conn, account_id, subject_and_text, expires=None):
+    """Save an email to send, in the same step as the change it's about. Returns its id."""
+    subject, text = subject_and_text
+    v = vault()
+    return conn.execute(db.outbox.insert().values(
+        account_id=account_id, subject_encrypted=v.encrypt_text(subject), text_encrypted=v.encrypt_text(text),
+        created=now(), send_after=now(), attempts=0, expires=expires)).inserted_primary_key[0]
+
+
+def deliver(conn, row, timeout):
     """The only place an email address is decrypted, and only to send to it."""
-    row = conn.execute(sa.select(db.accounts.c.email_encrypted).where(db.accounts.c.id == account_id)).first()
-    if row is not None:
-        mail.send(vault().decrypt(row.email_encrypted), subject, text)
+    account = conn.execute(sa.select(db.accounts.c.email_encrypted).where(
+        db.accounts.c.id == row["account_id"])).first()
+    if account is None:
+        return
+    v = vault()
+    mail.send(v.decrypt(account.email_encrypted), v.decrypt_text(row["subject_encrypted"]),
+              v.decrypt_text(row["text_encrypted"]), timeout=timeout)
+
+
+def safe_error(e):
+    """What went wrong, in words that never include an address or the service's own reply (R-14)."""
+    import smtplib
+    if isinstance(e, smtplib.SMTPRecipientsRefused):
+        return "The email service refused the recipient"
+    if isinstance(e, smtplib.SMTPResponseException):
+        return f"The email service answered with code {e.smtp_code}"
+    if isinstance(e, (smtplib.SMTPServerDisconnected, ConnectionError, TimeoutError, OSError)):
+        return "Couldn't reach the email service"
+    return f"Sending failed ({type(e).__name__})"
+
+
+def send_due_emails(ids=None, timeout=20):
+    """Send queued emails that are due: all of them (the 5-minute job), or only `ids`
+    (a page sending its own). Returns (sent, still waiting). Never raises.
+
+    Each email is claimed before it is sent, so two copies of the app running at
+    once never both send it. A failure is tried again in 5 minutes; an email past
+    its expiry (a sign-in link that has run out, a slot that has started) is dropped.
+    If the app stops just after the email service accepts an email but before the
+    queue is updated, that one email can be sent twice (Spec DD-6).
+    """
+    sent = 0
+    eng = engine()
+    query = sa.select(db.outbox).where(db.outbox.c.send_after <= now()).order_by(db.outbox.c.id)
+    if ids is not None:
+        ids = [i for i in ids if i is not None]
+        if not ids:
+            return 0, None
+        query = query.where(db.outbox.c.id.in_(ids))
+    with eng.connect() as conn:
+        due = conn.execute(query).mappings().all()
+    for row in due:
+        try:
+            with eng.begin() as conn:
+                if row["expires"] is not None and row["expires"] < now():
+                    conn.execute(db.outbox.delete().where(db.outbox.c.id == row["id"]))
+                    continue
+                claimed = conn.execute(db.outbox.update().where(
+                    db.outbox.c.id == row["id"], db.outbox.c.send_after == row["send_after"]
+                ).values(send_after=now() + dt.timedelta(minutes=RETRY_MINUTES))).rowcount
+            if claimed != 1:
+                continue  # another copy of the app has it
+            with eng.connect() as conn:
+                deliver(conn, row, timeout)
+        except Exception as e:  # the email service is down, or refused it: try again in 5 minutes
+            reason = safe_error(e)
+            with eng.begin() as conn:
+                conn.execute(db.outbox.update().where(db.outbox.c.id == row["id"]).values(
+                    attempts=row["attempts"] + 1, last_error=reason,
+                    send_after=now() + dt.timedelta(minutes=RETRY_MINUTES)))
+            current_app.logger.warning("Email %s not sent (attempt %s): %s", row["id"], row["attempts"] + 1, reason)
+            continue
+        with eng.begin() as conn:
+            conn.execute(db.outbox.delete().where(db.outbox.c.id == row["id"]))
+        sent += 1
+    with eng.connect() as conn:
+        waiting = conn.execute(sa.select(sa.func.count()).select_from(db.outbox)).scalar()
+    return sent, waiting
+
+
+def send_now(*ids):
+    """Send the email(s) this page just queued, waiting at most EMAIL_SEND_TIMEOUT
+    seconds in all (Spec DD-6; R-15). The sending carries on in the background if
+    the email service is slow; anything that fails stays queued for the 5-minute job.
+    """
+    ids = [i for i in ids if i is not None]
+    if not ids:
+        return
+    app = current_app._get_current_object()
+
+    def send():
+        with app.app_context():
+            try:
+                send_due_emails(ids)
+            except Exception as e:
+                app.logger.warning("Couldn't send queued email: %s", safe_error(e))
+
+    worker = threading.Thread(target=send, daemon=True)
+    worker.start()
+    worker.join(timeout=app.config["EMAIL_SEND_TIMEOUT"])
 
 
 def send_sign_in_link(conn, account):
+    """Queue a sign-in link, unless this address has had 10 in the last 24 hours (Spec DD-9).
+    Returns the queued email's id, or None when the limit is reached.
+
+    The email is recorded first and counted after, with the account row locked, so two
+    requests at the same moment can never both slip past the limit (R-6).
+    """
+    conn.execute(sa.select(db.accounts.c.id).where(db.accounts.c.id == account["id"]).with_for_update())
+    conn.execute(db.sign_in_emails.insert().values(email_lookup=account["email_lookup"], sent=now()))
+    in_last_day = conn.execute(sa.select(sa.func.count()).select_from(db.sign_in_emails).where(
+        db.sign_in_emails.c.email_lookup == account["email_lookup"],
+        db.sign_in_emails.c.sent > now() - dt.timedelta(hours=24))).scalar()
+    if in_last_day > SIGN_IN_EMAILS_PER_DAY:
+        conn.execute(db.sign_in_emails.delete().where(
+            db.sign_in_emails.c.email_lookup == account["email_lookup"],
+            db.sign_in_emails.c.id == sa.select(sa.func.max(db.sign_in_emails.c.id)).where(
+                db.sign_in_emails.c.email_lookup == account["email_lookup"]).scalar_subquery()))
+        return None
     token = secrets.token_urlsafe(24)
     minutes = current_app.config["SIGN_IN_LINK_MINUTES"]
-    conn.execute(db.sign_in_links.delete().where(db.sign_in_links.c.expires < now()))
+    expires = now() + dt.timedelta(minutes=minutes)
     conn.execute(db.sign_in_links.insert().values(
-        token_hash=token_hash(token), account_id=account["id"], expires=now() + dt.timedelta(minutes=minutes)))
+        token_hash=token_hash(token), account_id=account["id"], expires=expires))
     link = f"{current_app.config['BASE_URL'].rstrip('/')}/sign-in/{token}"
-    send_email(conn, account["id"], "Your BeautifulBeachPark sign-in link", (
-        f"Hello {account['username']},\n\n"
-        f"Use this link to sign in to BeautifulBeachPark Volunteers. It works for {minutes} minutes:\n\n"
-        f"{link}\n\n"
-        "If you didn't ask for it, you can ignore this email.\n"
-    ))
+    return queue_email(conn, account["id"], w.sign_in_email(account["username"], minutes, link), expires=expires)
 
 
 def is_blocked(conn, account):
@@ -176,12 +304,15 @@ def sign_in():
     if request.method == "POST":
         email = request.form.get("email", "")
         if looks_like_email(email):
+            queued = None
             with engine().begin() as conn:
                 account = conn.execute(db.accounts.select().where(
                     db.accounts.c.email_lookup == vault().lookup_key(email))).mappings().first()
                 if account is not None:
-                    send_sign_in_link(conn, account)
-        # The same reply whether or not the account exists (Spec DD-3, T-SEC-05)
+                    queued = send_sign_in_link(conn, account)
+            send_now(queued)
+        # The same reply whether or not the account exists, the limit is reached, or the
+        # email service is down (Spec DD-3, DD-6, DD-9; T-SEC-05, T-SEC-07, T-EM-01)
         return render_template("sign_in.html", banner=("info", w.CHECK_EMAIL))
     return render_template("sign_in.html")
 
@@ -193,12 +324,19 @@ def use_sign_in_link(token):
             db.sign_in_links.c.token_hash == token_hash(token))).mappings().first()
         if link is None:
             return render_template("sign_in.html", banner=("error", w.LINK_INVALID)), 400
-        conn.execute(db.sign_in_links.delete().where(db.sign_in_links.c.token_hash == link["token_hash"]))
+        # Use the link up in a single step: only the request that removes it may sign in (Spec DD-7)
+        used = conn.execute(db.sign_in_links.delete().where(
+            db.sign_in_links.c.token_hash == link["token_hash"])).rowcount
+        if used != 1:
+            return render_template("sign_in.html", banner=("error", w.LINK_INVALID)), 400
         account = conn.execute(db.accounts.select().where(
             db.accounts.c.id == link["account_id"])).mappings().first()
-        if link["expires"] < now():
-            send_sign_in_link(conn, account)
-            return render_template("sign_in.html", banner=("error", w.LINK_EXPIRED))
+        expired = link["expires"] < now()
+        if expired:
+            queued = send_sign_in_link(conn, account)
+    if expired:
+        send_now(queued)
+        return render_template("sign_in.html", banner=("error", w.LINK_EXPIRED))
     session.clear()
     session.permanent = True
     session["account_id"] = account["id"]
@@ -242,7 +380,8 @@ def create_account():
             username=form["username"], username_key=form["username"].lower(), role="volunteer",
             email_encrypted=v.encrypt(form["email"]), email_lookup=lookup, email_block_key=block_key,
             created=now())).inserted_primary_key[0]
-        send_sign_in_link(conn, {"id": account_id, "username": form["username"]})
+        queued = send_sign_in_link(conn, {"id": account_id, "username": form["username"], "email_lookup": lookup})
+    send_now(queued)
     return render_template("sign_in.html", banner=("info", w.CHECK_EMAIL))
 
 
@@ -292,7 +431,8 @@ def confirm_sign_up(slot_id):
         slot = slot_with_task(conn, slot_id)
     if slot is None:
         return page_not_found()
-    return render_template("confirm.html", slot=slot)
+    reminder_later = slot["date"] > now().date() + dt.timedelta(days=1)
+    return render_template("confirm.html", slot=slot, note=w.confirm_note(g.user["username"], reminder_later))
 
 
 @bp.route("/slots/<int:slot_id>/sign-up", methods=["POST"])
@@ -322,10 +462,15 @@ def sign_up(slot_id):
                 raise _SlotFull()
             conn.execute(db.signups.insert().values(
                 slot_id=slot_id, account_id=g.user["id"], signed_up=now(), reminder_sent=False))
+            # A confirmation straight away, saved in the same step (PRD v1.2, UC-3)
+            queued = queue_email(conn, g.user["id"], w.confirmation_email(
+                g.user["username"], slot["title"], day_heading(slot["date"]),
+                slot_time(slot["starts"], slot["ends"]), slot["description"]), expires=slot["starts"])
     except _SlotFull:
         return open_slots_page(banner=("error", w.JUST_TAKEN), status=409)
     except sa.exc.IntegrityError:  # a fast second tap on "Confirm"
         return open_slots_page(banner=("error", w.ALREADY), status=409)
+    send_now(queued)
     flash(w.SIGNED_UP, "success")
     return redirect(url_for("main.my_sign_ups"))
 
@@ -417,16 +562,15 @@ def _read_task_form():
     ends = request.form.getlist("slot_end")
     places = request.form.getlist("places")
     count = max(len(starts), len(ends), len(places))
-    rows = []
+    every_row = []
     for i in range(count):
-        row = {
+        every_row.append({
             "start": starts[i] if i < len(starts) else "",
             "end": ends[i] if i < len(ends) else "",
             "places": places[i] if i < len(places) else "",
-        }
-        if any(v.strip() for v in row.values()):
-            rows.append(row)
-    form["rows"] = rows
+        })
+    form["every_row"] = every_row  # as typed, empty rows included, to show the form again
+    form["rows"] = [row for row in every_row if any(v.strip() for v in row.values())]
     return form
 
 
@@ -468,12 +612,17 @@ def _check_task(form):
 @signed_in("coordinator")
 def post_task():
     if request.method == "GET":
-        return render_template("post_task.html", form={"rows": []}, rows=FORM_ROWS)
+        return render_template("post_task.html", form={"rows": []}, rows=FORM_ROWS, max_rows=MAX_SLOTS)
     form = _read_task_form()
+    shown = max(FORM_ROWS, len(form["every_row"]))
+    if request.form.get("add_slot"):
+        # "Add another slot": show the form again with one more row, up to 10 (d05-01 v1.2, S-7)
+        return render_template("post_task.html", form=dict(form, rows=form["every_row"]),
+                               rows=min(MAX_SLOTS, shown + 1), max_rows=MAX_SLOTS)
     error, task, slot_values = _check_task(form)
     if error:
-        return render_template("post_task.html", form=form, rows=max(FORM_ROWS, len(form["rows"])),
-                               error=error), 400
+        return render_template("post_task.html", form=dict(form, rows=form["every_row"]),
+                               rows=shown, max_rows=MAX_SLOTS, error=error), 400
     with engine().begin() as conn:
         task_id = conn.execute(db.tasks.insert().values(posted_by=g.user["id"], **task)).inserted_primary_key[0]
         conn.execute(db.slots.insert(), [dict(s, task_id=task_id) for s in slot_values])
@@ -495,7 +644,17 @@ def roster(slot_id):
             .where(db.signups.c.slot_id == slot_id)
             .order_by(db.signups.c.signed_up, db.signups.c.id)
         ).scalars().all()
-    return render_template("roster.html", slot=slot, names=names)
+    return render_template("roster.html", slot=slot, names=names, banner=_flashed())
+
+
+def back_to_roster():
+    """Where Send and "Yes, block" return to: the roster they came from (d05-01 v1.2, Section 6)."""
+    slot = request.values.get("slot", "")
+    if slot.isascii() and slot.isdigit():
+        with engine().connect() as conn:
+            if conn.execute(sa.select(db.slots.c.id).where(db.slots.c.id == int(slot))).first():
+                return url_for("main.roster", slot_id=int(slot))
+    return url_for("main.my_tasks")
 
 
 def volunteer_named(conn, username):
@@ -510,24 +669,23 @@ def message_volunteer(username):
         volunteer = volunteer_named(conn, username)
     if volunteer is None:
         return page_not_found()
+    back = back_to_roster()
+    slot = request.values.get("slot", "")
     if request.method == "GET":
-        return render_template("message_volunteer.html", volunteer=volunteer, text="")
+        return render_template("message_volunteer.html", volunteer=volunteer, text="", back=back, slot=slot)
     text = request.form.get("message", "")
     if len(text) > 500:
-        return render_template("message_volunteer.html", volunteer=volunteer, text=text,
+        return render_template("message_volunteer.html", volunteer=volunteer, text=text, back=back, slot=slot,
                                error=w.MESSAGE_LONG), 400
     if not text.strip():
-        return render_template("message_volunteer.html", volunteer=volunteer, text=text,
+        return render_template("message_volunteer.html", volunteer=volunteer, text=text, back=back, slot=slot,
                                error=w.MESSAGE_MISSING), 400
-    with engine().connect() as conn:
-        send_email(conn, volunteer["id"], "A message from a BeautifulBeachPark coordinator", (
-            f"Hello {volunteer['username']},\n\n"
-            f"{g.user['username']}, a BeautifulBeachPark coordinator, sent you this message:\n\n"
-            f"{text}\n\n"
-            "Please don't reply to this email; replies aren't read. "
-            "To reach the coordinators, contact the park office.\n"
-        ))
-    return render_template("message_volunteer.html", volunteer=volunteer, text="", banner=("success", w.SENT))
+    with engine().begin() as conn:
+        queued = queue_email(conn, volunteer["id"], w.message_email(volunteer["username"], g.user["username"], text),
+                             expires=now() + dt.timedelta(days=MESSAGE_KEEP_DAYS))
+    send_now(queued)
+    flash(w.SENT, "success")
+    return redirect(back)
 
 
 @bp.route("/volunteers/<username>/block", methods=["GET", "POST"])
@@ -537,8 +695,10 @@ def block_volunteer(username):
         volunteer = volunteer_named(conn, username)
     if volunteer is None:
         return page_not_found()
+    back = back_to_roster()
     if request.method == "GET":
-        return render_template("block_confirm.html", volunteer=volunteer)
+        return render_template("block_confirm.html", volunteer=volunteer, back=back,
+                               slot=request.values.get("slot", ""))
     with engine().begin() as conn:
         exists = conn.execute(sa.select(db.block_list.c.id).where(
             db.block_list.c.email_block_key == volunteer["email_block_key"])).first()
@@ -546,8 +706,8 @@ def block_volunteer(username):
             conn.execute(db.block_list.insert().values(
                 email_block_key=volunteer["email_block_key"], username=volunteer["username"],
                 blocked_by=g.user["username"], blocked_on=now().date()))
-    return render_template("message.html", title=f"Blocked {volunteer['username']}",
-                           banner=("success", w.BLOCKED), back=url_for("main.my_tasks"), back_text="Back to my tasks")
+    flash(w.BLOCKED, "success")
+    return redirect(back)
 
 
 # ---------------------------------------------------------------------------
@@ -586,16 +746,14 @@ def _404(_e):
 
 @bp.app_errorhandler(405)
 def _405(_e):
-    return render_template("message.html", title="Not allowed", banner=("error", w.NOT_ALLOWED)), 405
+    return render_template("message.html", title=w.TITLE_NOT_ALLOWED, banner=("error", w.NOT_ALLOWED)), 405
 
 
 @bp.app_errorhandler(400)
 def _400(_e):
-    return render_template("message.html", title="Please try again",
-                           banner=("error", "Something was wrong with that request. Please go back and try again.")), 400
+    return render_template("message.html", title=w.TITLE_TRY_AGAIN, banner=("error", w.BAD_REQUEST)), 400
 
 
 @bp.app_errorhandler(500)
 def _500(_e):
-    return render_template("message.html", title="Sorry",
-                           banner=("error", "Something went wrong on our side. Please try again in a few minutes.")), 500
+    return render_template("message.html", title=w.TITLE_SORRY, banner=("error", w.SERVER_ERROR)), 500

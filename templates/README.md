@@ -45,6 +45,8 @@ Templates for the documents each step produces. Names use two numbers: the step 
 - [d08-01-implementation-record.md](d08-01-implementation-record.md): Implementation Record: build plan linked to use cases, screens, and tests; tools and libraries; progress run by run; screens built; security, speed, cost, license, and code reviews; requests to change a test; requests sent back; and change log
 - [d08-02-developer-guide.md](d08-02-developer-guide.md): Developer Guide: how the code is organized, setting up, running the app and the tests, settings and secrets (where kept, never the values), making a change, libraries and licenses, and troubleshooting
 - [d08-03-release-notes.md](d08-03-release-notes.md): Release Notes: what's new in plain language, changes since the last version, known issues, what's not included, quality checks, and getting help; drafted in Step 8 and finalized in Step 9
+- [d08-04-code-review.md](d08-04-code-review.md): Code Review Report: one per independent AI reviewer (prompt c08-02); verdict, what was checked, plain-language findings rated Must fix, Should fix, Question, or Note, each with a next step and a Decision column for the person
+- [d08-05-hands-on-review.md](d08-05-hands-on-review.md): Hands-On Review Report: a person's review of the running app (prompt c08-03): session plan, tasks and results, ad-hoc testing, findings by kind (Bug, Usability, Requirement, Question, Praise) with a route back and a Decision column, usability summary, and re-check after rework
 
 **Step 9: Release**
 

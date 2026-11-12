@@ -201,7 +201,9 @@ content made by AI tools. -->
 ### 11.4 AI-Related Risks
 
 - [e.g., "No confidential data is pasted into AI tools during building,"
-  or "Content written by AI is reviewed by a person before it goes live."]
+  or "AI-written code gets two independent AI reviews and a person's
+  hands-on review, and a person decides on every finding, before it goes
+  live."]
 
 ## 12. Situational Diagrams
 

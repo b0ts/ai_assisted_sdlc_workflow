@@ -228,3 +228,6 @@ Use this to track your progress through the setup steps.
   command used in Step 5
 - [GitHub Desktop documentation](https://docs.github.com/en/desktop): more on
   the menu-based path in Steps 1 and 5
+
+**Next:** [UML Diagram Guide](a09-uml-diagram-guide.md)
+explains the diagrams you'll meet in the step guides.
