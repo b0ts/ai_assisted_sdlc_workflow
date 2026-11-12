@@ -47,7 +47,9 @@ ai_assisted_sdlc_workflow/
 ├── samples/               Finished examples
 │   ├── BeautifulBeachParkVolunteers/   The complete sample project
 │   └── FivePersonaCouncil/             A small multi-AI decision helper
-└── skeleton/              Empty starter folder for your own project
+├── project-template/       Starter kit for your own project: START-HERE.md,
+│                          every prompt, and blank copies of every template
+└── scripts/               Keeps project-template's copies up to date
 ```
 
 See the [numbering system](../README.md#numbering-system) for full details.
@@ -114,8 +116,12 @@ write prompts from scratch.
   filled-in document for every step plus working code and tests, and you
   can run it on your own computer (its README shows how). Whenever a step
   feels abstract, open the matching sample file.
-- **[`skeleton/`](../skeleton/)** is an empty project folder with the same
-  layout as the sample. Copy it to start your own app.
+- **[`project-template/`](../project-template/)** is a starter kit with the
+  same layout as the sample. Copy it into a new project folder to start your
+  own app: its [`START-HERE.md`](../project-template/START-HERE.md) walks you
+  from creating the folder and its GitHub repo to the first steps. It holds
+  a copy of every prompt (your AI team) and a blank copy of every template
+  (your deliverables).
 - **[`templates/`](../templates/)** holds the fill-in documents (d-numbers)
   that each step produces, so every project's paperwork looks the same.
 

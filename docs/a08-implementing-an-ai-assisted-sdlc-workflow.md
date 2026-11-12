@@ -73,38 +73,42 @@ Create a folder for your product in your projects folder, next to
 
 ---
 
-## Step 3: Copy the skeleton into your project folder
+## Step 3: Copy the project template into your project folder
 
-A **skeleton** is a starter set of folders and placeholder files that gives
-every project the same layout before any real work begins. Think of it as the
-frame of a house: nothing is finished yet, but everyone can see where the
-kitchen and bedrooms will go. With a skeleton, you, Claude, and anyone reading
-your project always know where to find the documents, prompts, tests, and code,
-and every project built with this workflow looks the same.
+The **project template** is a starter kit: a set of folders and files that
+gives every project the same layout before any real work begins. Think of it
+as the frame of a house: nothing is finished yet, but everyone can see where
+the kitchen and bedrooms will go. With it, you, Claude, and anyone reading
+your project always know where to find the documents, prompts, tests, and
+code, and every project built with this workflow looks the same.
 
-This repo's `skeleton/` folder contains:
+This repo's `project-template/` folder contains:
 
-    skeleton/
-    ├── README.md     describes your project (fill in the placeholders)
-    ├── CLAUDE.md     tells Claude how your project is organized
-    ├── .gitignore    lists files Git should ignore
-    ├── docs/         documents each step produces (d-numbers)
-    ├── prompts/      prompts used for each step's chat (c-numbers)
-    ├── tests/        automated tests (Step 07)
-    ├── src/          source code (Step 08)
-    └── assets/       images, media, and data
+    project-template/
+    ├── START-HERE.md  step-by-step directions: setup, then each step
+    ├── README.md      describes your project (fill in the placeholders)
+    ├── CLAUDE.md      tells Claude how your project is organized, and the rules
+    ├── .gitignore     lists files Git should ignore
+    ├── prompts/       a copy of every step's prompt (c-numbers): your AI team
+    ├── docs/          a blank copy of every template (d-numbers): your deliverables
+    ├── tests/         automated tests (Step 07)
+    ├── src/           source code (Step 08)
+    └── assets/        images, media, and data
 
 Each folder has its own `README.md` explaining what belongs there.
+`START-HERE.md` repeats this guide's steps in a short form, then explains how
+to run the steps, starting with the Scrum Master.
 
 To copy it, open a terminal in your projects folder, start Claude Code, and
-ask it to copy the skeleton into your project folder. Asking Claude Code is
+ask it to copy the template into your project folder. Asking Claude Code is
 easier than copying by hand, because `.gitignore` is a hidden file that Finder
-doesn't show by default.
+doesn't show by default. (Copying with Finder works too; you then miss only
+`.gitignore`, which GitHub Desktop can create for you in Step 5.)
 
-**In projects:** "Copy everything in ai_assisted_sdlc_workflow/skeleton,
+**In projects:** "Copy everything in ai_assisted_sdlc_workflow/project-template,
 including hidden files, into `<your-project>`."
 
-**In the sample:** "Copy everything in ai_assisted_sdlc_workflow/skeleton,
+**In the sample:** "Copy everything in ai_assisted_sdlc_workflow/project-template,
 including hidden files, into BeautifulBeachParkVolunteers."
 
 ---
@@ -146,7 +150,7 @@ and ask it to create a new repo for the folder in your GitHub account.
 your project, or **public** if it's fine for anyone to see your work. You can
 change this later in the repo's settings on GitHub.
 
-**Fill in the skeleton:** In the same request, give Claude Code a one-sentence
+**Fill in the template:** In the same request, give Claude Code a one-sentence
 description of your project and ask it to fill in the placeholders in
 `README.md` and `CLAUDE.md`, add a `LICENSE` if you want one, and then commit
 and push everything. Your new repo then starts with a clear description
@@ -162,7 +166,7 @@ volunteers sign up using a username only. Then commit and push everything."
 this path; GitHub Desktop asks you to sign in to GitHub the first time you
 open it.
 
-1. Fill in the skeleton first. Start Claude Code in your `<your-project>`
+1. Fill in the template first. Start Claude Code in your `<your-project>`
    folder and ask it to fill in the `README.md` and `CLAUDE.md` placeholders
    (and add a `LICENSE` if you want one), **without** committing.
 2. In GitHub Desktop, choose **File | Add Local Repository...**, click
@@ -190,7 +194,7 @@ in your `<your-project>` folder. This uses the Filesystem extension.
 4. Quit the Claude desktop app completely and restart it.
 5. To check that it worked, start a chat in your Project and ask:
    "Please list the contents of the local folder." Claude should reply with
-   the files and folders in `<your-project>`, including the skeleton folders
+   the files and folders in `<your-project>`, including the template's folders
    from Step 3.
 
 **In the sample:** the directory added was
@@ -212,7 +216,7 @@ Use this to track your progress through the setup steps.
 
 - [ ] Step 1: Get a local copy of this repo
 - [ ] Step 2: Create a folder for your project
-- [ ] Step 3: Copy the skeleton into your project folder
+- [ ] Step 3: Copy the project template into your project folder
 - [ ] Step 4: Create a Claude Project linked to your folder
 - [ ] Step 5: Create a GitHub repo for your project
 - [ ] Step 6: Give Claude desktop access to your folder

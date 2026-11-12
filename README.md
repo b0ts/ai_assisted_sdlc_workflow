@@ -7,6 +7,7 @@ Documentation and templates for incorporating AI assistance into the software de
 - [Introduction](docs/a01-introduction.md) — start here: what this repo teaches, how it's organized, and the order to read it in
 - [What Is a Software Development Lifecycle Workflow?](docs/a03-what-is-an-sdlc-workflow.md) — a plain-language introduction for non-programmers
 - [Building Your Own App](docs/a10-building-your-own-app.md) — the step-by-step walkthrough for your own project
+- [Project template](project-template/START-HERE.md) — the starter kit to copy into a new project: directions, every prompt, and blank deliverables
 - [Documentation index](docs/README.md) — all how-to guides and the ten step guides
 
 ## Numbering system
@@ -39,7 +40,16 @@ Every file starts with a letter that says what kind of file it is. Steps are num
 
 ## Sample
 
-The [`samples/`](samples/) folder holds a finished sample project: [BeautifulBeachPark Volunteers](samples/BeautifulBeachParkVolunteers/), a volunteer sign-up app for a made-up park. It has the same layout as the [`skeleton/`](skeleton/), so you can compare your own project folder with it after any step, then build your own version by following the docs.
+The [`samples/`](samples/) folder holds a finished sample project: [BeautifulBeachPark Volunteers](samples/BeautifulBeachParkVolunteers/), a volunteer sign-up app for a made-up park. It has the same layout as the [`project-template/`](project-template/), so you can compare your own project folder with it after any step, then build your own version by following the docs.
+
+## Starting your own project
+
+Copy the [`project-template/`](project-template/) folder into a new project
+folder, and follow its [`START-HERE.md`](project-template/START-HERE.md):
+create the project's GitHub repo, then run the steps, starting with the Scrum
+Master (Step 1). Its `prompts/` and `docs/` folders are copies of this repo's
+prompts and templates; after changing either, run
+`python3 scripts/build_project_template.py` to refresh the copies.
 
 ## Case studies
 
