@@ -7,17 +7,24 @@
 </div>
 {% for day in days %}
   <h2>{{ day.date|day_heading }}</h2>
-  <table>
-    <tr><th scope="col">{{ w.SCREEN.col_task }}</th><th scope="col">{{ w.SCREEN.col_slot }}</th><th scope="col">{{ w.SCREEN.col_filled }}</th><th scope="col"><span class="small">{{ w.SCREEN.col_roster }}</span></th></tr>
-    {% for r in day.rows %}
-    <tr>
-      <td>{{ r.title }}</td>
-      <td>{{ r|slot_time }}</td>
-      <td>{{ w.places_filled(r.places - r.places_left, r.places, r.places_left == 0) }}</td>
-      <td><a href="/slots/{{ r.id }}/roster" aria-label="{{ w.roster_label(r.title, r|hours) }}">{{ w.SCREEN.roster_link }}</a></td>
-    </tr>
-    {% endfor %}
-  </table>
+  {% for task in day.tasks %}
+  <section class="task" aria-labelledby="task-{{ task.id }}">
+    <div class="title-row">
+      <h3 id="task-{{ task.id }}">{{ task.title }}</h3>
+      <a class="btn secondary inline" href="/tasks/{{ task.id }}/delete" aria-label="{{ w.delete_task_label(task.title, day.date|day_label) }}">{{ w.SCREEN.delete_link }}</a>
+    </div>
+    <table>
+      <tr><th scope="col">{{ w.SCREEN.col_slot }}</th><th scope="col">{{ w.SCREEN.col_filled }}</th><th scope="col"><span class="small">{{ w.SCREEN.col_roster }}</span></th></tr>
+      {% for r in task.rows %}
+      <tr>
+        <td>{{ r|slot_time }}</td>
+        <td>{{ w.places_filled(r.places - r.places_left, r.places, r.places_left == 0) }}</td>
+        <td><a href="/slots/{{ r.id }}/roster" aria-label="{{ w.roster_label(r.title, r|hours) }}">{{ w.SCREEN.roster_link }}</a></td>
+      </tr>
+      {% endfor %}
+    </table>
+  </section>
+  {% endfor %}
 {% else %}
   <p>{{ w.NO_TASKS }}</p>
 {% endfor %}

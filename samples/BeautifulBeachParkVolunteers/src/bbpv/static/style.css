@@ -47,6 +47,10 @@ textarea.field { min-height: 144px; }
 .notice { background: var(--foam); border-radius: 8px; padding: 12px 16px; font-size: 16px; margin: 16px 0; }
 .slot-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0 12px; }
 .slot-row label { font-size: 16px; }
+section.task { margin-bottom: 24px; }
+section.task h3 { margin: 16px 0 8px; }
+.slot-row .label { display: block; font-weight: 700; margin: 16px 0 4px; font-size: 16px; }
+.slot-end-label { min-height: 48px; display: flex; align-items: center; margin: 0; font-size: 18px; }
 table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 8px; overflow: hidden; }
 th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid #E6E1D6; }
 th { font-size: 16px; color: var(--pebble); }

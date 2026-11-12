@@ -1,6 +1,6 @@
 # Step 8: Implementation (The Software Engineer Chat)
 
-**Role:** Software Engineer, then three independent reviewers · **Prompts:** [c08-01](../prompts/c08-01-implementation-prompt.md), [c08-02](../prompts/c08-02-code-review-prompt.md), [c08-03](../prompts/c08-03-hands-on-review-prompt.md) · **Templates:** d08-01 to d08-05
+**Role:** Software Engineer, then three independent reviewers · **Prompts:** [c08-01](../prompts/c08-01-implementation-prompt.md), [c08-02](../prompts/c08-02-code-review-prompt.md), [c08-03](../prompts/c08-03-hands-on-review-prompt.md), [c08-04](../prompts/c08-04-polishing-prompt.md) · **Templates:** d08-01 to d08-06
 
 > **Building your own app?** See [Building Your Own App, Step 8](a10-building-your-own-app.md#step-8-implementation) for what to do in this step for your project.
 
@@ -22,9 +22,11 @@ Step 8 builds it.
   **Implementation Record**, a **Developer Guide** that explains the code,
   draft **Release Notes**, and **three independent reviews, one after
   another**: two **Code Review Reports** from AI reviewers that didn't
-  write the code, then a **Hands-On Review Report** from a person who used
-  the app, each with a decision on every finding and a re-check of every
-  fix before the next review starts.
+  write the code, then a short **Polishing** session in which the person
+  who built the app runs it and fine-tunes it with the AI (the **Polishing
+  Log**), then a **Hands-On Review Report** from people who weren't
+  involved, each with a decision on every finding and a re-check of every
+  fix before the next stage starts.
 - **Hand-off:** once every test passes and the stakeholders sign off, the
   software goes to [Step 9: Release](b09-release.md), where the
   stakeholders try it in a demo on your computer, and only after they
@@ -89,6 +91,7 @@ looks wrong, they send a request back through the
 | **Developer Guide** (`d08-02`) | How the code is organized, and how to set it up, run it, test it, and change it | Step 10, and anyone who works on the code later |
 | **Release Notes** (`d08-03`) | What this version does, in plain language, and any known problems | Users, stakeholders, the Release Manager |
 | **Code Review Reports** (`d08-04`, one per reviewer) | Findings from two independent AI reviewers, in plain language, with a person's decision on each | The person who decides, the Software Engineer and SDET chats, the Tracking chat |
+| **Polishing Log** (`d08-06`) | What the person who built the app noticed while running it, each item's decision, and the documents, tests, and runs that carried each change | The person who decides; the next reviewers' version; the Tracking chat |
 | **Hands-On Review Report** (`d08-05`) | What a person found by using the app: tasks tried, ad-hoc testing, usability, each finding with a route back and a decision, and a re-check after rework | The person who decides; the UI/UX, SDET, and Software Engineer chats; the Tracking chat |
 | **Test Results Log** (`d07-02`, continued) | A new row for every test run | Scrum Master, SDET |
 
@@ -192,7 +195,9 @@ tested, and the same reviewer checks the fixes. Only then does the next
 round start, on the improved version. None of the reviewers built the
 app, and none reads an earlier reviewer's report. This follows the idea
 in [The Multi-AI-Agent Paradigm](a02-multi-ai-agent-paradigm.md): no one
-should grade their own homework.
+should grade their own homework. Between rounds 2 and 3, the person who
+built the app also **polishes** it (see below); that isn't an independent
+review, so it's the one stage where the builder looks at their own work.
 
 ```mermaid
 flowchart LR
@@ -200,7 +205,8 @@ flowchart LR
     R1 --> L1["Decide, fix,<br/>re-review"]
     L1 --> R2["Round 2:<br/>Claude Code<br/>code review"]
     R2 --> L2["Decide, fix,<br/>re-review"]
-    L2 --> R3["Round 3:<br/>a person's<br/>hands-on review"]
+    L2 --> P["Polishing:<br/>the builder's<br/>sanity check"]
+    P --> R3["Round 3:<br/>a person's<br/>hands-on review"]
     R3 --> L3["Decide, fix,<br/>re-check"]
     L3 --> SO["Step 8<br/>sign-off"]
 ```
@@ -220,9 +226,13 @@ flowchart LR
   code that round 1 has already improved, so it spends its effort on new
   problems instead of repeating old ones, and it looks at round 1's fixes
   with fresh eyes.
+- **The builder polishes before the person.** The person who built the
+  app runs it and fixes the rough edges they can spot in a few minutes
+  (see Polishing, below), so round 3's reviewers don't spend their time on
+  them.
 - **The person goes last.** Their time is the most valuable, so they use
-  the version closest to final and don't trip over problems an AI could
-  have caught. What they find, the AIs can't: a button nobody finds, a
+  the version closest to final and don't trip over problems an AI, or the
+  builder, could have caught. What they find, the AIs can't: a button nobody finds, a
   word that confuses, a task that takes too many steps.
 
 **Keeping each review independent:** every reviewer reads the approved
@@ -272,6 +282,38 @@ new Should-fix finding from a re-review goes on a **Future Version** list
 (to be considered in Step 10) unless the person deciding chooses Fix.
 Every finding still gets a decision; only the default changes.
 
+### Polishing: the Builder's Sanity Check
+
+Between round 2 and round 3 there's one more stage, and it isn't an
+independent review: **Polishing**. The person who built the app (usually
+you, the project owner) **runs it**, tries the main task for each role,
+and **goes back and forth with the AI** to fine-tune it. Prompt
+[c08-04](../prompts/c08-04-polishing-prompt.md) plays the **Polishing
+Partner**: it starts the app, suggests what to try, and, whenever you say
+something feels wrong, checks the approved documents and tells you
+whether it's **working as designed**, a **bug**, or a **gap in the
+design**. You decide; every agreed change still goes through the
+documents, then a failing test, then the code, then every test. Each item
+is recorded in the **Polishing Log** (`d08-06`).
+
+Why bother, when round 3 is coming? Because the builder knows what was
+meant, and can spot in minutes what doesn't match it. In the sample
+project, the owner's first look found that a coordinator couldn't pick
+8:00 a.m. as a start time, and that there was no way to remove a task at
+all: two gaps every test and both code reviews had missed, because no
+document asked for them. Fixing those first means the round 3 reviewers
+spend their time on what only a newcomer can find.
+
+Two rules keep it honest:
+
+- **Time-box it** (an hour or two). Stop when the main tasks feel right,
+  not when the app feels perfect; bigger ideas go on the Future Version
+  list.
+- **Have the polishing changes code-reviewed.** Polishing changes code
+  after the code reviews, so when it's done, the round 2 reviewer runs a
+  short re-review of just those changes (prompt c08-02, Mode E) before
+  round 3 starts. The round 3 reviewers don't read the Polishing Log.
+
 ### Running the Reviews
 
 - **Round 1, Codex:** if Codex is installed and signed in, open Claude
@@ -287,7 +329,12 @@ Every finding still gets a decision; only the default changes.
   Code session in your project folder and say: "Please follow
   `prompts/c08-02-code-review-prompt.md` and run `/security-review`
   first."
-- **Round 3, hands-on review:** when round 2 is settled, start a chat
+- **Polishing:** when round 2 is settled, open Claude Code in your
+  project folder and say: "Please follow
+  `prompts/c08-04-polishing-prompt.md`." Use the app, say what feels
+  wrong, decide on each item, and finish with the short code re-review of
+  the polishing changes.
+- **Round 3, hands-on review:** when polishing is done, start a chat
   with prompt c08-03 to write the person's **session plan** (how to start
   the app, and the tasks to try). The person runs the app on a computer
   with made-up accounts and the pretend inbox, works through the plan,
@@ -370,6 +417,7 @@ still reviews the code before it goes live.
 | **Code that only runs on your computer.** | Every setting comes from outside the code, and the code fits the live server requirements in d06-01 Section 5.1. |
 | **Unknown code libraries.** | Every library is listed in the Developer Guide with its license (Spec Section 11.2). |
 | **Grading its own homework.** | Three independent reviews before Step 9, one after another, each with its own fix-and-re-review loop: a code review by a different company's AI, then one by a new Claude Code session (prompt c08-02), then a person's hands-on review of the running app (prompt c08-03). A person decides on every finding, as the Spec's AI-Related Risks section requires. |
+| **The builder never using it.** Every test passes, yet a basic control is awkward or something obvious is missing. | Polishing: the person who built the app runs it before anyone else does, and fine-tunes it the workflow's way (prompt c08-04). |
 | **Never trying it as a person would.** | The hands-on reviewer uses the app for real, and usability findings go back to Step 5, not straight into the code. |
 
 ---
@@ -393,6 +441,11 @@ still reviews the code before it goes live.
   out of the way during the session, turns the person's notes into the
   Hands-On Review Report with a route for each finding, and records the
   re-check after rework
+- [`c08-04-polishing-prompt`](../prompts/c08-04-polishing-prompt.md):
+  plays the Polishing Partner for the person who built the app: starts it,
+  suggests what to try, explains "working as designed" versus a bug or a
+  gap, makes each agreed change through the documents, tests, and code,
+  and keeps the Polishing Log
 
 **Templates** (in `templates/`):
 
@@ -412,6 +465,10 @@ still reviews the code before it goes live.
   explored, findings by kind (Bug, Usability, Requirement, Question,
   Praise) with a route back and a Decision column, a usability summary,
   and the re-check after rework
+- [`d08-06-polishing-log`](../templates/d08-06-polishing-log.md):
+  Polishing Log: how the app was started, what was tried, each item in the
+  builder's words with its kind, decision, and the changes and test runs
+  that carried it, the questions answered as designed, and the hand-off
 
 **Samples** (in [`samples/BeautifulBeachParkVolunteers/docs/`](../samples/BeautifulBeachParkVolunteers/docs/)):
 
@@ -423,11 +480,16 @@ still reviews the code before it goes live.
   the sample's Developer Guide
 - [**d08-03**](../samples/BeautifulBeachParkVolunteers/docs/d08-03-release-notes.md):
   the sample's Release Notes for version 1.0
-- [**d08-04**](../samples/BeautifulBeachParkVolunteers/docs/d08-04-code-review-codex.md):
-  the sample's round 1 Code Review Report, from Codex, waiting for
-  decisions (round 2, a new Claude Code session, comes after round 1's
-  fixes, and round 3, the hands-on review, d08-05, after that; its session
-  plan is ready)
+- [**d08-04**](../samples/BeautifulBeachParkVolunteers/docs/d08-04-code-review-codex.md)
+  and [**d08-04 (round 2)**](../samples/BeautifulBeachParkVolunteers/docs/d08-04-code-review-claude.md):
+  the sample's two Code Review Reports, from Codex and from a new Claude
+  Code session, each with its decisions and re-reviews
+- [**d08-06**](../samples/BeautifulBeachParkVolunteers/docs/d08-06-polishing-log.md):
+  the sample's Polishing Log: the project owner's first look found a
+  start-time picker that couldn't reach 8:00 a.m. and no way to remove a
+  task, and both were fixed through the documents, tests, and code
+- [**d08-05**](../samples/BeautifulBeachParkVolunteers/docs/d08-05-hands-on-review.md):
+  the sample's round 3 session plan, ready for people who weren't involved
 
 Additional [case studies](case-studies.md) may be added to this repo at a
 future time.

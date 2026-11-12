@@ -62,7 +62,7 @@ they are planned. -->
 | Check | Result |
 |---|---|
 | Automated tests | [e.g., "38 of 38 pass (d07-02, Run 12)"] |
-| Independent reviews | [e.g., "Two AI code reviews and a hands-on review done; every finding decided, YYYY-MM-DD"] |
+| Independent reviews | [e.g., "Two AI code reviews, polishing, and a hands-on review done; every finding decided, YYYY-MM-DD"] |
 | Privacy | [e.g., "Checked: no email address appears on any screen"] |
 | Accessibility | [e.g., "Checked against WCAG 2.1 AA"] |
 

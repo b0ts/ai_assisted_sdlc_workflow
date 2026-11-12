@@ -23,10 +23,11 @@ env.write_text(
     "DATABASE_URL=sqlite:///bbpv-local.db\n"
     f"SECRET_KEY={secrets.token_hex(32)}\n"
     f"EMAIL_ENCRYPTION_KEY={Fernet.generate_key().decode()}\n"
-    "BASE_URL=http://localhost:5000\n"
+    "BASE_URL=http://127.0.0.1:5050\n"  # not port 5000: AirPlay Receiver uses it on a Mac
+
     "EMAIL_SERVICE=pretend\n"
     "FORCE_HTTPS=false\n"
 )
 print(f"Wrote {env}. Next, from the src/ folder:")
 print("  flask --app bbpv seed-demo     # made-up accounts and tasks for the demo")
-print("  flask --app bbpv run           # then open http://localhost:5000")
+print("  flask --app bbpv run --port 5050   # then open http://127.0.0.1:5050")

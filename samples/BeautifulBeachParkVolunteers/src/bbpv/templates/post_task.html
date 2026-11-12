@@ -18,9 +18,15 @@
   {% set r = form.rows[i] if i < form.rows|length else {} %}
   <div class="slot-row">
     <div><label for="start{{ i }}">{{ w.slot_start_label(i + 1) }}</label>
-      <input id="start{{ i }}" class="field slot-start" type="time" step="900" name="slot_start" value="{{ r.start or '' }}"></div>
-    <div><label for="end{{ i }}">{{ w.SCREEN.ends_label }}</label>
-      <input id="end{{ i }}" class="field slot-end" type="time" name="slot_end" value="{{ r.end or '' }}" readonly></div>
+      <select id="start{{ i }}" class="field slot-start" name="slot_start">
+        <option value="">{{ w.SCREEN.choose_time }}</option>
+        {% for value, label, end_value, end_label in start_times %}
+        <option value="{{ value }}" data-end="{{ end_value }}" data-end-label="{{ end_label }}"{% if r.start == value %} selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select></div>
+    <div><span class="label">{{ w.SCREEN.ends_label }}</span>
+      <p class="slot-end-label" aria-live="polite">{% for value, label, end_value, end_label in start_times %}{% if r.start == value %}{{ end_label }}{% endif %}{% endfor %}</p>
+      <input class="slot-end" type="hidden" name="slot_end" value="{% for value, label, end_value, end_label in start_times %}{% if r.start == value %}{{ end_value }}{% endif %}{% endfor %}"></div>
     <div><label for="places{{ i }}">{{ w.SCREEN.places_label }}</label>
       <input id="places{{ i }}" class="field" type="number" min="1" max="20" name="places" value="{{ r.places or '' }}"></div>
   </div>
@@ -31,13 +37,14 @@
   <button class="btn" type="submit">{{ w.SCREEN.post_button }}</button>
 </form>
 <script>
-  // Every slot is one hour (UX-3): the end time follows the start time.
+  // Every slot is one hour (UX-3): the end time follows the start time chosen from the list.
   document.querySelectorAll(".slot-row").forEach(function (row) {
-    var start = row.querySelector(".slot-start"), end = row.querySelector(".slot-end");
+    var start = row.querySelector(".slot-start"), end = row.querySelector(".slot-end"),
+        shown = row.querySelector(".slot-end-label");
     start.addEventListener("change", function () {
-      if (!start.value) { end.value = ""; return; }
-      var p = start.value.split(":"), h = (parseInt(p[0], 10) + 1) % 24;
-      end.value = (h < 10 ? "0" : "") + h + ":" + p[1];
+      var chosen = start.options[start.selectedIndex];
+      end.value = chosen.getAttribute("data-end") || "";
+      shown.textContent = chosen.getAttribute("data-end-label") || "";
     });
   });
 </script>

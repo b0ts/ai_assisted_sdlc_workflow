@@ -35,7 +35,7 @@ Everything runs on your own computer, at no cost. No real emails are sent.
 3. Run `pytest -m "not monkey and not browser"` while building. This skips
    the two long monkey tests and the two browser tests, and takes under a
    minute.
-4. Before sign-off, run plain `pytest` to run all 70.
+4. Before sign-off, run plain `pytest` to run all 74.
 
 Or ask Claude Code: "Run the tests in this project and summarize which pass
 and which fail."
@@ -110,7 +110,8 @@ page, so everything works without JavaScript.
 | S-5 My Sign-Ups | `GET /my-sign-ups` | Each sign-up has a link to its cancel page with `aria-label="Cancel <title>, April 21, 9:00 to 10:00 a.m."` |
 | Cancel confirm | `GET/POST /sign-ups/<id>/cancel` | The page has a "Yes, cancel" button |
 | S-6 My Tasks | `GET /my-tasks` | A table row per slot: title, time, `2 of 2` (plus `(Full)` when full), and a link with `aria-label="Roster for <title>, 9:00 to 10:00 a.m."` |
-| S-7 Post a Task | `GET/POST /tasks/new` | Fields `title`, `description`, `date` (`2027-04-21`), and for each slot `slot_start`, `slot_end` (`09:00`), `places`, repeated in order. Three rows to start; the "Add another slot" button is `<button name="add_slot">`, and posting with it shows the form again with one more row, up to 10, saving nothing |
+| Delete a task | `GET/POST /tasks/<id>/delete` | From S-6: each task is a `<section class="task">` with its title as an `<h3>`, a "Delete task" link with `aria-label="Delete <title>, April 21"`, and a table of its slots (time, places filled, Roster). The page shows the d05-01 confirm wording and a "Yes, delete" button (v1.7) |
+| S-7 Post a Task | `GET/POST /tasks/new` | Fields `title`, `description`, `date` (`2027-04-21`), and for each slot `slot_start`, `slot_end` (`09:00`), `places`, repeated in order. `slot_start` is a drop-down list (`<select>`) of `06:00` to `22:00` every 30 minutes; `slot_end` is hidden and may be empty (v1.7). Three rows to start; the "Add another slot" button is `<button name="add_slot">`, and posting with it shows the form again with one more row, up to 10, saving nothing |
 | S-8 Roster | `GET /slots/<id>/roster` | Links with `aria-label="Message <username>"` and `aria-label="Block <username>"` |
 | S-9 Message | `GET/POST /volunteers/<username>/message` (field `message`) | Shows `0 of 500 characters`. Sending returns to the roster the link came from, with "Message sent." |
 | Block confirm | `GET/POST /volunteers/<username>/block` | Shows the d05-01 confirm wording. "Yes, block" returns to the roster the link came from, with "Blocked." |
@@ -132,13 +133,14 @@ this is wrong."
 | File | Tests |
 |---|---|
 | `conftest.py` | Shared setup: the app, the test inbox, the clock, test accounts, and helpers |
-| `test_uc1_post_task.py` | T-01-01 to T-01-08 |
+| `test_uc1_post_task.py` | T-01-01 to T-01-09 |
 | `test_uc2_create_account.py` | T-02-01 to T-02-08 |
 | `test_uc3_sign_up.py` | T-03-01 to T-03-08 |
 | `test_uc4_cancel.py` | T-04-01 to T-04-03 |
 | `test_uc5_roster.py` | T-05-01 to T-05-04 |
 | `test_uc6_message.py` | T-06-01 to T-06-04 |
 | `test_uc7_block.py` | T-07-01 to T-07-05 |
+| `test_uc8_delete_task.py` | T-08-01 to T-08-03 (v1.7) |
 | `test_security.py` | T-SEC-01 to T-SEC-12 |
 | `test_quality.py` | T-QR-01, T-QR-02 (browser) |
 | `test_operations.py` | T-EM-01 to T-EM-08, T-DATA-01, T-QR-03, T-QR-04, T-WD-01 to T-WD-03 (added in v1.2 to v1.5) |

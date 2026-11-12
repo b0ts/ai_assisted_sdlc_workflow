@@ -54,8 +54,8 @@ It runs locally, at no cost, and never sends a real email.
    seconds), or plain `pytest` for all 58 (about 7 minutes).
 4. Try the app: in the `src/` folder, run
    `python infrastructure/setup_local.py`, then
-   `flask --app bbpv seed-demo`, then `flask --app bbpv run`, and open
-   <http://localhost:5000>. Sign in as `sandyhelps@example.test` and find
+   `flask --app bbpv seed-demo`, then `flask --app bbpv run --port 5050`, and open
+   <http://127.0.0.1:5050> (or double-click `start-demo.command`, which does all of this). Sign in as `sandyhelps@example.test` and find
    the sign-in link in the **pretend inbox**.
 
 Or ask Claude Code: "Set up this sample, run its tests, and start the app."

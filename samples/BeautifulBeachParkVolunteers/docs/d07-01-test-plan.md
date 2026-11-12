@@ -1,7 +1,7 @@
 # BeautifulBeachPark Volunteers: Test Plan
 
-**Document:** d07-01 · **Step:** 7, Test Creation · **Version:** 1.6
-· **Last updated:** 2026-11-11 · **Status:** Approved
+**Document:** d07-01 · **Step:** 7, Test Creation · **Version:** 1.7
+· **Last updated:** 2026-11-12 · **Status:** Approved
 · **Owner:** SDET (Test Creation chat)
 
 > **Sample document.** BeautifulBeachPark, its people, and every username
@@ -18,10 +18,10 @@
 | Source UI/UX Document | d05-01 v1.1, 2026-10-13 (v1.0 plus two messages; Section 12) |
 | Source System Infrastructure Document | d06-01 v1.1, 2026-10-13 (v1.0 plus a pretend inbox; Section 12) |
 | Infrastructure sign-off | D10, 2026-10-09 |
-| Phase covered | Phase 1: UC-1 to UC-7, email reminders |
+| Phase covered | Phase 1: UC-1 to UC-8, email reminders |
 | Test environment | Local (made-up data only, on the Volunteer Program Manager's laptop), d06-01 Section 4; the full suite runs again on Parks IT's servers in Step 9 |
 | Where the tests live | `tests/` |
-| Number of tests | 70: 16 happy path, 34 expected failure, 14 bounds, 2 monkey, 4 quality (v1.6; 58 in v1.4, 38 in v1.1) |
+| Number of tests | 74: 17 happy path, 36 expected failure, 15 bounds, 2 monkey, 4 quality (v1.7; 58 in v1.4, 38 in v1.1) |
 | Plan in one sentence | Every use case is tested for its normal path, its refusals, and its limits, with extra checks that no email address ever reaches a volunteer's or coordinator's screen. |
 
 ## 2. Inputs
@@ -35,7 +35,7 @@
 
 ## 3. Scope
 
-**Use cases tested:** UC-1 to UC-7
+**Use cases tested:** UC-1 to UC-8
 
 **Quality requirements tested:** Speed, Accessibility, Privacy and data
 (PRD Section 6)
@@ -45,7 +45,7 @@
 - Reliability (99% available): measured by the uptime alert in d06-01
   Section 9 once the app is live (Step 10).
 - Devices and browsers: T-QR-01 and T-QR-02 run in a real phone-sized and
-  desktop browser; the other 68 tests send requests straight to the app,
+  desktop browser; the other 72 tests send requests straight to the app,
   which is much faster. Other browsers are checked by hand in Step 9.
 - Delivery of real emails into real inboxes: the local environment never
   sends to real addresses (d06-01 v1.1). Checked by hand in Step 9.
@@ -91,6 +91,7 @@ criterion of UC-3 in the PRD. "UC-3 2a" means alternate flow 2a.
 | | Spec 6: title up to 60 characters | T-01-04 |
 | | AC3 (v1.2): 1 to 10 slots; description up to 1,000 characters | T-01-06 |
 | | d05-01 v1.2: "Add another slot," up to 10 | T-01-07 |
+| | AC6 (v1.4): start times from a list, 6:00 a.m. to 10:00 p.m. every 30 minutes | T-01-09 |
 | | AC3 (v1.3): a line break counts as one character | T-01-08 |
 | UC-2: Create an account | AC1: username and email only | T-02-01, T-SEC-04 |
 | | AC2: 3 to 20 letters, numbers, or underscores | T-02-03 |
@@ -124,6 +125,11 @@ criterion of UC-3 in the PRD. "UC-3 2a" means alternate flow 2a.
 | | AC4: only the System Administrator can undo | T-07-02, T-07-03 |
 | | d05-01 v1.2: "Yes, block" returns to the roster | T-07-04 |
 | | Main flow 3, AC2 (v1.3): upcoming sign-ups canceled | T-07-05 |
+| UC-8: Delete a task (v1.7) | AC1: only the coordinator who posted it | T-08-02 |
+| | AC2: asks to confirm, saying how many will be told | T-08-01, T-08-03 |
+| | AC3: gone from the open slots and sign-ups straight away | T-08-01 |
+| | AC4: one "canceled" email per volunteer, and no reminder | T-08-01 |
+| | 1a: nobody signed up, no email | T-08-03 |
 | Spec 11.1 | Emails never sent to the client | T-SEC-01 |
 | Spec 11.1 | HTTPS only | T-SEC-02 |
 | Spec 11.1 | Block list holds a scrambled copy only | T-SEC-03 |
@@ -172,6 +178,7 @@ has a security test. No test lacks a source.
 | T-01-06 | BC | Post tasks with descriptions of 1,000 and 1,001 characters, and with 10 and 11 slots. | 1,000 and 10 saved; 1,001 refused with "Descriptions can be up to 1,000 characters."; 11 refused with "A task can have up to 10 slots." | UC-1 AC3 (PRD v1.2); round 1, R-12 |
 | T-01-07 | HP | On S-7, tap "Add another slot" until there are 10 rows. | Each tap adds one row and keeps what was typed; nothing is saved; at 10 rows the button is gone. | d05-01 v1.2, S-7; round 1, R-9 |
 | T-01-08 | BC | Post descriptions of 1,000 and 1,001 characters as a browser sends them, with 9 line breaks (each sent as two characters). | 1,000 saved; 1,001 refused with "Descriptions can be up to 1,000 characters." | UC-1 AC3 (PRD v1.3); round 2, R2-1 |
+| T-01-09 | BC | Open S-7 and look at each start-time list; post slots starting at 6:00 a.m. and 10:00 p.m., then at 5:30 a.m., 10:30 p.m., and 8:15 a.m.; post one with no end time. | Each list offers "Choose a time" and 6:00 a.m. to 10:00 p.m. every 30 minutes. 6:00 a.m. and 10:00 p.m. saved; the others refused with "Please choose each slot's start time from the list."; a row with volunteers but no start is refused with "Please choose each slot's start time." (R2-21); with no end time, the slot ends one hour later. | UC-1 AC6 (PRD v1.4); d05-01 v1.4, UX-8; polishing item P-1 |
 | T-01-05 | EF | test_vol_01 sends a Post task request. | "Not allowed. Please contact the park office if you think this is wrong." No "Post a task" button appears for volunteers. | UC-1 AC3 |
 
 ### UC-2: Create an account
@@ -235,6 +242,14 @@ has a security test. No test lacks a source.
 | T-07-03 | HP | test_admin_01 opens S-10 and taps "Undo block" next to test_vol_04. | S-10 lists usernames only; "Block removed."; test_vol_04 can sign up again. | UC-7 1a, AC4 |
 | T-07-04 | HP | From the roster, test_coord_01 blocks test_vol_04. | After "Yes, block," the roster opens with "Blocked." | d05-01 v1.2, Section 6; round 1, R-9 |
 | T-07-05 | HP | test_vol_04 is signed up for both of tomorrow's slots, test_vol_01 for one. test_coord_01 blocks test_vol_04; at 6 p.m. the reminders are sent. | test_vol_04 is gone from both rosters and their places are open again; test_vol_01 stays signed up; test_vol_04 gets no reminder, test_vol_01 does. | UC-7 main flow 3, AC2 (PRD v1.3); round 2, R2-9 |
+
+### UC-8: Delete a task (v1.7)
+
+| ID | Type | Steps | Expected result | Source |
+|---|---|---|---|---|
+| T-08-01 | HP | test_vol_01 is signed up for both of tomorrow's Test Beach Cleanup slots, test_vol_02 for one. test_coord_01 taps "Delete" next to the task on S-6, reads the confirm page, then taps "Yes, delete." At 6 p.m. the reminders run. | S-6 lists the task once, with one "Delete task" button and its two slots under it (UX-9). The confirm page says 2 slots and 2 volunteers; opening it changes nothing. "Task deleted."; the task is gone from S-6, S-3, and S-5. test_vol_01 gets one "Canceled:" email naming both times, test_vol_02 one naming theirs; no reminders. | UC-8 main flow, AC2 to AC4 (PRD v1.4); d05-01 v1.4 |
+| T-08-02 | EF | test_coord_02 (who didn't post it) and test_vol_01 open and send the delete request for test_coord_01's task. | No "Delete" link on test_coord_02's S-6. Both get "Not allowed. Please contact the park office if you think this is wrong."; the task stays. | UC-8 AC1 (PRD v1.4); Spec 11.1 v1.4 |
+| T-08-03 | EF | test_coord_01 deletes a task nobody has signed up for. | The confirm page says "No one has signed up yet."; "Task deleted."; no email is sent. | UC-8 1a (PRD v1.4) |
 
 ## 8. Security and Privacy Tests
 
@@ -335,3 +350,4 @@ if the email service were down.
 | 1.4 | 2026-10-26 | T-EM-07 and T-WD-03 added; T-SEC-08 runs its two requests side by side with bounded waits, so it can't hang on PostgreSQL; the test inbox can be slow. 58 tests in all | Round 1 re-review 2 (Codex), findings R-5, R-15, R-17 | SDET; Park Manager, 2026-10-26 |
 | 1.5 | 2026-11-11 | 10 tests added (T-01-08, T-02-06, T-06-04, T-07-05, T-SEC-09 to T-SEC-12, T-EM-08, T-QR-04). TC-4: signing in in the shared setup, T-02-01, T-SEC-05, T-SEC-06, T-EM-01, and the browser tests now press "Sign in" on the page the link opens; the test client waits for emails sent in the background; T-07-01 uses the new block wording; T-EM-07 uses S-9, since the sign-in page no longer waits. 68 tests in all | Round 2 code review (Claude Code) decisions, R2-1 to R2-9; PRD v1.3, Spec v1.3, d05-01 v1.3, d06-01 v1.5 | SDET; Park Manager, 2026-11-11 |
 | 1.6 | 2026-11-11 | T-02-07 and T-02-08 added. TC-5: T-02-02 signs in from the first account's link before trying the username again, since an account now exists only from "Sign in" (PRD v1.3 UC-2 step 4). 70 tests in all | Round 2 re-reviews (Claude Code), R2-14, R2-17 | SDET; Park Manager, 2026-11-11 |
+| 1.7 | 2026-11-12 | T-01-09 and UC-8's T-08-01 to T-08-03 added. TC-6: T-01-07 counts the start-time lists as well as boxes; T-04-03's slot starts at 11:30 instead of 11:50, a time no longer on the list. TC-7: T-01-06, T-03-04, and T-MK-01 read S-6 task by task, since each task now has its own heading (UX-9). 74 tests in all | Polishing items P-1 and P-2 before round 3; PRD v1.4, d05-01 v1.4 | SDET; Park Manager, 2026-11-12 |

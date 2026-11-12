@@ -57,7 +57,21 @@ MSG = {
     # Added in d05-01 v1.3 (round 2 rework)
     "finish_heading": "Finish signing in",
     "finish_text": "One more step: select Sign in to finish signing in.",
+    # Added in d05-01 v1.4 (polishing before round 3)
+    "start_list": "Please choose each slot's start time from the list.",
+    "start_missing": "Please choose each slot's start time.",
+    "task_deleted": "Task deleted.",
 }
+
+
+def delete_confirm_wording(title, day, slots, signed_up):
+    """d05-01 v1.4, Section 9: the delete confirm page. `day` is a date."""
+    when = f"{day.strftime('%A')}, {day.strftime('%B')} {day.day}"
+    start = f"Delete {title} on {when}? Its {slots} slot{'s' if slots != 1 else ''} will be removed"
+    if not signed_up:
+        return start + ". No one has signed up yet."
+    who = "the 1 volunteer who" if signed_up == 1 else f"the {signed_up} volunteers who"
+    return start + f", and {who} signed up will get an email saying it's canceled."
 
 ALL_REFUSALS = [
     MSG[k]
@@ -140,6 +154,24 @@ def target_of(resp, aria_label):
             if el["form"] is not None:
                 return el["form"].get("action")
     return None
+
+
+def my_task_rows(resp):
+    """(title, time, filled text) for every slot row on S-6. Since d05-01 v1.4 (UX-9),
+    each task is a section with its title as a heading and a table of its slots."""
+    raw = resp.get_data(as_text=True)
+    rows = []
+
+    def plain(fragment):
+        return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", fragment))).strip()
+
+    for section in re.findall(r"(?is)<section\b[^>]*class=\"task\".*?</section>", raw):
+        title = plain(re.search(r"(?is)<h3\b.*?</h3>", section).group(0))
+        for row in re.findall(r"(?is)<tr\b.*?</tr>", section):
+            cells = [plain(c) for c in re.findall(r"(?is)<td\b.*?</td>", row)]
+            if len(cells) >= 2:
+                rows.append((title, cells[0], cells[1]))
+    return rows
 
 
 def form_fields(resp):

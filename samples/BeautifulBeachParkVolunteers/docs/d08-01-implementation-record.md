@@ -1,7 +1,7 @@
 # BeautifulBeachPark Volunteers: Implementation Record
 
-**Document:** d08-01 · **Step:** 8, Implementation · **Version:** 1.2
-· **Last updated:** 2026-11-11 · **Status:** In review: rounds 1 and 2 closed; round 3 (hands-on) next
+**Document:** d08-01 · **Step:** 8, Implementation · **Version:** 1.3
+· **Last updated:** 2026-11-12 · **Status:** In review: rounds 1 and 2 closed; polished and re-reviewed; round 3 (hands-on) next
 · **Owner:** Software Engineer (Implementation chat)
 
 > **Sample document.** BeautifulBeachPark, its city, its people, and Parks
@@ -25,7 +25,7 @@
 | Phase covered | Phase 1: UC-1 to UC-7, email reminders |
 | Where the code lives | `src/` |
 | Built with | Claude Code, working in the project folder, using the local environment only |
-| Latest test result | 70 of 70 pass at full length (Run 18, 2026-11-11, after the round 2 fixes, R2-14, and R2-17) |
+| Latest test result | 74 of 74 pass at full length (Run 24, 2026-11-12, after polishing and its code re-review) |
 | Build in one sentence | Claude Code wrote the whole app in one session, in the order of the Build Plan, then ran the tests; the runs found two problems in the tests, which the SDET fixed, and all 38 passed. |
 
 ## 2. Inputs
@@ -92,6 +92,12 @@ could build the whole app before the first run.
 | 16 | 2026-11-11 | R2-14 fix: Create Account saves only an account request (new `account_requests` table); the account is made at "Sign in"; a queued email can go to a request's encrypted address (`outbox.to_encrypted`); `clean-up` removes expired requests. Full length | 69 of 69 |
 | 17 | 2026-11-11 | Re-review 2 R2-17 decided Fix: Spec Section 6 and DD-13; T-02-08 added (d07-01 1.6), run against the old code | 65 of 66 quick tests: T-02-08 failed for the right reason |
 | 18 | 2026-11-11 | R2-17 fix: an email may have several account requests, each link working until one becomes the account, then the rest are removed; on PostgreSQL the email's lookup key is locked so the daily limit holds. Full length | 70 of 70 |
+| 19 | 2026-11-12 | Polishing item P-1 (the Park Manager, before round 3): S-7's time box made 8:00 a.m. hard to find. PRD 1.4, Spec 1.4, d05-01 1.4 (UX-8); T-01-09 and TC-6 (d07-01 1.7), run against the old code | 66 of 67 quick tests: T-01-09 failed for the right reason |
+| 20 | 2026-11-12 | P-1 fix: S-7's start time is a drop-down list, 6:00 a.m. to 10:00 p.m. every 30 minutes, with the end shown as text; the server refuses other start times and works out the end. Full length | 71 of 71 |
+| 21 | 2026-11-12 | Polishing item P-2 (the Park Manager): a coordinator couldn't remove a task. PRD 1.4 adds UC-8, Delete a task (no editing: delete and post again); Spec 1.4 and d05-01 1.4 updated; T-08-01 to T-08-03 (d07-01 1.7), run against the old code | 0 of 3 new tests: no "Delete" on S-6 |
+| 22 | 2026-11-12 | UC-8 built: "Delete" on S-6 for the coordinator who posted the task, a confirm page saying how many volunteers will be told, one "Canceled" email per volunteer (queued in the same step as the delete), "Task deleted." Full length | 74 of 74 |
+| 23 | 2026-11-12 | P-2 follow-up: "Delete" on a task's first slot row looked like it deleted that slot only. d05-01 UX-9: each task has its own heading and "Delete task" button, with its slots listed under it. TC-7 (d07-01 1.7). Full length | 74 of 74 |
+| 24 | 2026-11-12 | Code re-review of the polishing changes (round 2 reviewer, report v1.4): R2-21 done, the S-7 missing-time message reworded; R2-20 and R2-22 were document fixes. Full length | 74 of 74 |
 
 (Runs 5 and 6, on Parks IT's servers in Step 9, are in d07-02. Runs 7 to
 9 happened for real on 2026-10-25; the sample's story is set around
@@ -146,7 +152,8 @@ instead of an error page.
 | Licenses | Every library in d08-02 Section 7 | Pass: all open-source licenses that allow this use | Volunteer Program Manager, 2026-12-10 |
 | Round 1: independent code review | Codex (OpenAI), prompt c08-02, read-only: report [`d08-04-code-review-codex.md`](d08-04-code-review-codex.md) | Ready after the Must-fix items: 5 Must fix, 6 Should fix, 2 Question. Codex noted it saw an earlier review's summary in this table. **Decided:** 8 Fix (R-1 to R-6, R-9, R-10), 3 Accept as is (R-7, R-8, R-11), 2 Questions answered Yes (R-12, R-13). **Fixed and tested** (Runs 7 to 9, 51 of 51). **Re-review 1** (Mode E, report v1.1): 7 Fixed; 3 Partly fixed (R-2: overlapping reminder runs, retry timing; R-5: some template text; R-6: the limit under simultaneous requests); new R-14 (Must fix: an email error can hold the address) and R-15 (Should fix: pages send the whole queue), both decided Fix. **Second pass fixed and tested** (Run 10, 56 of 56). **Re-review 2** (report v1.2): R-2, R-6, R-14 Fixed; R-5 (a.m., p.m., and "to" still written in the code) and R-15 (the 5-second wait is per step, not in total) partly fixed; new R-16 (Should fix: a queued notice can arrive after a cancel; **Accept as is**) and R-17 (Should fix: T-SEC-08 could hang on PostgreSQL; **Fix**). Stop rule set by the Park Manager: a round ends when no Must-fix finding is left open. **Third pass fixed and tested** (Run 11, 58 of 58). **Re-review 3** (report v1.3, 2026-11-11): R-5, R-15, R-17 Fixed; every Fix confirmed. New R-18 (Should fix: slow background sends can tie up database connections) goes to the Future Version list under the stop rule. **Round 1 closed, 2026-11-11** | Codex, 2026-10-25; decisions by the Park Manager, 2026-10-25 |
 | Round 2: independent code review | A new Claude Code session (Claude Opus 5.5), prompt c08-02, read-only: report [`d08-04-code-review-claude.md`](d08-04-code-review-claude.md) | Ready after the Must-fix items: 1 Must fix (a line break counts as 2 characters on the server, so a message or description under the limit can be refused), 7 Should fix, 2 Question, 3 Note. Tests weren't run by the reviewer. Decided 2026-11-11: all 8 Fix; R2-9 and R2-10 Yes. Fixed in Runs 12 to 14 (68 of 68). Re-review 1 (2026-11-11): 9 of 10 fixed; R2-2 partly fixed. New: R2-14 **Must fix** (a second try with the same username still shows whether an email has an account), Notes R2-15 and R2-16. Decided: R2-14 Fix (account made only at "Sign in"), R2-15 do it, R2-16 no notice. Fixed in Runs 15 and 16 (69 of 69). Re-review 2 (2026-11-11): R2-14 and R2-2 fixed; **no Must fix open, so round 2 is closed** (stop rule). New Should fix R2-17 (the first of two Create Account emails stopped working): decided Fix, fixed in Runs 17 and 18 (70 of 70). Re-review 3 (2026-11-11): R2-17 fixed; one Note (R2-18, Spec Change Log), done. **Round 2 closed, 2026-11-12** | Claude Code (new session), 2026-11-11; decisions by the Park Manager, 2026-11-11 |
-| Round 3: hands-on review | A person uses the running app (prompt c08-03): report [`d08-05-hands-on-review.md`](d08-05-hands-on-review.md) | Not yet: starts when round 2 is settled. The session plan is ready | — |
+| Polishing | The Park Manager, who built the app, ran it and fine-tuned it with Claude (prompt c08-04): log [`d08-06-polishing-log.md`](d08-06-polishing-log.md) | 2 items, both Fix now: P-1 (the start-time picker; Bug) and P-2 (no way to remove a task; Requirement, new UC-8), with a Usability follow-up (UX-9). Runs 19 to 23 (74 of 74). Two questions answered as designed. **Code re-review of the polishing changes** (round 2 reviewer, report v1.4, 2026-11-12): no Must fix; R2-19 (Should fix, a rare timing gap) to the Future Version list; Notes R2-20 to R2-22 done. **Polishing done** | Park Manager, with Claude, 2026-11-12 |
+| Round 3: hands-on review | People who weren't involved use the running app (prompt c08-03): report [`d08-05-hands-on-review.md`](d08-05-hands-on-review.md) | Ready to start: the session plan is ready (v0.3) | — |
 
 > The three review rounds run one after another: each round's findings
 > are decided, fixed, and re-reviewed before the next starts. Reviewers
@@ -161,6 +168,8 @@ instead of an error page.
 | TC-3 | T-MK-01 | Run 8: flagged a volunteer's email "shown" after sending a message. "Send" now returns to My Tasks (d05-01 v1.2), where a random S-7 title, `test_vol_01@example.test`, appeared again | **Test wrong, code right.** As in TC-2, text the coordinator typed may reappear; the S-9 check now allows the S-7 titles too. | `tests/test_monkey.py` fixed (d07-01 v1.2). Run 9: 51 of 51. |
 | TC-4 | Shared setup, T-02-01, T-SEC-05, T-SEC-06, T-EM-01, T-EM-07, T-07-01, browser tests | Round 2 decisions changed what the tests must do: opening a sign-in link no longer signs in (R2-4); the sign-in page no longer waits for its email (R2-3); the block confirm box has new wording (R2-9) | **Tests changed to follow approved documents** (PRD 1.3, Spec 1.3, d05-01 1.3). They press "Sign in" on the page the link opens; the test client waits for emails sent in the background; T-EM-07 uses S-9 | d07-01 v1.5. Run 14: 68 of 68 |
 | TC-5 | T-02-02 | Re-review finding R2-14: an account now exists only once its owner presses "Sign in" (PRD v1.3, UC-2 step 4), so T-02-02's second try no longer met a taken username | **Test changed to follow the approved PRD.** It signs in from the first link before trying the username again | d07-01 v1.6. Run 16: 69 of 69 |
+| TC-6 | T-01-07, T-04-03 | Polishing P-1: S-7's start time became a list (UX-8). T-01-07 looked only for text boxes, and T-04-03 used 11:50, a time no longer allowed | **Tests changed to follow the approved design** (PRD 1.4, d05-01 1.4): T-01-07 also counts lists; T-04-03 uses 11:30 | d07-01 v1.7. Run 20: 71 of 71 |
+| TC-7 | T-01-06, T-03-04, T-MK-01 | Polishing P-2 follow-up: S-6 lists each task under its own heading (UX-9), so the task's title appears once, not on every slot row | **Tests changed to follow the approved design** (d05-01 1.4): they read S-6 task by task, with a shared helper | d07-01 v1.7. Run 23: 74 of 74 |
 
 ## 9. Requests Sent Back
 
@@ -176,6 +185,7 @@ They are considered in Step 10 (Maintenance).
 | Finding | From | What it is |
 |---|---|---|
 | ~~R-18~~ | Round 1, re-review 3 (Codex) | When the email service is slow, background sends hold database connections, so several at once could slow other pages. **Taken off the list 2026-11-11:** round 2 found it too (R2-5), and the Park Manager chose Fix; fixed in Run 13 (Spec DD-12) |
+| R2-19 | Round 2 reviewer, re-review of the polishing changes | If a volunteer signs up in the same split second the coordinator deletes the task, they can be told "You're signed up" and never get the "Canceled" email. Suggested fix: the delete first closes the task's slots, then lists whom to tell |
 
 ## 10. Risks, Assumptions, and Open Questions
 
@@ -206,3 +216,4 @@ They are considered in Step 10 (Maintenance).
 | 1.0 | 2026-12-11 | First version | — | Park Manager (D12, 2026-12-11) |
 | 1.1 | 2026-10-25 | Round 1: decisions, fixes, Runs 7 to 9, TC-3 | Round 1 code review (Codex) | Waiting for Codex's re-review, then the Park Manager |
 | 1.2 | 2026-11-11 | Round 2: decisions, fixes, Runs 12 to 18, TC-4, TC-5; R2-14, R2-17; R-18 fixed and taken off the Future Version list | Round 2 code review (Claude Code) | Waiting for Claude Code's re-review, then the Park Manager |
+| 1.3 | 2026-11-12 | Polishing (d08-06): P-1, P-2 and its follow-up, Runs 19 to 23, TC-6 and TC-7 | Polishing before round 3 | Park Manager, 2026-11-12 |

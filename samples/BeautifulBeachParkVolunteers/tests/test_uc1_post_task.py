@@ -1,5 +1,7 @@
 """UC-1: Post a task (Test Plan Section 7)."""
 
+import re
+
 from conftest import MSG, TASK, TOMORROW, slot_label, slot_time, target_of, text
 
 
@@ -76,7 +78,8 @@ def test_t_01_06_description_and_slot_count_bounds(coord):
     ten = tuple((f"{h:02d}:00", f"{h + 1:02d}:00", 1) for h in range(8, 18))
     resp = coord.post_task(title="Test Ten Slots", slots=ten)
     assert MSG["too_many_slots"] not in text(resp)
-    assert text(coord.get("/my-tasks")).count("Test Ten Slots") == 10
+    from conftest import my_task_rows
+    assert [r[0] for r in my_task_rows(coord.get("/my-tasks"))].count("Test Ten Slots") == 10
 
     eleven = tuple((f"{h:02d}:00", f"{h + 1:02d}:00", 1) for h in range(7, 18))
     resp = coord.post_task(title="Test Eleven Slots", slots=eleven)
@@ -89,7 +92,8 @@ def test_t_01_07_add_another_slot_up_to_ten(coord):
     from conftest import elements
 
     def slot_rows(resp):
-        return [el for el in elements(resp).elements if el["tag"] == "input" and el["attrs"].get("name") == "slot_start"]
+        return [el for el in elements(resp).elements
+                if el["tag"] in ("input", "select") and el["attrs"].get("name") == "slot_start"]
 
     def add_button(resp):
         return [el for el in elements(resp).elements
@@ -125,3 +129,42 @@ def test_t_01_08_a_line_break_counts_as_one_character(coord):
 
     resp = coord.post_task(title="Test Description Lines 2", description=lines + "d")
     assert MSG["description_long"] in text(resp)
+
+
+def test_t_01_09_start_times_come_from_a_list(coord):
+    """BC · UC-1 AC6 (PRD v1.4); d05-01 v1.4, S-7, UX-8; polishing item P-1
+
+    Each slot's start time is chosen from a list, 6:00 a.m. to 10:00 p.m. every
+    30 minutes, and the server refuses any other start time.
+    """
+    from conftest import elements
+
+    page = coord.get("/tasks/new")
+    starts = [el for el in elements(page).elements if el["tag"] == "select" and el["attrs"].get("name") == "slot_start"]
+    assert len(starts) == 3, "S-7's start times aren't drop-down lists"
+    html = page.get_data(as_text=True)
+    first_list = html[html.index('name="slot_start"'):]
+    first_list = first_list[:first_list.index("</select>")]
+    values = re.findall(r'<option value="([0-9:]*)"', first_list)
+    expected = [f"{h:02d}:{m:02d}" for h in range(6, 23) for m in (0, 30)][:-1]
+    assert values == [""] + expected, f"the list isn't 6:00 a.m. to 10:00 p.m. every 30 minutes: {values}"
+    shown = text(page)
+    for label in ("Choose a time", "6:00 a.m.", "8:00 a.m.", "12:30 p.m.", "10:00 p.m."):
+        assert label in shown, f"the list doesn't show {label!r}"
+
+    resp = coord.post_task(title="Test Early And Late", slots=(("06:00", "07:00", 1), ("22:00", "23:00", 1)))
+    assert "Test Early And Late" in text(coord.get("/my-tasks")), "6:00 a.m. and 10:00 p.m. were refused"
+    for start, end in (("05:30", "06:30"), ("22:30", "23:30"), ("08:15", "09:15")):
+        resp = coord.post_task(title=f"Test Off List {start}", slots=((start, end, 1),))
+        assert MSG["start_list"] in text(resp), f"{start} was accepted"
+        assert f"Test Off List {start}" not in text(coord.get("/my-tasks"))
+
+    # A row with volunteers but no start time (R2-21)
+    resp = coord.post_task(title="Test No Start", slots=(("", "", 2),))
+    assert MSG["start_missing"] in text(resp)
+
+    # The end time is worked out from the start when the form sends none (the end isn't a field)
+    data = {"title": "Test No End", "description": "", "date": TOMORROW.isoformat(),
+            "slot_start": ["08:00"], "slot_end": [""], "places": ["2"]}
+    coord.post("/tasks/new", data=data)
+    assert "Test No End" in text(coord.get("/my-tasks"))
