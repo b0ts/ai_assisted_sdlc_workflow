@@ -65,8 +65,10 @@ def test_t_03_04_never_over_filled_at_the_same_moment(app, inbox, coord, people)
 
         winners = [u for u, r in replies.items() if MSG["signed_up"] in r]
         assert len(winners) == 1, f"round {round_no}: {len(winners)} volunteers got the last place"
-        tasks = text(coord.get("/my-tasks"))
-        assert f"{title} {slot_time('09:00', '10:00')} 1 of 1" in tasks, f"round {round_no}: places filled is wrong"
+        from conftest import my_task_rows
+        rows = my_task_rows(coord.get("/my-tasks"))
+        assert (title, slot_time("09:00", "10:00"), "1 of 1 (Full)") in rows or (
+            title, slot_time("09:00", "10:00"), "1 of 1") in rows, f"round {round_no}: places filled is wrong"
 
 
 def test_t_03_05_already_signed_up(beach_task, people):

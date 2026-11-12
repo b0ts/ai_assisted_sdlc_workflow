@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% set title = w.SCREEN.delete_title %}
+{% block content %}
+<h1>{{ w.SCREEN.delete_title }}</h1>
+<p>{{ w.delete_task_confirm(task.title, task.date|day_heading, slots, signed_up) }}</p>
+<form method="post" action="/tasks/{{ task.id }}/delete">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <input type="hidden" name="confirm" value="yes">
+  <button class="btn danger" type="submit">{{ w.SCREEN.yes_delete }}</button>
+</form>
+<a class="btn secondary" href="/my-tasks">{{ w.SCREEN.dont_delete }}</a>
+{% endblock %}

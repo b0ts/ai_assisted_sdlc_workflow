@@ -235,7 +235,7 @@ writes and runs real tests.
 
 ### Step 8: Implementation
 
-**Guide:** [b08](b08-implementation.md) · **Prompts:** `c08-01-implementation-prompt.md`, `c08-02-code-review-prompt.md`, `c08-03-hands-on-review-prompt.md` ·
+**Guide:** [b08](b08-implementation.md) · **Prompts:** `c08-01-implementation-prompt.md`, `c08-02-code-review-prompt.md`, `c08-03-hands-on-review-prompt.md`, `c08-04-polishing-prompt.md` ·
 **Sample:** [`d08-01-implementation-record.md`](../samples/BeautifulBeachParkVolunteers/docs/d08-01-implementation-record.md),
 [`d08-02-developer-guide.md`](../samples/BeautifulBeachParkVolunteers/docs/d08-02-developer-guide.md),
 [`d08-04-code-review-codex.md`](../samples/BeautifulBeachParkVolunteers/docs/d08-04-code-review-codex.md),
@@ -266,7 +266,17 @@ asks the SDET chat, which decides.
      follow `prompts/c08-02-code-review-prompt.md` from the
      ai_assisted_sdlc_workflow repo, and run `/security-review` first."
      It saves `docs/d08-04-code-review-claude.md`.
-  3. **Round 3: a person uses the app** (a hands-on review). Anyone can
+  3. **Polishing: you use the app first.** When round 2 is settled, open
+     Claude Code in your project folder and say: "Please follow
+     `prompts/c08-04-polishing-prompt.md`." It starts the app and
+     suggests what to try. Whenever something feels wrong ("I can't pick
+     8:00 a.m."; "I can't remove a task"), say so: it tells you whether
+     that's how it was designed, offers options, and makes the change you
+     choose through the documents, tests, and code. Keep it to an hour or
+     two. It records everything in `docs/d08-06-polishing-log.md`. Then a
+     new Claude Code session reviews just the polishing changes (prompt
+     c08-02, Mode E).
+  4. **Round 3: a person uses the app** (a hands-on review). Anyone can
      do it, including you or another stakeholder, but it's best done by
      someone like your real users who didn't build it. Start a chat with
      prompt c08-03: it writes their **session plan** (how to start the
@@ -275,7 +285,7 @@ asks the SDET chat, which decides.
      slow; then the same chat turns their notes into
      `docs/d08-05-hands-on-review.md`. They may look at the code, but
      don't have to.
-  4. **Rework, in every round.** Each "Fix" goes back to where the
+  5. **Rework, in every round.** Each "Fix" goes back to where the
      problem starts: a **bug** to the SDET chat (a test) and then the
      Software Engineer chat; a **usability** problem to the UI/UX chat
      first (Step 5), then the tests and code; a **missing requirement** to
@@ -287,7 +297,8 @@ asks the SDET chat, which decides.
      list unless you choose Fix.
 - **You're done when:** every test passes, every screen matches its
   mockup, the code fits the live server requirements from Step 6, and all
-  three review rounds are done, in order, with a decision on every finding
+  three review rounds are done, in order, with polishing before round 3,
+  and a decision on every finding
   and every fix re-checked. If a professional
   developer can also look at the code, especially for an app that stores
   personal information, even better.
@@ -387,7 +398,7 @@ Tick these off in your tracking checklist as you go.
 - [ ] Step 5: UI/UX Document, Style Guide, and mockups approved
 - [ ] Step 6: Cost sign-off, local environment set up, final sign-off
 - [ ] Step 7: Tests written; every test failing for the right reason
-- [ ] Step 8: Every test passing; three review rounds done in order (Codex, then Claude Code, then a person's hands-on review); every finding decided and re-checked
+- [ ] Step 8: Every test passing; three review rounds done in order (Codex, then Claude Code, then a person's hands-on review), with polishing before the hands-on review and its changes code-reviewed; every finding decided and re-checked
 - [ ] Step 9: Demo approved; moved to the live servers; pilot done; live
 - [ ] Step 10: Maintenance Log started; first monthly report
 

@@ -50,11 +50,13 @@ NO_OPEN_SLOTS = "There are no open slots right now. Please check again soon."
 CANCELED = "Your sign-up was canceled. The place is open for someone else."
 NO_SIGN_UPS = "You haven't signed up for anything yet."
 TASK_POSTED = "Task posted."
+TASK_DELETED = "Task deleted."  # d05-01 v1.4, UC-8
 NO_TASKS = "You haven't posted any upcoming tasks."
 TITLE_MISSING = "Please enter a title."
 DESCRIPTION_LONG = "Descriptions can be up to 1,000 characters."
 DATE_INVALID = "Please choose a date."
-TIME_INVALID = "Please enter each slot's start and end time."
+TIME_INVALID = "Please choose each slot's start time."  # d05-01 v1.4 (round 2, R2-21)
+START_NOT_ON_LIST = "Please choose each slot's start time from the list."  # d05-01 v1.4
 NO_SLOTS = "Please add at least one slot."
 TOO_MANY_SLOTS = "A task can have up to 10 slots."
 MESSAGE_MISSING = "Please write a message."
@@ -124,6 +126,28 @@ def reminder_email(username, title, day, when, description):
         + (f"{description}\n\n" if description else "")
         + "If you can't come, please cancel in the app so someone else can take your place.\n"
     )
+
+
+def canceled_email(username, title, day, whens):
+    """UC-8 (d05-01 v1.4): one email per volunteer, naming each of their times."""
+    times = " and ".join(whens)
+    return f"Canceled: {title}, {day}", (
+        f"Hello {username},\n\n"
+        f"Sorry, {title} on {day} ({times}) has been canceled, so you don't need to come.\n\n"
+        "Thank you for signing up. You can find other open slots in the app.\n"
+    )
+
+
+def delete_task_confirm(title, day, slots, signed_up):
+    start = f"Delete {title} on {day}? Its {slots} slot{'s' if slots != 1 else ''} will be removed"
+    if not signed_up:
+        return start + ". No one has signed up yet."
+    who = "the 1 volunteer who" if signed_up == 1 else f"the {signed_up} volunteers who"
+    return start + f", and {who} signed up will get an email saying it's canceled."
+
+
+def delete_task_label(title, day):
+    return f"Delete {title}, {day}"
 
 
 def message_email(username, coordinator, text):
@@ -204,6 +228,7 @@ SCREEN = {
     "slots_heading": "Slots",
     "slots_hint": "Each slot is one hour, with 1 to 20 volunteers. Up to 10 slots. Leave unused rows empty.",
     "ends_label": "Ends",
+    "choose_time": "Choose a time",  # d05-01 v1.4, UX-8
     "places_label": "Volunteers needed",
     "add_slot_button": "+ Add another slot",
     "post_button": "Post task",
@@ -220,6 +245,11 @@ SCREEN = {
     "block_title": "Block a volunteer",
     "yes_block": "Yes, block",
     "dont_block": "Don't block",
+    # UC-8 Delete a task (d05-01 v1.4)
+    "delete_link": "Delete task",
+    "delete_title": "Delete this task?",
+    "yes_delete": "Yes, delete",
+    "dont_delete": "Don't delete",
     # S-10 Blocked Volunteers
     "blocked_title": "Blocked volunteers",
     "blocked_hint": "Usernames only. Only you, the System Administrator, can undo a block.",

@@ -1,7 +1,7 @@
 # BeautifulBeachPark Volunteers: Hands-On Review Report
 
-**Document:** d08-05 · **Step:** 8, Implementation · **Version:** 0.1
-· **Last updated:** 2026-10-25 · **Status:** Session planned
+**Document:** d08-05 · **Step:** 8, Implementation · **Version:** 0.3
+· **Last updated:** 2026-11-12 · **Status:** Session planned; ready to run
 · **Owner:** Hands-on reviewer (to be named), helped by the Hands-On Review Helper (prompt c08-03)
 
 > **Sample document.** The park and its people are made up; the app is
@@ -13,6 +13,12 @@
 > screen, check this plan still fits before the session.
 > The plan was written from the PRD (d03-01), the UI/UX Document (d05-01),
 > and the Developer Guide (d08-02), without reading the code reviews.
+> Checked again on 2026-11-12 after round 2 (v0.2): the tasks still fit.
+> Round 2 changed how signing in and creating an account work, and what
+> blocking does; the tasks say what to do, not how, so they stay as they
+> are. Starting the app is now one double-click.
+> Checked again after polishing (v0.3, d08-06): the tasks still fit. The
+> reviewer shouldn't read the Polishing Log first.
 
 > **How to Read This Report**
 >
@@ -39,7 +45,7 @@
 | Item | Details |
 |---|---|
 | Product | BeautifulBeachPark Volunteers |
-| Version tested | To be filled in: `src/` after both code review rounds' fixes (the commit or date) |
+| Version tested | `src/` after both code review rounds and polishing (d08-06) (commit to be named once committed) |
 | Reviewer | To be filled in |
 | Connection to the project | To be filled in (for example, "didn't build it," "stakeholder," or "built the app") |
 | Read the code reviews first? | Should be **No**: don't read `d08-04` or d08-01 Section 7 before this session |
@@ -53,7 +59,15 @@
 
 ### 2.1 How to Start the App
 
-You (or whoever set up the project) only need to do steps 1 and 2 once.
+**The quick way (v0.2):** in **Finder**, open the sample folder
+(`samples/BeautifulBeachParkVolunteers`) and double-click
+**start-demo.command**. If macOS asks, choose **Open**. It does steps 2 to
+4 for you: it makes the local settings and demo data the first time, starts
+the app, and opens it in your browser. Then go on to step 5. To stop the
+app, close its Terminal window.
+
+The steps by hand: you (or whoever set up the project) only need to do
+steps 1 and 2 once.
 
 1. **Set up the project's Python,** if it isn't already: in **Terminal**
    (in **Finder**, choose **Applications**, then **Utilities**, then
@@ -65,13 +79,14 @@ You (or whoever set up the project) only need to do steps 1 and 2 once.
    `cd src`, then `python infrastructure/setup_local.py`, then
    `flask --app bbpv seed-demo`. (If you see "already exists" or "That
    username is taken," it was done before; that's fine.)
-3. **Start the app:** `flask --app bbpv run`. Leave this Terminal window
+3. **Start the app:** `flask --app bbpv run --port 5050`. Leave this Terminal window
    open while you test.
-4. **Open the app:** in your browser, go to <http://localhost:5000>.
+4. **Open the app:** in your browser, go to <http://127.0.0.1:5050>. (Not
+   port 5000: on a Mac, AirPlay Receiver answers there instead of the app.)
 5. **Sign in:** type one of the made-up email addresses below and click
    **Send me a sign-in link**. No real email is sent: click **Open the
    pretend inbox** on the sign-in page and click the newest link
-   addressed to that email.
+   addressed to that email, then finish signing in on the page it opens.
 
    | Role | Made-up email |
    |---|---|
@@ -174,3 +189,5 @@ Not yet.
 | Version | Date | Change | By |
 |---|---|---|---|
 | 0.1 | 2026-10-25 | Session plan written (prompt c08-03, Mode A) | Hands-On Review Helper |
+| 0.2 | 2026-11-12 | Plan checked after round 2; version to test named; `start-demo.command` added | Hands-On Review Helper (Claude) |
+| 0.3 | 2026-11-12 | Plan checked after polishing; the owner's notes moved to the Polishing Log (d08-06); the app's address is now port 5050 | Hands-On Review Helper (Claude) |

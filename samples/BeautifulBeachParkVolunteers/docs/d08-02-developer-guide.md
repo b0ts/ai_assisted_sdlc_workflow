@@ -1,7 +1,7 @@
 # BeautifulBeachPark Volunteers: Developer Guide
 
-**Document:** d08-02 · **Step:** 8, Implementation · **Version:** 1.3
-· **Last updated:** 2026-11-11 · **Status:** Approved
+**Document:** d08-02 · **Step:** 8, Implementation · **Version:** 1.4
+· **Last updated:** 2026-11-12 · **Status:** Approved
 · **Owner:** Software Engineer (Implementation chat)
 
 > **Sample document.** BeautifulBeachPark, its city, and Parks IT are made
@@ -100,12 +100,12 @@ checks this.
 | Task | How |
 |---|---|
 | Add made-up accounts and tasks | In the `src/` folder: `flask --app bbpv seed-demo` |
-| Run the app on your own computer | In the `src/` folder: `flask --app bbpv run`, then open <http://localhost:5000>. (After updating to v1.3, delete `src/bbpv-local.db` once and run `seed-demo` again: the email queue table changed in round 2, R2-14, and the app can't change existing tables.) Sign in as `sandyhelps@example.test` (volunteer), `democoordinator@example.test`, or `demoadmin@example.test`, and find the sign-in link in the **pretend inbox** (linked from the sign-in page). This is also how the stakeholder demo is run in Step 9. |
+| Run the app on your own computer | In the `src/` folder: `flask --app bbpv run --port 5050`, then open <http://127.0.0.1:5050> (on a Mac, port 5000 belongs to AirPlay Receiver), or double-click `start-demo.command` in the sample folder. (After updating to v1.3, delete `src/bbpv-local.db` once and run `seed-demo` again: the email queue table changed in round 2, R2-14, and the app can't change existing tables.) Sign in as `sandyhelps@example.test` (volunteer), `democoordinator@example.test`, or `demoadmin@example.test`, and find the sign-in link in the **pretend inbox** (linked from the sign-in page). This is also how the stakeholder demo is run in Step 9. |
 | Send tomorrow's reminders by hand | `flask --app bbpv send-reminders` (they appear in the pretend inbox) |
 | Send queued emails by hand | `flask --app bbpv send-emails` |
 | Remove tasks older than 12 months | `flask --app bbpv clean-up` |
 | Run every test | In Visual Studio Code, choose the **Testing** icon (a beaker) in the left sidebar, then **Run Tests**. Or, in the project folder, run `pytest`. Or ask Claude Code to "run all the tests." The tests use a throwaway database and never send email. |
-| Run the quick tests while working | `pytest -m "not monkey and not browser"`: 66 tests in a few seconds |
+| Run the quick tests while working | `pytest -m "not monkey and not browser"`: 70 tests in a few seconds |
 | Run one test | In the **Testing** panel, find the test by its ID (for example, `test_t_03_02`) and choose its run button. |
 | Where results go | Add a Run History row to `docs/d07-02-test-results.md` after every full run. |
 
@@ -119,7 +119,7 @@ runs on your computer and on Parks IT's servers; only the values change.
 | `DATABASE_URL` | Which database the app uses | The local test database | Parks IT's secret store (d06-01 Section 7.2) |
 | `EMAIL_ENCRYPTION_KEY` | Encrypts volunteer emails | A made-up key in the local settings file | Parks IT's secret store |
 | `EMAIL_SERVICE` | Where emails go | `pretend`: the pretend inbox | `smtp`: the city email service |
-| `BASE_URL` | The web address used in emailed links | `http://localhost:5000` | The app's `volunteers.` address |
+| `BASE_URL` | The web address used in emailed links | `http://127.0.0.1:5050` | The app's `volunteers.` address |
 | `SECRET_KEY` | Signs sessions | A made-up value | Parks IT's secret store |
 | `FORCE_HTTPS` | Sends plain HTTP to HTTPS (Spec 11.1) | `false` (the laptop has no certificate) | `true` (the default) |
 | `TRUST_PROXY` | Trusts Parks IT's web server to say the visitor used HTTPS | Not set | `true` |
@@ -209,3 +209,4 @@ demo, on a Tuesday evening (d06-01 Section 5.1):
 | 1.1 | 2026-10-25 | Email queue and `send-emails`; `clean-up`; `PARK_TIMEZONE`; tzdata; decryption now in `deliver()` | Round 1 code review fixes (d08-04-code-review-codex.md) | Park Manager, 2026-10-25 |
 | 1.2 | 2026-10-26 | Pages send only their own email (`EMAIL_SEND_TIMEOUT`); fixed 5-minute retries and expiry; safe failure reasons; all screen text in `wording.py` | Round 1 re-review (Codex), R-2, R-5, R-14, R-15 | Park Manager, 2026-10-26 |
 | 1.3 | 2026-11-11 | Waitress production server and start command; recreate the local database after updating (R2-14); `SMTP_CA_FILE`; never change `EMAIL_ENCRYPTION_KEY`; sign-in pages don't wait for email | Round 2 code review (Claude Code), R2-3, R2-6, R2-7, R2-11, R2-12 | Park Manager, 2026-11-11 |
+| 1.4 | 2026-11-12 | The app runs on port 5050 (`start-demo.command`, `BASE_URL`); 70 quick tests | Polishing (d08-06); round 2 re-review of polishing, R2-22 | Park Manager, 2026-11-12 |

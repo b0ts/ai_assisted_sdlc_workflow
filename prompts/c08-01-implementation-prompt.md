@@ -45,6 +45,9 @@ project, for any case studies added later, and for your own projects.
    first for a bug; the UI/UX Document first for a usability problem; the
    PRD first for a missing requirement), every test runs again, and the
    same reviewer re-checks the changes before the next round starts.
+   Between rounds 2 and 3, you **polish** the app yourself: you run it and
+   fine-tune it with prompt [c08-04](c08-04-polishing-prompt.md), which
+   makes each change through the documents, tests, and code.
 7. It writes the Developer Guide and drafts the Release Notes.
 8. Take the Implementation Record, Developer Guide, Release Notes, and
    Test Results Log to the **Tracking chat** for sign-off before Step 9.
@@ -91,7 +94,8 @@ Section 5.1. You will:
   Guide, and design files, with the exact wording.
 - **Review:** check security, privacy, speed, cost, and licenses, and
   prepare the app for three independent review rounds, one after another
-  (prompts c08-02 and c08-03); after each round, rebuild whatever the
+  (prompts c08-02 and c08-03), with polishing between rounds 2 and 3
+  (prompt c08-04); after each round, rebuild whatever the
   person decides to fix, once the earlier steps' documents and tests have
   been updated.
 - **Document:** write the Developer Guide and draft the Release Notes.
@@ -174,6 +178,7 @@ exist:
 | [`d08-03-release-notes.md`](../templates/d08-03-release-notes.md) | Always: what this version does, in plain language, drafted here and finalized in Step 9 |
 | [`d08-04-code-review.md`](../templates/d08-04-code-review.md) | Not yours to write: each independent code reviewer (prompt c08-02) writes one. You act on the findings the person marks "Fix." |
 | [`d08-05-hands-on-review.md`](../templates/d08-05-hands-on-review.md) | Not yours to write: the hands-on reviewer writes it, with prompt c08-03. You act on the findings marked "Fix," after their earlier step is done. It's the last of the three review rounds. |
+| [`d08-06-polishing-log.md`](../templates/d08-06-polishing-log.md) | Kept during Polishing (prompt c08-04), between rounds 2 and 3, by the session that polishes the app with the person who built it. |
 
 You also **continue** `d07-02-test-results.md` from Step 7. Never start a
 new one.
@@ -320,8 +325,10 @@ When every test passes:
    independent review rounds, one after another: round 1, a code review
    by a different company's AI (prompt c08-02); round 2, a code review by
    a new Claude Code session (c08-02); round 3, a person's hands-on review
-   (prompt c08-03). Make sure the Developer Guide says plainly how to
-   start the app locally, for the hands-on reviewer. **Don't review your
+   (prompt c08-03), after the person who built the app has polished it
+   (prompt c08-04). Make sure the Developer Guide says plainly how to
+   start the app locally, for the person polishing and the hands-on
+   reviewer. **Don't review your
    own code as one of them.** After each round, when I bring back the
    report with my decision on each finding, rebuild for every finding
    marked "Fix" only after its earlier step is done: a new or changed test
@@ -493,7 +500,8 @@ to me.
     code?
 12. Have all three independent review rounds been done, in order (two
     code reviews, c08-02, saved as d08-04; then one hands-on review,
-    c08-03, saved as d08-05), and does every finding have a person's
+    c08-03, saved as d08-05, after polishing, c08-04, saved as d08-06),
+    and does every finding have a person's
     decision, with each "Fix" fixed through the right step, tested, and
     re-checked before the next round?
 

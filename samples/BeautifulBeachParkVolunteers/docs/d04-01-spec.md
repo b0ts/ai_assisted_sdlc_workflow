@@ -1,7 +1,7 @@
 # BeautifulBeachPark Volunteers: Software Design Specification (Spec)
 
-**Document:** d04-01 · **Step:** 4, Design · **Version:** 1.3
-· **Last updated:** 2026-11-11 · **Status:** Approved
+**Document:** d04-01 · **Step:** 4, Design · **Version:** 1.4
+· **Last updated:** 2026-11-12 · **Status:** Approved
 · **Owner:** Software Architect (Design chat)
 
 **Diagrams included:** System Overview; UML Sequence Diagram for every use
@@ -19,7 +19,7 @@ entities (accounts, tasks, slots, sign-ups, and the block list).
 | Product | BeautifulBeachPark Volunteers |
 | Source PRD | d03-01 v1.1, 2026-09-18 |
 | PRD sign-off | D5, 2026-09-18 (after the D4 go-back) |
-| Phase covered | Phase 1: UC-1 to UC-7, email reminders |
+| Phase covered | Phase 1: UC-1 to UC-8, email reminders |
 | Application type | Web app |
 | Design in one sentence | A web app whose server saves tasks, slots, and sign-ups in a database, keeps every email address hidden, and sends sign-in links, reminders, and messages through an email service. |
 
@@ -78,11 +78,11 @@ flowchart LR
 | Item (entity) | What it holds | Personal information? | Kept for how long | Use cases |
 |---|---|---|---|---|
 | Account | Username (3 to 20 letters, numbers, or underscores), role, email (encrypted) | Yes: email | Until the account is deleted | UC-2 to UC-7 |
-| Task | Title (up to 60 characters), description (up to 1,000 characters; a line break counts as one), date, posted by; 1 to 10 slots | No | 12 months after its date, then removed by the daily clean-up | UC-1 |
-| Slot | Task, start time, end time (exactly one hour later), places needed (1 to 20), places left | No | With its task | UC-1, UC-3, UC-4, UC-5 |
+| Task | Title (up to 60 characters), description (up to 1,000 characters; a line break counts as one), date, posted by; 1 to 10 slots | No | 12 months after its date, then removed by the daily clean-up, or until the coordinator who posted it deletes it (v1.4) | UC-1, UC-8 |
+| Slot | Task, start time (on the hour or half hour, 6:00 a.m. to 10:00 p.m.; v1.4), end time (exactly one hour later), places needed (1 to 20), places left | No | With its task | UC-1, UC-3, UC-4, UC-5 |
 | Sign-up | Slot, username, time signed up | No | With its slot | UC-3, UC-4, UC-5 |
 | Block list entry | Scrambled (hashed) copy of the standardized email, blocked by, date | Yes, but scrambled | Until the System Administrator removes it | UC-2, UC-3, UC-7 |
-| Queued email | Account, subject and text (encrypted), when to try next, attempts, when it expires, and a short reason for the last failure (never an address or the email service's own reply) | Yes: a sign-in email holds a sign-in link, so the text is encrypted | Until it's sent, or until it expires: a sign-in email with its link, a confirmation or reminder when the slot starts, a message after 3 days | UC-2, UC-3, UC-6 |
+| Queued email | Account, subject and text (encrypted), when to try next, attempts, when it expires, and a short reason for the last failure (never an address or the email service's own reply) | Yes: a sign-in email holds a sign-in link, so the text is encrypted | Until it's sent, or until it expires: a sign-in email with its link, a confirmation or reminder when the slot starts, a message or a "Canceled" email (UC-8) after 3 days. Known limit: a confirmation or reminder already waiting when its task is deleted can still go out, before or after the "Canceled" email (round 2, R2-20) | UC-2, UC-3, UC-6 |
 | Account request (v1.3) | Username, email (encrypted), its two scrambled copies, a scrambled copy of the link, when it expires. An email may have several at once (each email's link keeps working); when one becomes an account, the others are removed (round 2 re-review 2, R2-17) | Yes: email (encrypted) | Until the volunteer signs in from the link (then it becomes an account), or until it expires (15 minutes; the daily clean-up removes it) | UC-2 |
 | Sign-in email count | Scrambled (hashed) copy of the email, time sent | Yes, but scrambled | Counted for 24 hours; deleted by the daily clean-up once older than 24 hours, so kept up to about 48 hours (round 2, R2-10) | All (sign-in) |
 
@@ -106,6 +106,7 @@ the email in lowercase and removes dots and any "+" tag before the "@," so
 | Get roster | Client → Server | Slot | Usernames only | "No one has signed up yet" | UC-5 |
 | List my tasks | Client → Server | — | The coordinator's tasks, with every slot (full or not) and places filled | "Not allowed" | UC-1, UC-5 |
 | Message volunteer | Client → Server | Username, message | "Message sent" | "Messages can be up to 500 characters" (a line break counts as one) | UC-6 |
+| Delete task | Client → Server | Task | "Task deleted."; a "canceled" email to each volunteer signed up for a slot that hasn't started | "Not allowed" (not the coordinator who posted it) | UC-8 |
 | Block volunteer | Client → Server | Username | "Blocked"; the volunteer's upcoming sign-ups are canceled and their places given back | "Not allowed" | UC-7 |
 | Undo block | Client → Server | Username | "Block removed" | "Not allowed" | UC-7 |
 | List blocked volunteers | Client → Server | — | Usernames (or "account deleted"), blocked by, and date; never emails | "Not allowed" | UC-7 |
@@ -122,6 +123,7 @@ the email in lowercase and removes dots and any "+" tag before the "@," so
 | UC-5: View a roster | Must have | Section 9, UC-5 | Client, Server, Database | List my tasks, Get roster |
 | UC-6: Message a volunteer | Should have | Section 9, UC-6 | Client, Server, Database, Email service | Message volunteer, Send email |
 | UC-7: Block a volunteer | Must have | Section 9, UC-7 | Client, Server, Database | Block volunteer, List blocked volunteers, Undo block |
+| UC-8: Delete a task (v1.4) | Must have | Section 9, UC-8 | Client, Server, Database, Email service | List my tasks, Delete task, Send email |
 
 Every component and request is used by at least one use case.
 
@@ -315,6 +317,26 @@ sequenceDiagram
     end
 ```
 
+### UC-8: Delete a task (v1.4)
+
+```mermaid
+sequenceDiagram
+    actor K as Coordinator
+    participant C as Client
+    participant S as Application Server
+    participant DB as Database
+    participant E as Email service
+    K->>C: Chooses "Delete" next to a task on My Tasks
+    C->>S: Delete task (confirm page)
+    S->>DB: Is this coordinator the one who posted it? How many signed up?
+    S-->>C: "Delete Picnic Area Tidy? 2 volunteers will be told."
+    K->>C: Chooses "Yes, delete"
+    C->>S: Delete task
+    S->>DB: Queue a "canceled" email to each volunteer signed up for a slot that hasn't started; remove the task, its slots, and sign-ups (one step)
+    S-->>C: "Task deleted."
+    S->>E: Send the "canceled" emails (in the background)
+```
+
 ## 10. Quality Requirements: How They Are Met
 
 | Area | PRD requirement | How the design meets it |
@@ -335,6 +357,7 @@ sequenceDiagram
 | Volunteer email | The application server only; the System Administrator through the database | Stored encrypted; never sent to the client; sent only to the email service |
 | Block list | Coordinators add; only the System Administrator removes | Scrambled (hashed) copy only, so it is kept even if the account is deleted |
 | Sign-ups and rosters | Volunteers see their own; coordinators see usernames | Server checks the role on every request |
+| Tasks | Any coordinator posts; only the coordinator who posted a task deletes it (v1.4) | Server checks who posted it on every delete |
 | Queued emails | The application server only | Subject and text stored encrypted; deleted once sent; a sign-in email is dropped when its link expires; failure reasons and logs never hold an address (round 1, R-14) |
 | Everything | — | HTTPS (encrypted connections) only; plain HTTP is turned off. The connection to the email service is encrypted, and the app checks the service's certificate (round 2, R2-6). Every form that changes something carries a token against forged submissions |
 
@@ -461,3 +484,4 @@ classDiagram
 | 1.1 | 2026-09-30 | Added the "List my tasks" and "List blocked volunteers" requests | Requested by the UI/UX Designer (d05-01 Section 16): screens S-6 and S-10 had no request to use | Park Manager (with D7) |
 | 1.2 | 2026-10-25 | Email queue with retries (DD-6), one-step sign-in links (DD-7), park time zone (DD-8), sign-in email limit (DD-9), sign-up confirmation email, 12-month clean-up job, task limits | Round 1 code review (Codex), findings R-1 to R-4, R-6, R-10, R-12; PRD v1.2 | Park Manager, 2026-10-25 |
 | 1.3 | 2026-11-11 | Account made only at sign-in (DD-13); sign-in replies straight away (DD-10); a "Sign in" button page for sign-in links (DD-11); emails sent with no database connection held (DD-12); create account gives the same reply when the email has an account; blocking cancels upcoming sign-ups; certificate check for the email service; line breaks count as one character; sign-in counts kept up to about 48 hours | Round 2 code review (Claude Code), findings R2-1 to R2-6, R2-9, R2-10, R2-14, R2-17 (an email may have several account requests); PRD v1.3 | Park Manager, 2026-11-11 |
+| 1.4 | 2026-11-12 | Slot start times: on the hour or half hour, 6:00 a.m. to 10:00 p.m.; the server works out the end time when the form doesn't send one. New "Delete task" request and UC-8 sequence diagram; the "Canceled" email's expiry and known limit (R2-20) | Polishing items P-1 and P-2; round 2 re-review of polishing, R2-20; PRD v1.4 | Park Manager, 2026-11-12 |

@@ -33,12 +33,12 @@ def test_t_04_02_only_your_own_sign_ups(beach_task, people):
 def test_t_04_03_not_after_the_slot_starts(clock, coord, people):
     """EF · UC-4 AC3, 2a"""
     clock.set(dt.datetime.combine(TODAY, dt.time(11, 0)))
-    coord.post_task(title="Test Pulling Weeds", day=TODAY, slots=(("11:50", "12:50", 2),))
+    coord.post_task(title="Test Pulling Weeds", day=TODAY, slots=(("11:30", "12:30", 2),))
     vol = people("test_vol_01")
-    vol.sign_up("Test Pulling Weeds", "11:50", "12:50")
-    path = vol.cancel_path("Test Pulling Weeds", TODAY, "11:50", "12:50")
+    vol.sign_up("Test Pulling Weeds", "11:30", "12:30")
+    path = vol.cancel_path("Test Pulling Weeds", TODAY, "11:30", "12:30")
 
-    clock.set(dt.datetime.combine(TODAY, dt.time(12, 0)))  # started 10 minutes ago
+    clock.set(dt.datetime.combine(TODAY, dt.time(12, 0)))  # started 30 minutes ago
     resp = vol.post(path, data={"confirm": "yes"})
     assert MSG["started"] in text(resp)
     assert "Test Pulling Weeds" in text(vol.get("/my-sign-ups"))

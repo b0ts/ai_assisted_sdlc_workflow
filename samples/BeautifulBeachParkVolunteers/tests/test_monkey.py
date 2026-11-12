@@ -51,14 +51,13 @@ def check_reply(resp, where, typed=()):
 
 def task_rows(coord):
     """(title, time, filled, places) for every row on S-6."""
+    from conftest import my_task_rows
+
     rows = []
-    page = coord.get("/my-tasks").get_data(as_text=True)
-    for row in re.findall(r"(?is)<tr\b.*?</tr>", page):
-        cells = [re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", c))).strip()
-                 for c in re.findall(r"(?is)<td\b.*?</td>", row)]
-        match = len(cells) >= 3 and re.match(r"(\d+) of (\d+)", cells[2])
+    for title, time, filled in my_task_rows(coord.get("/my-tasks")):
+        match = re.match(r"(\d+) of (\d+)", filled)
         if match:
-            rows.append((cells[0], cells[1], int(match.group(1)), int(match.group(2))))
+            rows.append((title, time, int(match.group(1)), int(match.group(2))))
     return rows
 
 

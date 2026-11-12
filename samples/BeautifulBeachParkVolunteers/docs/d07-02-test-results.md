@@ -1,6 +1,6 @@
 # BeautifulBeachPark Volunteers: Test Results Log
 
-**Document:** d07-02 · **Step:** 7, Test Creation (continued in Steps 8 and 9) · **Version:** 1.6
+**Document:** d07-02 · **Step:** 7, Test Creation (continued in Steps 8 and 9) · **Version:** 1.7
 · **Last updated:** 2026-11-11 · **Status:** Green: all tests pass
 · **Owner:** SDET (Test Creation chat); runs added by the Software Engineer (Implementation chat) and the DevOps Engineer
 
@@ -56,18 +56,24 @@
 | 16 | 2026-11-11 | Software Engineer (Claude) | R2-14 fixed: the account is made only at "Sign in" (Spec DD-13). Full length, in Claude's cloud workspace, warnings as failures, Waitress installed so T-QR-04 ran (R2-15); the quick tests also on the project owner's Mac | 69 | 0 | 0 |
 | 17 | 2026-11-11 | SDET (Claude) | Re-review 2 finding R2-17: T-02-08 added (d07-01 v1.6), run against the Run 16 code. Quick tests only. T-02-08 failed for the right reason: the first of two emails' links no longer opened | 65 | 1 | 0 |
 | 18 | 2026-11-11 | Software Engineer (Claude) | R2-17 fixed: every request's link works until one becomes the account. Full length, in Claude's cloud workspace, warnings as failures; the quick tests also on the project owner's Mac | 70 | 0 | 0 |
+| 19 | 2026-11-12 | SDET (Claude) | Polishing item P-1: T-01-09 added and TC-6 (d07-01 v1.7), run against the Run 18 code. Quick tests only. T-01-09 failed for the right reason: S-7's start times weren't lists | 66 | 1 | 0 |
+| 20 | 2026-11-12 | Software Engineer (Claude) | P-1 fixed: S-7's start time is a list, 6:00 a.m. to 10:00 p.m. every 30 minutes, checked by the server too. Full length, in Claude's cloud workspace, warnings as failures | 71 | 0 | 0 |
+| 21 | 2026-11-12 | SDET (Claude) | Polishing item P-2: UC-8's T-08-01 to T-08-03 added (d07-01 v1.7), run against the Run 20 code. All three failed for the right reason: S-6 had no "Delete" | 0 | 3 | 0 |
+| 22 | 2026-11-12 | Software Engineer (Claude) | P-2 built: UC-8, Delete a task. Full length, in Claude's cloud workspace, warnings as failures | 74 | 0 | 0 |
+| 23 | 2026-11-12 | Software Engineer (Claude) | P-2 follow-up: S-6 lists each task under its own heading with one "Delete task" button (d05-01 UX-9); TC-7 (three tests read S-6 task by task) and a UX-9 check in T-08-01. Full length, warnings as failures | 74 | 0 | 0 |
+| 24 | 2026-11-12 | Software Engineer (Claude) | After the code re-review of the polishing changes: the S-7 missing-time message reworded (R2-21), with a check in T-01-09. Full length, warnings as failures | 74 | 0 | 0 |
 
 ```mermaid
 xychart-beta
     title "Tests passing, run by run"
-    x-axis [Run 1, Run 2, Run 3, Run 4, Run 5, Run 6, Run 7, Run 8, Run 9, Run 10, Run 11, Run 12, Run 13, Run 14, Run 15, Run 16, Run 17, Run 18]
-    y-axis "Tests passing" 0 --> 70
-    bar [0, 0, 37, 38, 38, 38, 14, 50, 51, 56, 58, 12, 68, 68, 64, 69, 65, 70]
+    x-axis [Run 1, Run 2, Run 3, Run 4, Run 5, Run 6, Run 7, Run 8, Run 9, Run 10, Run 11, Run 12, Run 13, Run 14, Run 15, Run 16, Run 17, Run 18, Run 19, Run 20, Run 21, Run 22, Run 23, Run 24]
+    y-axis "Tests passing" 0 --> 74
+    bar [0, 0, 37, 38, 38, 38, 14, 50, 51, 56, 58, 12, 68, 68, 64, 69, 65, 70, 66, 71, 0, 74, 74, 74]
 ```
 
 ## 4. Results by Test (Latest Run)
 
-Run 18 passed all 70 (T-02-07 and T-02-08 were added in d07-01 v1.6, for re-review findings R2-14 and R2-17). Run 14 passed all 68 (T-01-08, T-02-06, T-06-04, T-07-05, T-SEC-09 to T-SEC-12, T-EM-08, and T-QR-04 were added in d07-01 v1.5, for round 2). Run 11 passed all 58 (T-EM-07 and T-WD-03 were added in d07-01 v1.4). Run 10 passed all 56 (T-SEC-08, T-EM-04 to T-EM-06, and T-WD-02 were added in d07-01 v1.3; each failed first against the Run 9 code). Run 9 passed all 51. The 13 tests added in d07-01 v1.2 (T-01-06, T-01-07,
+Run 24 passed all 74 (after the code re-review of the polishing changes). Run 23 passed all 74 (the S-6 layout change, UX-9). Run 22 passed all 74 (T-01-09 and T-08-01 to T-08-03 were added in d07-01 v1.7, for polishing before round 3). Run 18 passed all 70 (T-02-07 and T-02-08 were added in d07-01 v1.6, for re-review findings R2-14 and R2-17). Run 14 passed all 68 (T-01-08, T-02-06, T-06-04, T-07-05, T-SEC-09 to T-SEC-12, T-EM-08, and T-QR-04 were added in d07-01 v1.5, for round 2). Run 11 passed all 58 (T-EM-07 and T-WD-03 were added in d07-01 v1.4). Run 10 passed all 56 (T-SEC-08, T-EM-04 to T-EM-06, and T-WD-02 were added in d07-01 v1.3; each failed first against the Run 9 code). Run 9 passed all 51. The 13 tests added in d07-01 v1.2 (T-01-06, T-01-07,
 T-03-08, T-06-03, T-07-04, T-SEC-06, T-SEC-07, T-EM-01 to T-EM-03,
 T-DATA-01, T-QR-03, T-WD-01) first passed in Run 8; the table below lists
 the original 38.
@@ -117,18 +123,19 @@ the original 38.
 
 | Use case | Tests | Pass | Fail | Blocked |
 |---|---|---|---|---|
-| UC-1: Post a task | 8 | 8 | 0 | 0 |
+| UC-1: Post a task | 9 | 9 | 0 | 0 |
 | UC-2: Create an account | 8 | 8 | 0 | 0 |
 | UC-3: Sign up for a slot | 8 | 8 | 0 | 0 |
 | UC-4: Cancel a sign-up | 3 | 3 | 0 | 0 |
 | UC-5: View a roster | 4 | 4 | 0 | 0 |
 | UC-6: Message a volunteer | 4 | 4 | 0 | 0 |
 | UC-7: Block a volunteer | 5 | 5 | 0 | 0 |
+| UC-8: Delete a task | 3 | 3 | 0 | 0 |
 | Security (T-SEC) | 12 | 12 | 0 | 0 |
 | Email queue, clean-up, wording (T-EM, T-DATA, T-WD) | 12 | 12 | 0 | 0 |
 | Quality (T-QR) | 4 | 4 | 0 | 0 |
 | Monkey (T-MK) | 2 | 2 | 0 | 0 |
-| **Total** | **70** | **70** | **0** | **0** |
+| **Total** | **74** | **74** | **0** | **0** |
 
 ## 6. Problems Found
 
@@ -150,3 +157,4 @@ the original 38.
 | 1.4 | 2026-10-26 | Added Run 10: the second pass of round 1 fixes | Round 1 re-review (Codex) | Park Manager, 2026-10-26 |
 | 1.5 | 2026-10-26 | Added Run 11: the third pass of round 1 fixes | Round 1 re-review 2 (Codex) | Park Manager, 2026-10-26 |
 | 1.6 | 2026-11-11 | Added Runs 12 to 18: the round 2 review fixes, and the R2-14 and R2-17 fixes | Round 2 code review (Claude Code) decisions | Park Manager, 2026-11-11 |
+| 1.7 | 2026-11-12 | Added Runs 19 to 24: the polishing changes P-1 and P-2 | Polishing before round 3 (the Park Manager) | Park Manager, 2026-11-12 |

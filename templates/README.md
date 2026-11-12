@@ -47,6 +47,7 @@ Templates for the documents each step produces. Names use two numbers: the step 
 - [d08-03-release-notes.md](d08-03-release-notes.md): Release Notes: what's new in plain language, changes since the last version, known issues, what's not included, quality checks, and getting help; drafted in Step 8 and finalized in Step 9
 - [d08-04-code-review.md](d08-04-code-review.md): Code Review Report: one per independent AI reviewer (prompt c08-02); verdict, what was checked, plain-language findings rated Must fix, Should fix, Question, or Note, each with a next step and a Decision column for the person
 - [d08-05-hands-on-review.md](d08-05-hands-on-review.md): Hands-On Review Report: a person's review of the running app (prompt c08-03): session plan, tasks and results, ad-hoc testing, findings by kind (Bug, Usability, Requirement, Question, Praise) with a route back and a Decision column, usability summary, and re-check after rework
+- [d08-06-polishing-log.md](d08-06-polishing-log.md): Polishing Log: the builder's sanity check and fine-tuning (prompt c08-04), between the code reviews and the hands-on review: how the app was started, what was tried, each item with its kind, decision, and the changes and test runs that carried it, questions answered as designed, and the hand-off
 
 **Step 9: Release**
 

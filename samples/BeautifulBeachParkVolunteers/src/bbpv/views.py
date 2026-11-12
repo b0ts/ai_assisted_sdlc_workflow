@@ -22,6 +22,9 @@ bp = Blueprint("main", __name__)
 USERNAME_RE = re.compile(r"[A-Za-z0-9_]{3,20}")
 TIME_RE = re.compile(r"([01]\d|2[0-3]):([0-5]\d)")
 MAX_SLOTS = 10
+# The start times a slot may have: 6:00 a.m. to 10:00 p.m., every 30 minutes
+# (PRD v1.4, UC-1; d05-01 v1.4, UX-8)
+START_TIMES = [dt.time(h, m) for h in range(6, 23) for m in (0, 30)][:-1]
 FORM_ROWS = 3
 
 
@@ -689,11 +692,14 @@ def my_tasks():
             .where(db.tasks.c.posted_by == g.user["id"], db.tasks.c.date >= now().date())
             .order_by(db.tasks.c.date, db.tasks.c.id, db.slots.c.starts)
         ).mappings().all()
-    days = []
+    days = []  # by day, then by task (d05-01 v1.4, UX-9)
     for row in rows:
         if not days or days[-1]["date"] != row["date"]:
-            days.append({"date": row["date"], "rows": []})
-        days[-1]["rows"].append(row)
+            days.append({"date": row["date"], "tasks": []})
+        tasks = days[-1]["tasks"]
+        if not tasks or tasks[-1]["id"] != row["task_id"]:
+            tasks.append({"id": row["task_id"], "title": row["title"], "rows": []})
+        tasks[-1]["rows"].append(row)
     return render_template("my_tasks.html", days=days, banner=_flashed())
 
 
@@ -739,11 +745,19 @@ def _check_task(form):
         return w.TOO_MANY_SLOTS, None, None
     slot_values = []
     for row in form["rows"]:
-        start_m, end_m = TIME_RE.fullmatch(row["start"].strip()), TIME_RE.fullmatch(row["end"].strip())
-        if not start_m or not end_m:
+        start_m = TIME_RE.fullmatch(row["start"].strip())
+        if not start_m:
             return w.TIME_INVALID, None, None
-        starts = dt.datetime.combine(day, dt.time(int(start_m[1]), int(start_m[2])))
-        ends = dt.datetime.combine(day, dt.time(int(end_m[1]), int(end_m[2])))
+        start_time = dt.time(int(start_m[1]), int(start_m[2]))
+        if start_time not in START_TIMES:
+            return w.START_NOT_ON_LIST, None, None
+        starts = dt.datetime.combine(day, start_time)
+        # The end isn't a field on S-7 (UX-3): one hour after the start unless a request sends one
+        end_text = row["end"].strip()
+        end_m = TIME_RE.fullmatch(end_text)
+        if end_text and not end_m:
+            return w.TIME_INVALID, None, None
+        ends = dt.datetime.combine(day, dt.time(int(end_m[1]), int(end_m[2]))) if end_m else starts + dt.timedelta(hours=1)
         if ends - starts != dt.timedelta(hours=1):
             return w.ONE_HOUR, None, None
         places = row["places"].strip()
@@ -753,25 +767,80 @@ def _check_task(form):
     return None, {"title": title, "description": description, "date": day}, slot_values
 
 
+def _start_choices():
+    """(value, label, end value, end label) for each start time on S-7's list."""
+    choices = []
+    for t in START_TIMES:
+        end = (dt.datetime.combine(dt.date(2000, 1, 1), t) + dt.timedelta(hours=1)).time()
+        choices.append((t.strftime("%H:%M"), f"{clock_time(t)} {_period(t)}",
+                        end.strftime("%H:%M"), f"{clock_time(end)} {_period(end)}"))
+    return choices
+
+
 @bp.route("/tasks/new", methods=["GET", "POST"])
 @signed_in("coordinator")
 def post_task():
     if request.method == "GET":
-        return render_template("post_task.html", form={"rows": []}, rows=FORM_ROWS, max_rows=MAX_SLOTS)
+        return render_template("post_task.html", form={"rows": []}, rows=FORM_ROWS, max_rows=MAX_SLOTS,
+                               start_times=_start_choices())
     form = _read_task_form()
     shown = max(FORM_ROWS, len(form["every_row"]))
     if request.form.get("add_slot"):
         # "Add another slot": show the form again with one more row, up to 10 (d05-01 v1.2, S-7)
         return render_template("post_task.html", form=dict(form, rows=form["every_row"]),
-                               rows=min(MAX_SLOTS, shown + 1), max_rows=MAX_SLOTS)
+                               rows=min(MAX_SLOTS, shown + 1), max_rows=MAX_SLOTS, start_times=_start_choices())
     error, task, slot_values = _check_task(form)
     if error:
         return render_template("post_task.html", form=dict(form, rows=form["every_row"]),
-                               rows=shown, max_rows=MAX_SLOTS, error=error), 400
+                               rows=shown, max_rows=MAX_SLOTS, error=error, start_times=_start_choices()), 400
     with engine().begin() as conn:
         task_id = conn.execute(db.tasks.insert().values(posted_by=g.user["id"], **task)).inserted_primary_key[0]
         conn.execute(db.slots.insert(), [dict(s, task_id=task_id) for s in slot_values])
     flash(w.TASK_POSTED, "success")
+    return redirect(url_for("main.my_tasks"))
+
+
+@bp.route("/tasks/<int:task_id>/delete", methods=["GET", "POST"])
+@signed_in("coordinator")
+def delete_task(task_id):
+    """UC-8 (PRD v1.4): only the coordinator who posted a task may delete it. Each volunteer
+    signed up for a slot that hasn't started gets one "canceled" email, queued in the same
+    step as the delete; with the sign-ups gone, no reminder is sent."""
+    with engine().connect() as conn:
+        task = conn.execute(db.tasks.select().where(db.tasks.c.id == task_id)).mappings().first()
+    if task is None or task["posted_by"] != g.user["id"]:
+        return not_allowed()
+
+    def upcoming_sign_ups(conn):
+        return conn.execute(
+            sa.select(db.signups.c.account_id, db.accounts.c.username, db.slots.c.starts, db.slots.c.ends)
+            .join(db.slots, db.slots.c.id == db.signups.c.slot_id)
+            .join(db.accounts, db.accounts.c.id == db.signups.c.account_id)
+            .where(db.slots.c.task_id == task_id, db.slots.c.starts > now())
+            .order_by(db.signups.c.account_id, db.slots.c.starts)
+        ).mappings().all()
+
+    if request.method == "GET":
+        with engine().connect() as conn:
+            slots = conn.execute(sa.select(sa.func.count()).select_from(db.slots).where(
+                db.slots.c.task_id == task_id)).scalar()
+            people = {r["account_id"] for r in upcoming_sign_ups(conn)}
+        return render_template("delete_task_confirm.html", task=task, slots=slots, signed_up=len(people))
+    queued = []
+    with engine().begin() as conn:
+        by_person = {}
+        for r in upcoming_sign_ups(conn):
+            by_person.setdefault((r["account_id"], r["username"]), []).append(slot_time(r["starts"], r["ends"]))
+        for (account_id, username), whens in by_person.items():
+            queued.append(queue_email(conn, account_id, w.canceled_email(
+                username, task["title"], day_heading(task["date"]), whens),
+                expires=now() + dt.timedelta(days=MESSAGE_KEEP_DAYS)))
+        slot_ids = sa.select(db.slots.c.id).where(db.slots.c.task_id == task_id)
+        conn.execute(db.signups.delete().where(db.signups.c.slot_id.in_(slot_ids)))
+        conn.execute(db.slots.delete().where(db.slots.c.task_id == task_id))
+        conn.execute(db.tasks.delete().where(db.tasks.c.id == task_id))
+    send_in_background(*queued)
+    flash(w.TASK_DELETED, "success")
     return redirect(url_for("main.my_tasks"))
 
 

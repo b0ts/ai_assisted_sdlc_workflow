@@ -1,10 +1,10 @@
 # BeautifulBeachPark Volunteers: UI/UX Document
 
-**Document:** d05-01 · **Step:** 5, User Experience · **Version:** 1.3
-· **Last updated:** 2026-11-11 · **Status:** Approved
+**Document:** d05-01 · **Step:** 5, User Experience · **Version:** 1.4
+· **Last updated:** 2026-11-12 · **Status:** Approved
 · **Owner:** UI/UX Designer (User Experience chat)
 
-**Screens included:** 10 screens covering 7 use cases. User flow for every
+**Screens included:** 10 screens covering 8 use cases (v1.4). User flow for every
 use case (required); wireframe and mockup for every screen (required).
 
 > **Sample document.** BeautifulBeachPark, its website, and its people are
@@ -19,7 +19,7 @@ use case (required); wireframe and mockup for every screen (required).
 | Source PRD | d03-01 v1.1, 2026-09-18 |
 | Source Spec | d04-01 v1.1, 2026-09-30 (v1.0 plus the two requests in Section 16) |
 | Spec sign-off | D6, 2026-09-25; v1.1 additions approved with D7, 2026-09-30 |
-| Phase covered | Phase 1: UC-1 to UC-7 |
+| Phase covered | Phase 1: UC-1 to UC-8 |
 | Application type | Web app used on phones and desktops (Spec Section 3) |
 | Style source | The park's pretend website and screenshots; see d05-02 v1.0 |
 | Design in one sentence | A calm, beach-colored web app where a volunteer can find an open slot and sign up in three taps, and nobody ever sees anyone's email. |
@@ -60,7 +60,7 @@ use case (required); wireframe and mockup for every screen (required).
 | S-3 | Open Slots | Browse tasks and open one-hour slots | Volunteer | UC-3 | List open slots |
 | S-4 | Confirm Sign-Up | Check the slot and confirm | Volunteer | UC-3 | Sign up |
 | S-5 | My Sign-Ups | See and cancel your own sign-ups | Volunteer | UC-3, UC-4 | List my sign-ups, Cancel sign-up |
-| S-6 | My Tasks | See your tasks and every slot, full or not | Coordinator | UC-1, UC-5 | List my tasks |
+| S-6 | My Tasks | See your tasks and every slot, full or not; delete a task (v1.4) | Coordinator | UC-1, UC-5, UC-8 | List my tasks, Delete task |
 | S-7 | Post a Task | Create a task with one-hour slots | Coordinator | UC-1 | Post task |
 | S-8 | Roster | See who's coming; message or block | Coordinator | UC-5, UC-6, UC-7 | Get roster, Block volunteer |
 | S-9 | Message a Volunteer | Write a message to one volunteer | Coordinator | UC-6 | Message volunteer |
@@ -146,6 +146,18 @@ flowchart LR
 ```
 
 **Steps:** 2 taps to block; 1 tap for the System Administrator to undo.
+
+### UC-8: Delete a task (v1.4)
+
+```mermaid
+flowchart LR
+    S6["S-6: My Tasks"] -->|"taps Delete next to a task"| D["Confirm page: Delete this task?"]
+    D -->|"taps Yes, delete"| S6
+    D -.->|"taps Don't delete"| S6
+```
+
+**Steps:** 2 taps. The confirm page says how many volunteers will be told
+(UX-4: hard-to-undo actions always ask first).
 
 ## 7. Wireframes
 
@@ -253,14 +265,18 @@ and says the details will be emailed now and a reminder the day before.
 ┌──────────────────────────────────────────┐
 │ My tasks                  [ Post a task ]│
 │ Sat, Oct 12                              │
-│ Beach Cleanup   9–10  3 of 5  [ Roster ] │
-│                10–11  5 of 5  [ Roster ] │
-│ Driftwood       1–2   0 of 4  [ Roster ] │
+│ Beach Cleanup           [ Delete task ]  │
+│   9–10   3 of 5  [ Roster ]              │
+│   10–11  5 of 5  [ Roster ]              │
+│ Driftwood               [ Delete task ]  │
+│   1–2    0 of 4  [ Roster ]              │
 └──────────────────────────────────────────┘
 ```
 
 **Notes:** Full slots are shown too, so a coordinator can always reach a
-roster (Section 16, request 1).
+roster (Section 16, request 1). v1.4 (UX-9): each task has its own heading
+with a **Delete task** button, and its slots are listed under it, so it's
+clear the button removes the whole task, not one slot.
 
 ### S-7: Post a Task
 
@@ -278,7 +294,9 @@ roster (Section 16, request 1).
 ```
 
 **Notes:** The coordinator picks only a start time; the end is always one
-hour later, so a slot can't be the wrong length. The form starts with
+hour later, so a slot can't be the wrong length. v1.4 (UX-8): the start
+time is a drop-down list, "6:00 a.m." to "10:00 p.m." every 30 minutes,
+the same in every browser; the end time shows as text ("Ends 10:00 a.m."). The form starts with
 three slot rows; "Add another slot" adds one more, up to 10 (PRD UC-1).
 
 ### S-8: Roster
@@ -368,6 +386,14 @@ each message, so tests can match them exactly.
 | S-7 | Slot not one hour | "Each slot must be one hour." |
 | S-7 | Places out of range | "Each slot needs 1 to 20 volunteers." |
 | S-7 | Title too long | "Titles can be up to 60 characters." |
+| S-7 | Start-time list: first choice (v1.4) | "Choose a time" |
+| S-6 | Delete button, one per task, next to its heading (v1.4) | "Delete task" (read aloud as "Delete Beach Cleanup, October 12") |
+| Delete confirm | Heading (v1.4) | "Delete this task?" |
+| Delete confirm | With sign-ups (v1.4) | "Delete Beach Cleanup on Saturday, October 12? Its 3 slots will be removed, and the 2 volunteers who signed up will get an email saying it's canceled." (one volunteer: "the 1 volunteer who signed up") |
+| Delete confirm | No sign-ups (v1.4) | "Delete Beach Cleanup on Saturday, October 12? Its 3 slots will be removed. No one has signed up yet." |
+| Delete confirm | Buttons (v1.4) | "Yes, delete" and "Don't delete" |
+| S-6 | Deleted (v1.4) | "Task deleted." |
+| S-7 | A start time not on the list (v1.4) | "Please choose each slot's start time from the list." |
 | S-8 | Empty roster | "No one has signed up yet." |
 | S-8 | Block confirm box (v1.3) | "Block BigHeartedGuy? Their upcoming sign-ups will be canceled, and they won't be able to sign up for any slots. Only the System Administrator can undo this." |
 | S-8 | Blocked | "Blocked." |
@@ -396,7 +422,7 @@ R-5). They're kept, with every other message, in one wording file.
 | S-7 | No title | "Please enter a title." |
 | S-7 | Description too long | "Descriptions can be up to 1,000 characters." |
 | S-7 | No date, or an impossible one | "Please choose a date." |
-| S-7 | A slot's time missing | "Please enter each slot's start and end time." |
+| S-7 | A slot's start time missing (v1.4) | "Please choose each slot's start time." |
 | S-7 | No slots | "Please add at least one slot." |
 | S-7 | More than 10 slots | "A task can have up to 10 slots." |
 | S-9 | Empty message | "Please write a message." |
@@ -413,6 +439,7 @@ R-5). They're kept, with every other message, in one wording file.
 | Sign-up confirmation (v1.2) | "You're signed up: Beach Cleanup, Saturday, October 12, 9:00 – 10:00 a.m." |
 | Reminder | "Reminder: Beach Cleanup tomorrow, 9:00 – 10:00 a.m." |
 | Coordinator message | "A message from a BeautifulBeachPark coordinator" |
+| Task canceled (v1.4) | "Canceled: Beach Cleanup, Saturday, October 12". The text names each of the volunteer's times, says they don't need to come, and thanks them |
 
 **Times (v1.2, UX-6):** every time shows a.m. or p.m., once when both ends
 share it ("9:00 – 10:00 a.m.") and on both ends when they don't ("11:30
@@ -460,6 +487,7 @@ The park doesn't use Figma, so no Figma files were made.
 | UC-5: View a roster | Must have | Section 6, UC-5 | S-6, S-8 | Usernames only; empty roster says so |
 | UC-6: Message a volunteer | Should have | Section 6, UC-6 | S-8, S-9 | 500-character counter |
 | UC-7: Block a volunteer | Must have | Section 6, UC-7 | S-8, S-10 | Email never shown; only the System Administrator can undo |
+| UC-8: Delete a task (v1.4) | Must have | Section 6, UC-8 | S-6 and its confirm page | Only your own tasks have "Delete"; the confirm page says how many volunteers will be told |
 
 Every screen serves at least one use case.
 
@@ -474,6 +502,8 @@ Every screen serves at least one use case.
 | UX-5 | Darken the website's turquoise for buttons | Turquoise, Ocean | Turquoise fails contrast with white text (d05-02) | 2026-09-29 |
 | UX-6 | Every time shows a.m. or p.m., and labels include the minutes | Bare 12-hour times, a.m. and p.m. | A morning and an evening slot can't look the same; screen readers say the exact time (round 1, R-13) | 2026-10-25 |
 | UX-7 | The sign-in link opens a "Finish signing in" page with one "Sign in" button | Sign in on opening, one more tap | Email systems that check links can't use them up; one extra tap (round 2, R2-4; Spec DD-11) | 2026-11-11 |
+| UX-8 | The start time is a drop-down list from 6:00 a.m. to 10:00 p.m. every 30 minutes, not the browser's time box | Browser time box, a list | The browser's box differed from browser to browser and hid most hours; a list matches the S-7 sketch ("9:00 ▾") (polishing item P-1) | 2026-11-12 |
+| UX-9 | On S-6, each task has a heading with its own "Delete task" button, and its slots are listed under it | One table with a link on the task's first row, a heading per task | A link on one slot's row looked like it deleted only that slot (polishing item P-2, follow-up) | 2026-11-12 |
 
 ## 15. Assumptions and Open Questions
 
@@ -502,3 +532,4 @@ Every screen serves at least one use case.
 | 1.1 | 2026-10-13 | Added two messages to Section 9: username breaks the rules; title too long | Requested by the SDET (d07-01 Section 12, requests 1 and 2): the tests need exact wording | Park Manager |
 | 1.2 | 2026-10-25 | Times with a.m. and p.m. (UX-6); "Add another slot" up to 10; live message counter; Send and Block return to the roster; new "Signed up" wording and confirmation email; the messages, empty states, and email subjects written in Step 8 added to Section 9; S-3 and S-6 empty states changed to match. Every heading, label, and button from Section 7 and the mockups is also kept in the app's one wording file (re-review, R-5) | Round 1 code review (Codex), findings R-4, R-5, R-9, R-12, R-13; PRD v1.2 | Park Manager, 2026-10-25 |
 | 1.3 | 2026-11-11 | S-1 "Finish signing in" state (UX-7); S-2 gives the "Check your email" reply when the email already has an account, and the account is made at "Sign in" (UC-2 flow); block confirm box says upcoming sign-ups are canceled; a line break counts as one character on S-7 and S-9 | Round 2 code review (Claude Code), findings R2-1, R2-2, R2-4, R2-9, R2-14; Spec v1.3 | Park Manager, 2026-11-11 |
+| 1.4 | 2026-11-12 | S-7 start time is a drop-down list, 6:00 a.m. to 10:00 p.m. every 30 minutes (UX-8); two new messages, and the missing-time message reworded for the list (R2-21). UC-8: a heading per task on S-6 with "Delete task" (UX-9), a delete confirm page, "Task deleted.", and a "Canceled" email | Polishing items P-1 and P-2 (d08-06); PRD v1.4 | Park Manager, 2026-11-12 |

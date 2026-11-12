@@ -12,6 +12,7 @@ Predefined prompts for each step's chat. Names start with the step number. If a 
 - [c08-01-implementation-prompt.md](c08-01-implementation-prompt.md): Step 8, Implementation (Software Engineer)
 - [c08-02-code-review-prompt.md](c08-02-code-review-prompt.md): Step 8, Independent Code Review (Code Reviewer), run in a new Claude Code session and in a second AI tool such as Codex
 - [c08-03-hands-on-review-prompt.md](c08-03-hands-on-review-prompt.md): Step 8, Hands-On Review (helper for the person who uses the running app: ad-hoc testing and usability)
+- [c08-04-polishing-prompt.md](c08-04-polishing-prompt.md): Step 8, Polishing (partner for the person who built the app: a sanity check and fine-tuning, between the code reviews and the hands-on review)
 - [c09-release-prompt.md](c09-release-prompt.md): Step 9, Release (Release Manager)
 - [c10-maintenance-prompt.md](c10-maintenance-prompt.md): Step 10, Maintenance (SRE / Maintenance Engineer)
 

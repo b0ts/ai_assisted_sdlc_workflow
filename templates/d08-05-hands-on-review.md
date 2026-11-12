@@ -8,8 +8,10 @@ app: working through tasks, exploring freely to try to break it (ad-hoc
 testing), and judging how easy it is to use. Prompt c08-03 helps prepare
 the session and write this report from the person's notes; the findings
 are the person's own. It is round 3, the last of the three reviews: it
-starts only when both code review rounds (d08-04) are settled, and it
-tests that latest version.
+starts only when both code review rounds (d08-04) are settled and the
+app has been polished by the person who built it (d08-06), and it tests
+that latest version. The reviewer doesn't read the code reviews or the
+Polishing Log first.
 The reviewer may look at the code, but doesn't have to.
 Never write real people's information here: the app holds only made-up
 accounts. -->
@@ -43,7 +45,7 @@ accounts. -->
 | Item | Details |
 |---|---|
 | Product | [Name] |
-| Version tested | [e.g., "1.0 at commit 4867cab, after both code review rounds' fixes"] |
+| Version tested | [e.g., "1.0 at commit 4867cab, after both code review rounds' fixes and polishing"] |
 | Reviewer | [Name and role, e.g., "Sam, a volunteer"] |
 | Connection to the project | [e.g., "Didn't build it; not an approver" / "Stakeholder" / "Built the app"] |
 | Read the code reviews first? | [No / Yes] |

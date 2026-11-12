@@ -128,6 +128,7 @@ rows, so the reviews stay independent. -->
 | Licenses | [Every library in d08-02 Section 7 may be used] | [Result] | [Name, YYYY-MM-DD] |
 | Round 1: independent code review | [e.g., "Codex, prompt c08-02": report `d08-04-code-review-codex.md`] | [Verdict; findings by seriousness; how many marked Fix, fixed, and re-reviewed] | [Reviewer; decisions by Name, YYYY-MM-DD] |
 | Round 2: independent code review | [e.g., "New Claude Code session, prompt c08-02": report `d08-04-code-review-claude.md`] | [Verdict; findings; decisions; re-review result] | [Reviewer; decisions by Name, YYYY-MM-DD] |
+| Polishing | [e.g., "The project owner ran the app and fine-tuned it (prompt c08-04)": log `d08-06-polishing-log.md`] | [Items by kind and decision; test runs; code re-review of the polishing changes] | [Name, YYYY-MM-DD] |
 | Round 3: hands-on review | [e.g., "Sam, a volunteer, used the app for 90 minutes (prompt c08-03)": report `d08-05-hands-on-review.md`] | [Overall impression; findings by kind; decisions; re-check result] | [Reviewer; decisions by Name, YYYY-MM-DD] |
 
 ## 8. Requests to Change a Test

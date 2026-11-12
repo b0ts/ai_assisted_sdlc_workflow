@@ -17,6 +17,7 @@ closest to final:
 |---|---|---|
 | 1. Code review | A different company's AI, such as Codex (prompt [c08-02](c08-02-code-review-prompt.md)) | The code |
 | 2. Code review | A new Claude Code session (prompt c08-02) | The code, after round 1's fixes |
+| Polishing | The person who built the app (prompt [c08-04](c08-04-polishing-prompt.md)) | The running app: a sanity check and fine-tuning, not an independent review |
 | **3. Hands-on review** | **A person**, helped by this prompt | **The running app**, after both code reviews' fixes: does it work, and can people actually use it? |
 
 The hands-on reviewer **uses the app** the way a volunteer, coordinator,
@@ -34,9 +35,10 @@ This prompt is the reviewer's **helper**, not the reviewer. It prepares
 the session, and afterward it turns the person's notes into the report.
 The findings are the person's own.
 
-1. Wait until **both code review rounds are settled**: every finding
-   decided, every fix made and re-reviewed, and **every test passing** on
-   the new version.
+1. Wait until **both code review rounds are settled** and the app has
+   been **polished** by the person who built it (prompt c08-04), with the
+   polishing changes code-reviewed: every finding decided, every fix made
+   and re-reviewed, and **every test passing** on the new version.
 2. **Before the session:** start a new chat (or Claude Code session),
    named something like `08-hands-on-review`. Paste everything below the
    line, and attach the PRD (`d03-01`), the UI/UX Document (`d05-01`), and
@@ -90,7 +92,7 @@ findings they didn't report, and never soften what they said.
 
 | | Details |
 |---|---|
-| **Comes after** | Both code review rounds (c08-02) are settled, and every test passes on the new version |
+| **Comes after** | Both code review rounds (c08-02) are settled, the app has been polished (c08-04) and the polishing changes code-reviewed, and every test passes on the new version |
 | **Inputs** | The approved PRD (`d03-01`) and UI/UX Document (`d05-01`); the Developer Guide (`d08-02`); the person's notes and screenshots |
 | **Output** | The Hands-On Review Report (`d08-05`) |
 | **Decided by** | A person, finding by finding; then the stakeholders, through the Tracking chat |
@@ -109,9 +111,9 @@ findings they didn't report, and never soften what they said.
 - **The template** `d08-05-hands-on-review.md` from the workflow
   repository's `templates/` folder. If you can't read it, ask for it.
 
-Don't use the code reviews (`d08-04`), or the review rows of d08-01
-Section 7, to prepare the session or write the report; the reviews must
-be independent.
+Don't use the code reviews (`d08-04`), the Polishing Log (`d08-06`), or
+the review rows of d08-01 Section 7, to prepare the session or write the
+report; the reviews must be independent.
 
 ## Protocol
 

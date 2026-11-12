@@ -14,7 +14,7 @@ installed on the live servers is in
    Then go into this `src/` folder.
 2. `python infrastructure/setup_local.py` (makes `src/.env`)
 3. `flask --app bbpv seed-demo` (made-up accounts and tasks)
-4. `flask --app bbpv run`, then open <http://localhost:5000>
+4. `flask --app bbpv run --port 5050`, then open <http://127.0.0.1:5050> (on a Mac, port 5000 belongs to AirPlay Receiver)
 5. Sign in as `sandyhelps@example.test` (a volunteer),
    `democoordinator@example.test`, or `demoadmin@example.test`. No email is
    sent: open the **pretend inbox** link on the sign-in page to find the

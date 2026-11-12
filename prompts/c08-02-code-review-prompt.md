@@ -16,6 +16,7 @@ round starts only when this one is settled.
 |---|---|---|
 | 1 | A different company's AI, such as **Codex** | This prompt |
 | 2 | A **new** Claude Code session, which also runs `/security-review` | This prompt |
+| (Polishing) | The **person who built the app** runs it and fine-tunes it; not an independent review. Its changes get a short re-review by the round 2 reviewer (Mode E) | [c08-04](c08-04-polishing-prompt.md) |
 | 3 | A **person**, using the running app | [c08-03](c08-03-hands-on-review-prompt.md) |
 
 "Independent" means the reviewer did not write the code and has not read
@@ -50,8 +51,12 @@ spots; the second reviews the improved code with fresh eyes.
    ai_assisted_sdlc_workflow repo, and run `/security-review` first."
    Then repeat steps 3 and 4 for its report,
    `docs/d08-04-code-review-claude.md`.
-6. Then comes round 3, the person's hands-on review (prompt c08-03).
-7. Take the reports to the **Tracking chat** with the Implementation
+6. Then the person who built the app **polishes** it (prompt c08-04).
+   When that's done, the round 2 reviewer runs a short re-review of just
+   the polishing changes (Mode E, comparing with the commit round 2 ended
+   on).
+7. Then comes round 3, the person's hands-on review (prompt c08-03).
+8. Take the reports to the **Tracking chat** with the Implementation
    Record for sign-off before Step 9.
 
 Background reading: [Step 8: Implementation](../docs/b08-implementation.md)
