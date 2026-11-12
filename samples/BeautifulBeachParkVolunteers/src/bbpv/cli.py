@@ -54,6 +54,8 @@ def register(app):
                              .values(places_left=db.slots.c.places_left + 1))
             conn.execute(db.signups.delete().where(db.signups.c.account_id == account["id"]))
             conn.execute(db.sign_in_links.delete().where(db.sign_in_links.c.account_id == account["id"]))
+            conn.execute(db.outbox.delete().where(db.outbox.c.account_id == account["id"]))
+            conn.execute(db.sign_in_emails.delete().where(db.sign_in_emails.c.email_lookup == account["email_lookup"]))
             conn.execute(db.tasks.update().where(db.tasks.c.posted_by == account["id"]).values(posted_by=None))
             conn.execute(db.block_list.update().where(db.block_list.c.username == account["username"])
                          .values(username=None))
@@ -62,14 +64,19 @@ def register(app):
 
     @app.cli.command("send-reminders")
     def send_reminders():
-        """The daily reminder job: email everyone signed up for a slot tomorrow."""
-        from .views import send_email, slot_time
+        """The daily reminder job (6 p.m.): email everyone signed up for a slot tomorrow.
+
+        Each reminder is queued and marked as sent in one step, so running the job
+        again never sends a second one, even after the email service was down.
+        """
+        from . import wording as w
+        from .views import day_heading, queue_email, send_due_emails, slot_time
 
         tomorrow = current_app.config["CLOCK"]().date() + dt.timedelta(days=1)
         start = dt.datetime.combine(tomorrow, dt.time())
         end = start + dt.timedelta(days=1)
-        sent = 0
-        with current_app.extensions["engine"].begin() as conn:
+        eng = current_app.extensions["engine"]
+        with eng.connect() as conn:
             rows = conn.execute(
                 sa.select(db.signups.c.id, db.signups.c.account_id, db.accounts.c.username,
                           db.slots.c.starts, db.slots.c.ends, db.tasks.c.title, db.tasks.c.description)
@@ -79,18 +86,57 @@ def register(app):
                 .where(db.slots.c.starts >= start, db.slots.c.starts < end,
                        db.signups.c.reminder_sent.is_(False))
             ).mappings().all()
-            for row in rows:
-                when = slot_time(row["starts"], row["ends"])
-                send_email(conn, row["account_id"], f"Reminder: {row['title']} tomorrow, {when}", (
-                    f"Hello {row['username']},\n\n"
-                    f"This is a reminder that you're signed up for {row['title']} tomorrow, "
-                    f"{tomorrow.strftime('%A')}, {tomorrow.strftime('%B')} {tomorrow.day}, {when}.\n\n"
-                    f"{row['description']}\n\n"
-                    "If you can't come, please cancel in the app so someone else can take your place.\n"
-                ))
-                conn.execute(db.signups.update().where(db.signups.c.id == row["id"]).values(reminder_sent=True))
-                sent += 1
-        click.echo(f"Sent {sent} reminder(s) for {tomorrow.isoformat()}.")
+        queued = 0
+        for row in rows:
+            with eng.begin() as conn:
+                # Claim this reminder first: if another run already did, skip it (R-2)
+                claimed = conn.execute(db.signups.update().where(
+                    db.signups.c.id == row["id"], db.signups.c.reminder_sent.is_(False)
+                ).values(reminder_sent=True)).rowcount
+                if claimed != 1:
+                    continue
+                queue_email(conn, row["account_id"], w.reminder_email(
+                    row["username"], row["title"], day_heading(tomorrow),
+                    slot_time(row["starts"], row["ends"]), row["description"]), expires=row["starts"])
+                queued += 1
+        sent, waiting = send_due_emails()
+        click.echo(f"Queued {queued} reminder(s) for {tomorrow.isoformat()}; "
+                   f"sent {sent} email(s); {waiting} waiting.")
+
+    @app.cli.command("send-emails")
+    def send_emails():
+        """Send queued emails and retry ones that failed (every 5 minutes; Spec DD-6)."""
+        from .views import send_due_emails
+
+        sent, waiting = send_due_emails()
+        click.echo(f"Sent {sent} email(s); {waiting} waiting.")
+        hour_ago = current_app.config["CLOCK"]() - dt.timedelta(hours=1)
+        with current_app.extensions["engine"].connect() as conn:
+            stuck = conn.execute(sa.select(sa.func.count()).select_from(db.outbox).where(
+                db.outbox.c.created < hour_ago)).scalar()
+        if stuck:
+            click.echo(f"Warning: {stuck} email(s) have waited more than an hour. "
+                       "The email service may be down (d06-01 Section 9).")
+
+    @app.cli.command("clean-up")
+    def clean_up():
+        """The daily clean-up: remove tasks 12 months after their date, with their slots
+        and sign-ups (Spec Section 6). The block list is never touched."""
+        today = current_app.config["CLOCK"]().date()
+        try:
+            cutoff = today.replace(year=today.year - 1)
+        except ValueError:  # February 29
+            cutoff = today.replace(year=today.year - 1, day=28)
+        now = current_app.config["CLOCK"]()
+        with current_app.extensions["engine"].begin() as conn:
+            old_tasks = sa.select(db.tasks.c.id).where(db.tasks.c.date < cutoff)
+            old_slots = sa.select(db.slots.c.id).where(db.slots.c.task_id.in_(old_tasks))
+            signups = conn.execute(db.signups.delete().where(db.signups.c.slot_id.in_(old_slots))).rowcount
+            conn.execute(db.slots.delete().where(db.slots.c.task_id.in_(old_tasks)))
+            tasks = conn.execute(db.tasks.delete().where(db.tasks.c.date < cutoff)).rowcount
+            conn.execute(db.sign_in_links.delete().where(db.sign_in_links.c.expires < now))
+            conn.execute(db.sign_in_emails.delete().where(db.sign_in_emails.c.sent < now - dt.timedelta(hours=24)))
+        click.echo(f"Removed {tasks} task(s) dated before {cutoff.isoformat()}, with {signups} sign-up(s).")
 
     @app.cli.command("new-key")
     def new_key():

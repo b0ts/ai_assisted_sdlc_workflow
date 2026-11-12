@@ -69,6 +69,31 @@ sign_in_links = sa.Table(
 )
 
 
+# Every email waits here until the email service accepts it (Spec DD-6). It is saved in
+# the same step as the change it's about, so nothing is lost if the service is down.
+# Subject and text are encrypted: a sign-in email holds a sign-in link.
+outbox = sa.Table(
+    "outbox", metadata,
+    sa.Column("id", sa.Integer, primary_key=True),
+    sa.Column("account_id", sa.Integer, sa.ForeignKey("accounts.id", ondelete="CASCADE"), nullable=False),
+    sa.Column("subject_encrypted", sa.Text, nullable=False),
+    sa.Column("text_encrypted", sa.Text, nullable=False),
+    sa.Column("created", sa.DateTime, nullable=False),
+    sa.Column("send_after", sa.DateTime, nullable=False, index=True),
+    sa.Column("attempts", sa.Integer, nullable=False, default=0),
+    sa.Column("expires", sa.DateTime, nullable=True),  # sign-in emails expire with their link
+    sa.Column("last_error", sa.String(200), nullable=True),
+)
+
+# One row per sign-in email sent, kept 24 hours, for the limit of 10 a day (Spec DD-9).
+sign_in_emails = sa.Table(
+    "sign_in_emails", metadata,
+    sa.Column("id", sa.Integer, primary_key=True),
+    sa.Column("email_lookup", sa.String(64), nullable=False, index=True),
+    sa.Column("sent", sa.DateTime, nullable=False, index=True),
+)
+
+
 def make_engine(url, pool_size=15):
     if url.startswith("postgresql://"):
         url = "postgresql+psycopg://" + url[len("postgresql://"):]

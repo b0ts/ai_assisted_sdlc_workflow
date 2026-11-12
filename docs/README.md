@@ -15,6 +15,7 @@ Read these in order if you're new to SDLCs or to working with AI.
 - [a07 What Is an AI-Assisted SDLC Workflow?](a07-what-is-an-ai-assisted-sdlc-workflow.md) — ten chained AI chats, one per step
 - [a08 Implementing an AI-Assisted SDLC Workflow](a08-implementing-an-ai-assisted-sdlc-workflow.md) — step-by-step setup for using this repo on your own product
 - [a09 UML Diagram Guide](a09-uml-diagram-guide.md) — which diagrams every project draws, and which only some need
+- [a10 Building Your Own App](a10-building-your-own-app.md) — a walkthrough of all ten steps for your own project; keep it open alongside the step guides
 
 ## Step guides (b)
 

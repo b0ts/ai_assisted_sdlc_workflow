@@ -2,6 +2,8 @@
 
 **Role:** SDET (Software Development Engineer in Test) · **Prompt:** [c07](../prompts/c07-test-creation-prompt.md) · **Templates:** d07-01 to d07-02
 
+> **Building your own app?** See [Building Your Own App, Step 7](a10-building-your-own-app.md#step-7-test-creation) for what to do in this step for your project.
+
 ## Executive Summary
 
 At the end of [Step 6: Initial Infrastructure](b06-infrastructure.md), we

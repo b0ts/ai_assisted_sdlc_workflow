@@ -18,7 +18,7 @@ from flask import current_app
 _pretend_lock = threading.Lock()
 
 
-def send(to, subject, text):
+def send(to, subject, text, timeout=20):
     app = current_app
     mail = {"to": to, "from": app.config["EMAIL_FROM"], "subject": subject, "text": text}
     inbox = app.config.get("TEST_INBOX")
@@ -35,7 +35,7 @@ def send(to, subject, text):
         msg = EmailMessage()
         msg["From"], msg["To"], msg["Subject"] = mail["from"], to, subject
         msg.set_content(text)
-        with smtplib.SMTP(app.config["SMTP_HOST"], int(app.config["SMTP_PORT"]), timeout=20) as smtp:
+        with smtplib.SMTP(app.config["SMTP_HOST"], int(app.config["SMTP_PORT"]), timeout=timeout) as smtp:
             smtp.starttls()
             if app.config.get("SMTP_USER"):
                 smtp.login(app.config["SMTP_USER"], app.config["SMTP_PASSWORD"])

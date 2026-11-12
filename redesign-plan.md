@@ -159,12 +159,45 @@ screenshots instead.
   all 38 tests pass, and `d07-01`, `d07-02`, `d08-01`, `d08-02`, and the
   sample README now match the real code and runs
 
+- [x] Wrote the tutorial, [docs/a10-building-your-own-app.md](docs/a10-building-your-own-app.md),
+  linked from a01, the docs index, and the top of every step guide; added
+  the missing "Next:" links from a04 to a09
+
+- [x] Replaced the "person reads the code" rule with two independent AI
+  code reviews plus a person's decision on every finding: new prompt
+  `c08-02-code-review-prompt.md` (the implementation prompt is now
+  `c08-01`), new template `d08-04-code-review.md`, and updates to a04,
+  a10, b08, c01, c08-01, the d04-01, d08-01, d08-03, and d09-02 templates,
+  the indexes, and the sample; the sample's review guide is now
+  `src/REVIEW-GUIDE.md`
+- [x] Ran an early independent review from a new Claude session, before
+  the reviews were put in order; kept as
+  `samples/BeautifulBeachParkVolunteers/docs/d08-04-code-review-claude-trial.md`
+
+- [x] Added a third, human reviewer: a hands-on review of the running app
+  (ad-hoc testing and usability) by any person, with the AI helper prompt
+  `c08-03-hands-on-review-prompt.md` and template
+  `d08-05-hands-on-review.md`; findings go back to Step 3, 5, or 7 as
+  needed (b08 "The Rework Loop")
+- [x] Put the three reviews in order, each with its own decide, fix, and
+  re-review loop: round 1 Codex, round 2 a new Claude Code session, round
+  3 the hands-on review; reviewers skip earlier reports and d08-01
+  Section 7 (b08, c08-01, c08-02, c08-03, a04, a10, c01, the d08-01,
+  d08-04, d08-05, and d09-02 templates, and the sample)
+- [x] Round 1: ran the sample's Codex review
+  (`docs/d08-04-code-review-codex.md`: 5 Must fix, 6 Should fix, 2
+  Question), using `run-codex-review.command`
+- [x] Wrote the sample's hands-on session plan (d08-05 Section 2)
+
 **Still to do:**
 
-- [ ] A person reviews the sample's code in `src/` (the workflow requires
-  it before Step 9; the sample documents describe a made-up reviewer)
+- [ ] Round 1: decide on every Codex finding, make the fixes (SDET chat,
+  then Software Engineer chat), run every test, and get Codex's re-review
+  (c08-02 Mode E)
+- [ ] Round 2: a new Claude Code session reviews the improved code
+  (`docs/d08-04-code-review-claude.md`); decide, fix, re-review
+- [ ] Round 3: a person runs the hands-on review from d08-05 Section 2;
+  decide, fix, re-check. Until all three rounds are settled, the sample's
+  d09-02 HS-4 "Pass" and d01-01's D12 note run ahead of reality
 - [ ] Confirm the wording the code added in Step 8 (marked in
   `src/bbpv/wording.py`) and record it in `d05-01` v1.2
-- [ ] Write the tutorial: building your own app (for example,
-  `OurGroupVolunteerApp`) from the skeleton, styled to match your website,
-  following the same local, demo, live path, including the private pilot

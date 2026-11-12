@@ -95,3 +95,6 @@ parts:
   the AI maker's own guide to writing good prompts
 - [Prompts](../prompts/README.md): the predefined prompts used for each
   step's chat in this workflow
+
+**Next:** [Prompt Engineering](a06-prompt-engineering.md)
+shows how to write a prompt, and which of four kinds to use.

@@ -34,7 +34,7 @@ MSG = {
     "username_taken": "That username is taken. Please try another.",
     "username_rules": "Usernames are 3 to 20 letters, numbers, or underscores.",
     "couldnt_create": "We couldn't create this account. Please contact the park office.",
-    "signed_up": "You're signed up! We'll email you a reminder the day before.",
+    "signed_up": "You're signed up! We've emailed you the details.",
     "just_taken": "Sorry, this slot was just taken. Here are other open times.",
     "already": "You're already signed up for this slot.",
     "started": "This slot has already started, so it can't be canceled.",
@@ -47,6 +47,13 @@ MSG = {
     "message_long": "Messages can be up to 500 characters.",
     "unblocked": "Block removed.",
     "not_allowed": "Not allowed. Please contact the park office if you think this is wrong.",
+    # Added in d05-01 v1.2 (round 1 rework)
+    "description_long": "Descriptions can be up to 1,000 characters.",
+    "too_many_slots": "A task can have up to 10 slots.",
+    "no_open_slots": "There are no open slots right now. Please check again soon.",
+    "no_sign_ups": "You haven't signed up for anything yet.",
+    "no_tasks": "You haven't posted any upcoming tasks.",
+    "link_invalid": "This link isn't valid. Please ask for a new one below.",
 }
 
 ALL_REFUSALS = [
@@ -144,20 +151,28 @@ def form_fields(resp):
     return names
 
 
+def _clock(t):
+    """'13:30' -> ('1:30', 'p.m.')"""
+    hour, minute = t.split(":")
+    hour = int(hour)
+    return f"{hour % 12 or 12}:{minute}", "a.m." if hour < 12 else "p.m."
+
+
+def _span(start, end, joiner):
+    (a, pa), (b, pb) = _clock(start), _clock(end)
+    if pa == pb:
+        return f"{a}{joiner}{b} {pb}"
+    return f"{a} {pa}{joiner}{b} {pb}"
+
+
 def slot_label(start, end):
-    """'09:00', '10:00' -> '9 to 10' (12-hour clock, as in the mockups)."""
-    def h(t):
-        hour = int(t.split(":")[0]) % 12
-        return str(hour or 12)
-    return f"{h(start)} to {h(end)}"
+    """'09:00', '10:00' -> '9:00 to 10:00 a.m.' (d05-01 v1.2, UX-6)."""
+    return _span(start, end, " to ")
 
 
 def slot_time(start, end):
-    """'09:00', '10:00' -> '9:00 – 10:00' (en dash, 12-hour clock)."""
-    def h(t):
-        hour, minute = t.split(":")
-        return f"{int(hour) % 12 or 12}:{minute}"
-    return f"{h(start)} – {h(end)}"
+    """'09:00', '10:00' -> '9:00 – 10:00 a.m.'; '11:30', '12:30' -> '11:30 a.m. – 12:30 p.m.' (en dash)."""
+    return _span(start, end, " – ")
 
 
 # ---------------------------------------------------------------------------
@@ -186,10 +201,32 @@ def clock():
     return Clock(NOON)
 
 
+class Inbox(list):
+    """The test inbox. Set `down = True` to act like an email service that is down:
+    every email the app tries to send then fails (d07-01 v1.2, T-EM tests).
+    Set `reject = True` to act like a service that refuses the recipient, with
+    an error that names the address, as real mail libraries do (T-EM-04)."""
+
+    down = False
+    reject = False
+    slow = 0  # seconds the email service takes to answer each email (T-EM-07)
+
+    def append(self, mail):
+        if self.slow:
+            import time
+            time.sleep(self.slow)
+        if self.down:
+            raise ConnectionError("test email service is down")
+        if self.reject:
+            import smtplib
+            raise smtplib.SMTPRecipientsRefused({mail["to"]: (550, b"5.1.1 No such user here")})
+        super().append(mail)
+
+
 @pytest.fixture
 def inbox():
     """The test inbox: the app appends {'to', 'from', 'subject', 'text'} for every email."""
-    return []
+    return Inbox()
 
 
 @pytest.fixture

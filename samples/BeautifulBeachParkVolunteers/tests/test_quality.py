@@ -8,7 +8,7 @@ import time
 
 import pytest
 
-from conftest import TASK, TOMORROW, make_app, mails_to, run_command, sign_in_link
+from conftest import TASK, TOMORROW, make_app, mails_to, run_command, sign_in_link, slot_label
 
 pytestmark = pytest.mark.browser
 
@@ -170,10 +170,11 @@ def test_t_qr_02_accessibility_checks_on_every_screen(live):
     anon = browser.new_context(viewport=PHONE).new_page()
 
     vol.goto(f"{base}/slots")
-    confirm_href = vol.locator(f"[aria-label='Sign up for {TASK}, 9 to 10']").get_attribute("href")
+    nine = slot_label("09:00", "10:00")
+    confirm_href = vol.locator(f"[aria-label='Sign up for {TASK}, {nine}']").get_attribute("href")
     vol.request.post(base + confirm_href.replace("/confirm", "/sign-up"))
     coord.goto(f"{base}/my-tasks")
-    roster_href = coord.locator(f"[aria-label='Roster for {TASK}, 9 to 10']").get_attribute("href")
+    roster_href = coord.locator(f"[aria-label='Roster for {TASK}, {nine}']").get_attribute("href")
 
     screens = [
         ("S-1", anon, "/sign-in"),

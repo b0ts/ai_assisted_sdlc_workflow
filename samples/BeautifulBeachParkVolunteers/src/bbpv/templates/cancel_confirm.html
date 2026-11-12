@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% set title = "Cancel this sign-up?" %}
+{% set title = w.SCREEN.cancel_title %}
 {% block content %}
-<h1>Cancel this sign-up?</h1>
-<p>{{ row.title }}, {{ row.date|day_heading }}, {{ row|slot_time }}. Your place will open for someone else.</p>
+<h1>{{ w.SCREEN.cancel_title }}</h1>
+<p>{{ w.cancel_summary(row.title, row.date|day_heading, row|slot_time) }}</p>
 <form method="post" action="/sign-ups/{{ row.id }}/cancel">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
   <input type="hidden" name="confirm" value="yes">
-  <button class="btn" type="submit">Yes, cancel</button>
+  <button class="btn" type="submit">{{ w.SCREEN.yes_cancel }}</button>
 </form>
-<a class="btn secondary" href="/my-sign-ups">Keep my sign-up</a>
+<a class="btn secondary" href="/my-sign-ups">{{ w.SCREEN.keep_sign_up }}</a>
 {% endblock %}

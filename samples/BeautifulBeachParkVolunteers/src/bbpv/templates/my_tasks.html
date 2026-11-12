@@ -1,24 +1,24 @@
 {% extends "base.html" %}
-{% set title = "My tasks" %}
+{% set title = w.SCREEN.my_tasks_title %}
 {% block content %}
 <div class="title-row">
-  <h1>My tasks</h1>
-  <a class="btn inline" href="/tasks/new">Post a task</a>
+  <h1>{{ w.SCREEN.my_tasks_title }}</h1>
+  <a class="btn inline" href="/tasks/new">{{ w.SCREEN.post_task_button }}</a>
 </div>
 {% for day in days %}
   <h2>{{ day.date|day_heading }}</h2>
   <table>
-    <tr><th scope="col">Task</th><th scope="col">Slot</th><th scope="col">Places filled</th><th scope="col"><span class="small">Roster</span></th></tr>
+    <tr><th scope="col">{{ w.SCREEN.col_task }}</th><th scope="col">{{ w.SCREEN.col_slot }}</th><th scope="col">{{ w.SCREEN.col_filled }}</th><th scope="col"><span class="small">{{ w.SCREEN.col_roster }}</span></th></tr>
     {% for r in day.rows %}
     <tr>
       <td>{{ r.title }}</td>
       <td>{{ r|slot_time }}</td>
-      <td>{{ r.places - r.places_left }} of {{ r.places }}{% if r.places_left == 0 %} (Full){% endif %}</td>
-      <td><a href="/slots/{{ r.id }}/roster" aria-label="Roster for {{ r.title }}, {{ r|hours }}">Roster</a></td>
+      <td>{{ w.places_filled(r.places - r.places_left, r.places, r.places_left == 0) }}</td>
+      <td><a href="/slots/{{ r.id }}/roster" aria-label="{{ w.roster_label(r.title, r|hours) }}">{{ w.SCREEN.roster_link }}</a></td>
     </tr>
     {% endfor %}
   </table>
 {% else %}
-  <p>You haven't posted any upcoming tasks.</p>
+  <p>{{ w.NO_TASKS }}</p>
 {% endfor %}
 {% endblock %}

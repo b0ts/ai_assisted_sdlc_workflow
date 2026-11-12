@@ -6,6 +6,7 @@ Documentation and templates for incorporating AI assistance into the software de
 
 - [Introduction](docs/a01-introduction.md) — start here: what this repo teaches, how it's organized, and the order to read it in
 - [What Is a Software Development Lifecycle Workflow?](docs/a03-what-is-an-sdlc-workflow.md) — a plain-language introduction for non-programmers
+- [Building Your Own App](docs/a10-building-your-own-app.md) — the step-by-step walkthrough for your own project
 - [Documentation index](docs/README.md) — all how-to guides and the ten step guides
 
 ## Numbering system

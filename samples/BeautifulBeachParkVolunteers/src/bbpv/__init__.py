@@ -8,6 +8,7 @@ on Parks IT's servers; the tests pass their own settings in `config`.
 import datetime as dt
 import os
 import secrets
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from flask import Flask, abort, g, redirect, request, session
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -36,7 +37,23 @@ def _settings_from_environment():
         "SIGN_IN_LINK_MINUTES": int(os.environ.get("SIGN_IN_LINK_MINUTES", "15")),
         "TRUST_PROXY": _env_bool("TRUST_PROXY", "false"),
         "DB_POOL_SIZE": int(os.environ.get("DB_POOL_SIZE", "15")),
+        "PARK_TIMEZONE": os.environ.get("PARK_TIMEZONE", "America/Los_Angeles"),
+        # Seconds a page waits for the email service before leaving its email to the 5-minute job
+        "EMAIL_SEND_TIMEOUT": float(os.environ.get("EMAIL_SEND_TIMEOUT", "5")),
     }
+
+
+def park_clock(zone_name):
+    """'Now' in park time, whatever the server's own clock is set to (Spec DD-8)."""
+    try:
+        zone = ZoneInfo(zone_name)
+    except (ZoneInfoNotFoundError, ValueError) as e:
+        raise RuntimeError(f"PARK_TIMEZONE {zone_name!r} isn't a time zone, e.g. America/Los_Angeles.") from e
+
+    def now():
+        return dt.datetime.now(zone).replace(tzinfo=None)
+
+    return now
 
 
 def create_app(config=None):
@@ -69,7 +86,7 @@ def create_app(config=None):
         domain = host if "." in host else "localhost.test"
         cfg["EMAIL_FROM"] = f"BeautifulBeachPark Volunteers <no-reply@{domain}>"
     if not callable(cfg.get("CLOCK")):
-        cfg["CLOCK"] = dt.datetime.now
+        cfg["CLOCK"] = park_clock(cfg["PARK_TIMEZONE"])
 
     cfg["SESSION_COOKIE_HTTPONLY"] = True
     cfg["SESSION_COOKIE_SAMESITE"] = "Lax"

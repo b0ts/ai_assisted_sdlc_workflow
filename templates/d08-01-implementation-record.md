@@ -113,14 +113,22 @@ request that approved it.]
 ## 7. Reviews
 
 <!-- Required before hand-off. AI-written code must be reviewed by a
-person before it goes live (Spec Section 11). -->
+person before it goes live (Spec Section 11). The three independent
+reviews run one after another: round 1, round 2, then round 3; each round
+is decided, fixed, and re-reviewed before the next starts. Fill in each
+round's row only when that round is settled. A round ends when no
+Must-fix finding is left open; after that, new Should-fix findings go on a
+Future Version list unless the person chooses Fix. Reviewers don't read these
+rows, so the reviews stay independent. -->
 
 | Review | What was checked | Result | By and date |
 |---|---|---|---|
 | Security and privacy | [Every item in Spec Section 11; no secrets in the code] | [Pass / Issues listed] | [Name, YYYY-MM-DD] |
 | Speed and cost | [e.g., Database indexes; pages send only what they need] | [Result] | [Name, YYYY-MM-DD] |
 | Licenses | [Every library in d08-02 Section 7 may be used] | [Result] | [Name, YYYY-MM-DD] |
-| Person's code review | [A person read the code and its changes] | [Result] | [Name, YYYY-MM-DD] |
+| Round 1: independent code review | [e.g., "Codex, prompt c08-02": report `d08-04-code-review-codex.md`] | [Verdict; findings by seriousness; how many marked Fix, fixed, and re-reviewed] | [Reviewer; decisions by Name, YYYY-MM-DD] |
+| Round 2: independent code review | [e.g., "New Claude Code session, prompt c08-02": report `d08-04-code-review-claude.md`] | [Verdict; findings; decisions; re-review result] | [Reviewer; decisions by Name, YYYY-MM-DD] |
+| Round 3: hands-on review | [e.g., "Sam, a volunteer, used the app for 90 minutes (prompt c08-03)": report `d08-05-hands-on-review.md`] | [Overall impression; findings by kind; decisions; re-check result] | [Reviewer; decisions by Name, YYYY-MM-DD] |
 
 ## 8. Requests to Change a Test
 

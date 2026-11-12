@@ -2,6 +2,8 @@
 
 **Role:** SRE (Site Reliability Engineer) / Maintenance Engineer · **Prompt:** [c10](../prompts/c10-maintenance-prompt.md) · **Templates:** d10-01 to d10-03
 
+> **Building your own app?** See [Building Your Own App, Step 10](a10-building-your-own-app.md#step-10-maintenance) for what to do in this step for your project.
+
 ## Executive Summary
 
 At the end of [Step 9: Release](b09-release.md), the software is live and
@@ -172,3 +174,6 @@ future time.
 - [Step 6: Initial Infrastructure](b06-infrastructure.md): where monitoring and costs are set up
 - [Software rot (Wikipedia)](https://en.wikipedia.org/wiki/Software_rot):
   a general introduction
+
+**Next:** [Building Your Own App](a10-building-your-own-app.md)
+walks you through all ten steps for your own project.

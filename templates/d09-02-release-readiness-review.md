@@ -38,7 +38,7 @@ never remove the standard rules. -->
 | HS-1 | Every earlier step has a recorded sign-off, the stakeholders approved the demo of this version, and the people who run the live servers approved the move | [Tracking Decision IDs; d09-01 Sections 1.1 and 6] | [Pass / Fail / Accepted] |
 | HS-2 | Every automated test passes on the exact version being released, on the local environment and on the live servers | [d07-02, runs, dates] | [Pass / Fail / Accepted] |
 | HS-3 | No test was changed, skipped, or weakened without the SDET's recorded reason | [d07-01 Change Log] | [Pass / Fail / Accepted] |
-| HS-4 | A person has reviewed the code | [d08-01 Section 7] | [Pass / Fail / Accepted] |
+| HS-4 | Three independent review rounds are done, in order (two AI code reviews, prompt c08-02; then one hands-on review by a person, prompt c08-03), a person has decided on every finding, and every finding marked "Fix" is fixed, tested, and re-checked | [d08-04 and d08-05 reports; d08-01 Section 7] | [Pass / Fail / Accepted] |
 | HS-5 | The stress test passes at the expected busiest load | [d09-01 Section 7, run] | [Pass / Fail / Accepted] |
 | HS-6 | Every manual check passes | [d09-01 Section 8] | [Pass / Fail / Accepted] |
 | HS-7 | Every Security & Compliance item is met on the live servers | [d04-01 Section 11; d06-01 Section 8] | [Pass / Fail / Accepted] |

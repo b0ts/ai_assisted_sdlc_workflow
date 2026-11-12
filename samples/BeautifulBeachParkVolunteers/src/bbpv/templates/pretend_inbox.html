@@ -1,14 +1,14 @@
 {% extends "base.html" %}
-{% set title = "Pretend inbox" %}
+{% set title = w.SCREEN.inbox_title %}
 {% block content %}
-<h1>Pretend inbox</h1>
-<div class="notice"><strong>Local demo only.</strong> This page shows the emails the app would have sent, newest first. It exists only in the local environment, with made-up accounts, and is turned off on the live servers.</div>
+<h1>{{ w.SCREEN.inbox_title }}</h1>
+<div class="notice"><strong>{{ w.SCREEN.inbox_notice_title }}</strong> {{ w.SCREEN.inbox_notice }}</div>
 {% for m in mails %}
 <div class="card">
-  <p class="small">To {{ m.to }} · {{ m.subject }}</p>
+  <p class="small">{{ w.mail_header(m.to, m.subject) }}</p>
   <pre class="mail">{{ m.text|urlize }}</pre>
 </div>
 {% else %}
-<p>No emails yet.</p>
+<p>{{ w.SCREEN.inbox_empty }}</p>
 {% endfor %}
 {% endblock %}

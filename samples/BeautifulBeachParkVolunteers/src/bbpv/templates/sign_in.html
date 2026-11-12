@@ -1,16 +1,16 @@
 {% extends "base.html" %}
-{% set title = "Sign in" %}
+{% set title = w.SCREEN.sign_in_title %}
 {% block content %}
-<h1>Sign in</h1>
-<p>We'll email you a link to sign in. There's no password to remember.</p>
+<h1>{{ w.SCREEN.sign_in_title }}</h1>
+<p>{{ w.SCREEN.sign_in_intro }}</p>
 <form method="post" action="/sign-in">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-  <label for="email">Email</label>
+  <label for="email">{{ w.SCREEN.email_label }}</label>
   <input id="email" class="field" type="email" name="email" autocomplete="email" required>
-  <button class="btn" type="submit">Send me a sign-in link</button>
+  <button class="btn" type="submit">{{ w.SCREEN.send_link_button }}</button>
 </form>
-<p>New here? <a href="/create-account">Create an account</a></p>
+<p>{{ w.SCREEN.new_here }} <a href="/create-account">{{ w.SCREEN.create_account_link }}</a></p>
 {% if pretend_inbox %}
-<div class="notice"><strong>Local demo.</strong> Emails aren't really sent. <a href="/pretend-inbox">Open the pretend inbox</a> to find your sign-in link.</div>
+<div class="notice"><strong>{{ w.SCREEN.demo_notice_title }}</strong> {{ w.SCREEN.demo_notice }} <a href="/pretend-inbox">{{ w.SCREEN.open_pretend_inbox }}</a> {{ w.SCREEN.demo_notice_end }}</div>
 {% endif %}
 {% endblock %}

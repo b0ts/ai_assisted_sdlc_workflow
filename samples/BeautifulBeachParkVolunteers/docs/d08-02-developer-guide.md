@@ -1,7 +1,7 @@
 # BeautifulBeachPark Volunteers: Developer Guide
 
-**Document:** d08-02 · **Step:** 8, Implementation · **Version:** 1.0
-· **Last updated:** 2026-12-11 · **Status:** Approved
+**Document:** d08-02 · **Step:** 8, Implementation · **Version:** 1.1
+· **Last updated:** 2026-10-25 · **Status:** Approved
 · **Owner:** Software Engineer (Implementation chat)
 
 > **Sample document.** BeautifulBeachPark, its city, and Parks IT are made
@@ -27,8 +27,8 @@
 | `src/bbpv/templates/` | The page layouts for S-1 to S-10, built from `assets/mockups/` | Client |
 | `src/bbpv/static/style.css` | Colors, fonts, and spacing, taken from `assets/design-tokens.json` | Client |
 | `src/bbpv/wording.py` | Every message people see, in one place, so other languages can be added later (Spec Section 10) | Client and Application server |
-| `src/bbpv/cli.py` | Commands: create and delete accounts, the daily reminder job, demo data | Reminder job; System Administrator |
-| `src/bbpv/db.py` | The database tables | Database |
+| `src/bbpv/cli.py` | Commands: create and delete accounts, the scheduled jobs (reminders, sending queued emails, the 12-month clean-up), demo data | Scheduled jobs; System Administrator |
+| `src/bbpv/db.py` | The database tables, including the email queue (`outbox`) | Database |
 | `src/bbpv/privacy.py` | Email encryption, the scrambled copies, and the standardized email (Spec Section 6) | Application server |
 | `src/bbpv/mail.py` | Sending email: the test inbox, the pretend inbox, or the city email service | Email service |
 | `src/infrastructure/setup_local.py` | Sets up the local environment | — |
@@ -38,7 +38,7 @@
 flowchart LR
     P["templates/ and static/<br/>(screens S-1 to S-10)"] --> S["views.py<br/>(requests and rules)"]
     S --> D[("db.py<br/>SQLite locally;<br/>PostgreSQL live")]
-    J["cli.py<br/>send-reminders"] --> D
+    J["cli.py<br/>send-reminders, send-emails,<br/>clean-up"] --> D
     S --> V["privacy.py<br/>(encrypt, scramble)"]
     S --> M["mail.py<br/>(pretend inbox locally;<br/>city email service live)"]
     J --> M
@@ -47,9 +47,24 @@ flowchart LR
 ```
 
 **The one rule to remember:** email addresses are decrypted in exactly one
-place, `send_email()` in `views.py`, and only to send an email. No page in
+place, `deliver()` in `views.py`, and only to send an email. No page in
 `templates/` ever receives one (Spec Section 11). T-SEC-01 and T-SEC-03
 check this.
+
+**How email works (Spec DD-6):** nothing is emailed directly. Each email is
+saved to the queue (`queue_email()`), encrypted, in the same step as the
+change it's about. The page that queued it tries to send it once, waiting
+at most `EMAIL_SEND_TIMEOUT` seconds in all (a slow send finishes in the
+background), and never sends anyone else's. If the
+email service doesn't answer, the email stays queued and `send-emails`
+retries it every 5 minutes until it expires: a sign-in email with its link,
+a confirmation or reminder when the slot starts, a message after 3 days. A
+failure is recorded as a short reason, never with the address or the
+service's own reply.
+
+**All wording lives in `wording.py`:** messages, emails, every heading,
+label, and button, and the words in times (a.m., p.m.). The page templates hold no words of their own; T-WD-02
+checks this.
 
 ## 3. Setting Up
 
@@ -87,8 +102,10 @@ check this.
 | Add made-up accounts and tasks | In the `src/` folder: `flask --app bbpv seed-demo` |
 | Run the app on your own computer | In the `src/` folder: `flask --app bbpv run`, then open <http://localhost:5000>. Sign in as `sandyhelps@example.test` (volunteer), `democoordinator@example.test`, or `demoadmin@example.test`, and find the sign-in link in the **pretend inbox** (linked from the sign-in page). This is also how the stakeholder demo is run in Step 9. |
 | Send tomorrow's reminders by hand | `flask --app bbpv send-reminders` (they appear in the pretend inbox) |
+| Send queued emails by hand | `flask --app bbpv send-emails` |
+| Remove tasks older than 12 months | `flask --app bbpv clean-up` |
 | Run every test | In Visual Studio Code, choose the **Testing** icon (a beaker) in the left sidebar, then **Run Tests**. Or, in the project folder, run `pytest`. Or ask Claude Code to "run all the tests." The tests use a throwaway database and never send email. |
-| Run the quick tests while working | `pytest -m "not monkey and not browser"`: 34 tests in a few seconds |
+| Run the quick tests while working | `pytest -m "not monkey and not browser"`: 54 tests in a few seconds |
 | Run one test | In the **Testing** panel, find the test by its ID (for example, `test_t_03_02`) and choose its run button. |
 | Where results go | Add a Run History row to `docs/d07-02-test-results.md` after every full run. |
 
@@ -107,6 +124,8 @@ runs on your computer and on Parks IT's servers; only the values change.
 | `FORCE_HTTPS` | Sends plain HTTP to HTTPS (Spec 11.1) | `false` (the laptop has no certificate) | `true` (the default) |
 | `TRUST_PROXY` | Trusts Parks IT's web server to say the visitor used HTTPS | Not set | `true` |
 | `DB_POOL_SIZE` | Database connections each copy of the app may keep | Not needed | `4`: Parks IT runs 4 copies, and allows 20 connections in all (d06-01 v1.2) |
+| `PARK_TIMEZONE` | The park's time zone, used for every "now" (Spec DD-8) | `America/Los_Angeles` (the default) | `America/Los_Angeles` (d06-01 v1.4) |
+| `EMAIL_SEND_TIMEOUT` | Seconds a page waits for the email service before leaving its email to the 5-minute job | `5` (the default) | `5` |
 | `EMAIL_FROM`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` | The sending address and the city email service | Not needed | From Parks IT; the password in their secret store |
 
 The local settings file is listed in `.gitignore`, so it never goes to
@@ -124,8 +143,11 @@ demo, on a Tuesday evening (d06-01 Section 5.1):
    environment variables above from Parks IT's secret store.
 3. Start the app as a service behind Parks IT's web server, with HTTPS.
    It creates its database tables the first time it starts.
-4. Add a daily 6 p.m. job to Parks IT's scheduler that runs
-   `flask --app bbpv send-reminders`.
+4. Add three jobs to Parks IT's scheduler (d06-01 v1.4): a daily 6 p.m.
+   job that runs `flask --app bbpv send-reminders`; one every 5 minutes
+   that runs `flask --app bbpv send-emails`, with its output emailed to the
+   Volunteer Program Manager when it warns; and a daily 3 a.m. job that
+   runs `flask --app bbpv clean-up`.
 5. Run the full test suite against the live servers, using a test
    database, and record the run in `docs/d07-02-test-results.md`.
 6. Create the System Administrator's account with
@@ -151,6 +173,7 @@ demo, on a Tuesday evening (d06-01 Section 5.1):
 | SQLAlchemy | Talks to the database (SQLite or PostgreSQL) | See `src/requirements.txt` | MIT | Yes |
 | cryptography | Encrypts volunteer emails | See `src/requirements.txt` | Apache-2.0 or BSD-3-Clause | Yes |
 | python-dotenv | Reads `src/.env` in the local environment | See `src/requirements.txt` | BSD-3-Clause | Yes |
+| tzdata | Time zone data, for `PARK_TIMEZONE` on computers that lack it | See `src/requirements.txt` | Apache-2.0 | Yes |
 | psycopg | Talks to PostgreSQL on Parks IT's servers | 3.1 or newer | LGPL-3.0 | Yes, used unchanged as a library |
 | pytest | Runs the tests | See `tests/requirements.txt` | MIT | Yes |
 | Playwright for Python | Drives a real browser in T-QR-01 and T-QR-02 | Latest | Apache-2.0 | Yes |
@@ -162,6 +185,7 @@ demo, on a Tuesday evening (d06-01 Section 5.1):
 | Tests show **Blocked** | The local database isn't running | Ask Claude Code to "start the local environment" (d06-01, ongoing DevOps support) |
 | Email tests fail, other tests pass | `EMAIL_SERVICE` isn't set to the pretend inbox | Check the local settings file |
 | Slot pages are slow | A missing database index after a database change | Check `src/bbpv/db.py`; T-QR-01 measures this |
+| Emails aren't arriving | The email service is down, or rejecting the app | Run `flask --app bbpv send-emails`: it says how many are waiting, and warns after an hour. They're sent once the service answers |
 | A new screen looks "off" | Styles written by hand instead of from the design tokens | Use `src/bbpv/static/style.css`, built from `assets/design-tokens.json` |
 
 ## 9. Change Log
@@ -169,3 +193,5 @@ demo, on a Tuesday evening (d06-01 Section 5.1):
 | Version | Date | Change | Reason | Approved by |
 |---|---|---|---|---|
 | 1.0 | 2026-12-11 | First version | — | Park Manager (D12, 2026-12-11) |
+| 1.1 | 2026-10-25 | Email queue and `send-emails`; `clean-up`; `PARK_TIMEZONE`; tzdata; decryption now in `deliver()` | Round 1 code review fixes (d08-04-code-review-codex.md) | Park Manager, 2026-10-25 |
+| 1.2 | 2026-10-26 | Pages send only their own email (`EMAIL_SEND_TIMEOUT`); fixed 5-minute retries and expiry; safe failure reasons; all screen text in `wording.py` | Round 1 re-review (Codex), R-2, R-5, R-14, R-15 | Park Manager, 2026-10-26 |

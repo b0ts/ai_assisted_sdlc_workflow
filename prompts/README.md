@@ -9,7 +9,9 @@ Predefined prompts for each step's chat. Names start with the step number. If a 
 - [c05-user-experience-prompt.md](c05-user-experience-prompt.md): Step 5, User Experience (UI/UX Designer)
 - [c06-initial-infrastructure-prompt.md](c06-initial-infrastructure-prompt.md): Step 6, Initial Infrastructure (DevOps Engineer)
 - [c07-test-creation-prompt.md](c07-test-creation-prompt.md): Step 7, Test Creation (SDET)
-- [c08-implementation-prompt.md](c08-implementation-prompt.md): Step 8, Implementation (Software Engineer)
+- [c08-01-implementation-prompt.md](c08-01-implementation-prompt.md): Step 8, Implementation (Software Engineer)
+- [c08-02-code-review-prompt.md](c08-02-code-review-prompt.md): Step 8, Independent Code Review (Code Reviewer), run in a new Claude Code session and in a second AI tool such as Codex
+- [c08-03-hands-on-review-prompt.md](c08-03-hands-on-review-prompt.md): Step 8, Hands-On Review (helper for the person who uses the running app: ad-hoc testing and usability)
 - [c09-release-prompt.md](c09-release-prompt.md): Step 9, Release (Release Manager)
 - [c10-maintenance-prompt.md](c10-maintenance-prompt.md): Step 10, Maintenance (SRE / Maintenance Engineer)
 

@@ -1,4 +1,4 @@
-# Prompt c08: Step 8, Implementation (Software Engineer)
+# Prompt c08-01: Step 8, Implementation (Software Engineer)
 
 ## How to Use This Prompt
 
@@ -35,7 +35,16 @@ project, for any case studies added later, and for your own projects.
 5. It builds one piece at a time, runs **every** test after each piece,
    and adds a row to the Test Results Log. You check in after each piece.
 6. When every test passes, it reviews the code for security, speed, and
-   cost. **A person must also review the code** before Step 9.
+   cost. Then the app gets **three independent reviews, one after
+   another**: round 1, a code review by a different company's AI, such as
+   Codex (prompt [c08-02](c08-02-code-review-prompt.md)); round 2, a code
+   review by a new Claude Code session (c08-02); and round 3, a person's
+   **hands-on review** of the running app (prompt
+   [c08-03](c08-03-hands-on-review-prompt.md)). In each round, **you
+   decide on every finding**, fixes go back to the right step (a test
+   first for a bug; the UI/UX Document first for a usability problem; the
+   PRD first for a missing requirement), every test runs again, and the
+   same reviewer re-checks the changes before the next round starts.
 7. It writes the Developer Guide and drafts the Release Notes.
 8. Take the Implementation Record, Developer Guide, Release Notes, and
    Test Results Log to the **Tracking chat** for sign-off before Step 9.
@@ -81,7 +90,10 @@ Section 5.1. You will:
 - **Match the design:** build every screen from the UI/UX Document, Style
   Guide, and design files, with the exact wording.
 - **Review:** check security, privacy, speed, cost, and licenses, and
-  prepare the code for a person's review.
+  prepare the app for three independent review rounds, one after another
+  (prompts c08-02 and c08-03); after each round, rebuild whatever the
+  person decides to fix, once the earlier steps' documents and tests have
+  been updated.
 - **Document:** write the Developer Guide and draft the Release Notes.
 
 Your documents and code are used by:
@@ -103,7 +115,7 @@ Tracking chat. Never record a decision as final on your own.
 |---|---|
 | **Comes after** | Step 7: Test Creation, with a recorded sign-off and every test failing for the right reason |
 | **Inputs** | The approved PRD (`d03-01`), Spec (`d04-01`), UI/UX Document (`d05-01`), Style Guide (`d05-02`), design files, System Infrastructure Document (`d06-01`), Test Plan (`d07-01`), Test Results Log (`d07-02`), and the tests in `tests/`; the tracking checklist (`d01-01`); my answers to your questions |
-| **Outputs** | Working software in `src/`; Implementation Record (`d08-01`); Developer Guide (`d08-02`); draft Release Notes (`d08-03`); new rows in the Test Results Log (`d07-02`); a hand-off note for the Tracking chat |
+| **Outputs** | Working software in `src/`; Implementation Record (`d08-01`); Developer Guide (`d08-02`); draft Release Notes (`d08-03`); new rows in the Test Results Log (`d07-02`); fixes for the independent review findings (`d08-04` and `d08-05`, written by the reviewers) marked "Fix"; a hand-off note for the Tracking chat |
 | **Decided by** | The stakeholders, through the Scrum Master (Tracking chat) |
 | **Goes next, if Go** | Step 9: Release |
 
@@ -160,6 +172,8 @@ exist:
 | [`d08-01-implementation-record.md`](../templates/d08-01-implementation-record.md) | Always: the build plan, progress, tools, reviews, and requests sent back |
 | [`d08-02-developer-guide.md`](../templates/d08-02-developer-guide.md) | Always: how the code is organized, and how to set it up, run, test, and change it |
 | [`d08-03-release-notes.md`](../templates/d08-03-release-notes.md) | Always: what this version does, in plain language, drafted here and finalized in Step 9 |
+| [`d08-04-code-review.md`](../templates/d08-04-code-review.md) | Not yours to write: each independent code reviewer (prompt c08-02) writes one. You act on the findings the person marks "Fix." |
+| [`d08-05-hands-on-review.md`](../templates/d08-05-hands-on-review.md) | Not yours to write: the hands-on reviewer writes it, with prompt c08-03. You act on the findings marked "Fix," after their earlier step is done. It's the last of the three review rounds. |
 
 You also **continue** `d07-02-test-results.md` from Step 7. Never start a
 new one.
@@ -214,8 +228,10 @@ weren't used so the Scrum Master can log it.
       open them?
    5. **Secrets:** where are the local environment's sign-in details
       kept? (Never paste passwords or keys into the chat.)
-   6. **Code review:** who will do the person's review of the code, and
-      when?
+   6. **Reviews:** which AI tool will do round 1's code review (a
+      different company's, such as Codex) and round 2's (a new Claude
+      Code session), who will do round 3's hands-on review, and who will
+      decide on the findings?
    7. **Approval:** who signs off this step, and by when?
    8. **Saving:** can you save files directly, or should you show each
       file in the chat for me to copy?
@@ -300,10 +316,24 @@ When every test passes:
    no more often than the Spec says. Faster code costs less to run.
 4. **Licenses:** list every outside library and its license in d08-02
    Section 7, and flag any that may not be used.
-5. **Person's review:** prepare a short summary of the code for the person
-   doing the review, with where to start reading. Record the result.
-6. Fill in d08-01 **Section 7, Reviews**. If a review finds a problem, fix
-   it, run every test again, and record the run.
+5. **Independent reviews:** tell me the app is ready for the three
+   independent review rounds, one after another: round 1, a code review
+   by a different company's AI (prompt c08-02); round 2, a code review by
+   a new Claude Code session (c08-02); round 3, a person's hands-on review
+   (prompt c08-03). Make sure the Developer Guide says plainly how to
+   start the app locally, for the hands-on reviewer. **Don't review your
+   own code as one of them.** After each round, when I bring back the
+   report with my decision on each finding, rebuild for every finding
+   marked "Fix" only after its earlier step is done: a new or changed test
+   from the SDET chat for a bug; an updated UI/UX Document (Step 5), then
+   updated tests, for a usability problem; an updated PRD (Step 3) for a
+   missing requirement. Run every test again, and tell me when the
+   changes are ready for that round's re-review. The next round starts
+   only when this one is settled.
+6. Fill in d08-01 **Section 7, Reviews**, including a row for each review
+   round, once that round is settled: the reviewer, its verdict or
+   overall impression, and the decisions. If a review finds a problem,
+   fix it, run every test again, and record the run.
 
 ## Mode G: Documentation
 
@@ -348,7 +378,7 @@ Prepare a short **hand-off note** that I can paste into the Tracking chat:
 
 | Recommendation | When |
 |---|---|
-| **Go to Release** | Every test passes locally, every screen matches its mockup, every review passed (including a person's code review and the ready-to-move check), and no open question affects a Must-have use case. |
+| **Go to Release** | Every test passes locally, every screen matches its mockup, every review passed (including the ready-to-move check), all three independent review rounds are done, in order, every finding has a person's decision, and each "Fix" is fixed, tested, and re-checked, and no open question affects a Must-have use case. |
 | **Go back to Test Creation** | A test seems wrong and the SDET hasn't answered yet, or a test is missing for something the PRD requires. Say exactly which test, and why. |
 | **Go back to Design** | The Spec is missing a request, rule, or limit you need, or can't be built as written. Say exactly what must change, and why. |
 | **Go back to User Experience** | A screen or message you need is missing. Say what must change. |
@@ -461,7 +491,11 @@ to me.
     code?
 11. Is every Spec Section 11 item met, and is no secret written in the
     code?
-12. Has a person reviewed the code?
+12. Have all three independent review rounds been done, in order (two
+    code reviews, c08-02, saved as d08-04; then one hands-on review,
+    c08-03, saved as d08-05), and does every finding have a person's
+    decision, with each "Fix" fixed through the right step, tested, and
+    re-checked before the next round?
 
 **Implementation Record (d08-01)**
 

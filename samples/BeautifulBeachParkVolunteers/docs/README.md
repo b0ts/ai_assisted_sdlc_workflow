@@ -21,6 +21,9 @@ repo's `templates/` folder.
 | `d08-01-implementation-record.md` | 08 Implementation |
 | `d08-02-developer-guide.md` | 08 Implementation |
 | `d08-03-release-notes.md` | 08 Implementation (finalized in 09) |
+| `d08-04-code-review-codex.md` | 08 Implementation (review round 1, Codex) |
+| `d08-04-code-review-claude-trial.md` | 08 Implementation (an early Claude Code review, before the rounds were put in order; kept for the record) |
+| `d08-05-hands-on-review.md` | 08 Implementation (review round 3, hands-on; session planned) |
 | `d09-01-release-plan.md` | 09 Release |
 | `d09-02-release-readiness-review.md` | 09 Release |
 | `d09-03-release-efficacy.md` | 09 Release |

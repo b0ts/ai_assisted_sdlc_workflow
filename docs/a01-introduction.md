@@ -9,8 +9,15 @@ ready-made AI instructions, fill-in-the-blank documents, and a finished
 sample project to copy from. You stay in charge and make the decisions. The
 AI does most of the writing and building.
 
+Everything is built and tested on **your own computer first, at no cost**.
+Nothing goes live until the people in charge have tried the working
+software and approved it, and then it usually moves onto servers your
+organization already has.
+
 The repo is organized in four sections, **a** through **d**, so you can
-always tell what kind of file you're looking at and where it fits.
+always tell what kind of file you're looking at and where it fits. A fifth
+letter, **e**, is saved for [case studies](case-studies.md) of real
+projects, which may be added later.
 
 ---
 
@@ -33,7 +40,7 @@ step's guide, prompt, templates, and sample documents together.
 
 ```
 ai_assisted_sdlc_workflow/
-├── docs/        a01–a09   Background and how-to guides (section a)
+├── docs/        a01–a10   Background and how-to guides (section a)
 │                b01–b10   One guide per SDLC step (section b)
 ├── prompts/     c01–c10   Ready-made AI prompts, one per step (section c)
 ├── templates/   d01–d10   Fill-in documents for each step's deliverables
@@ -61,6 +68,7 @@ Read these in order. Each one builds on the last.
 | [a07 What Is an AI-Assisted SDLC Workflow?](a07-what-is-an-ai-assisted-sdlc-workflow.md) | How AI roles and SDLC steps combine: ten chained AI chats, one per step, each passing its finished document to the next |
 | [a08 Implementing an AI-Assisted SDLC Workflow](a08-implementing-an-ai-assisted-sdlc-workflow.md) | Setting up your computer, Claude, and GitHub so you can start your own project |
 | [a09 UML Diagram Guide](a09-uml-diagram-guide.md) | Which standard software diagrams every project needs, and which only some do |
+| [a10 Building Your Own App](a10-building-your-own-app.md) | A walkthrough of all ten steps for **your** project, to keep open alongside the step guides |
 
 ---
 
@@ -103,8 +111,9 @@ write prompts from scratch.
 
 - **[BeautifulBeachPark Volunteers](../samples/BeautifulBeachParkVolunteers/)**
   is a finished sample: a volunteer sign-up app for a made-up park. It has a
-  filled-in document for every step plus working code and tests. Whenever a
-  step feels abstract, open the matching sample file.
+  filled-in document for every step plus working code and tests, and you
+  can run it on your own computer (its README shows how). Whenever a step
+  feels abstract, open the matching sample file.
 - **[`skeleton/`](../skeleton/)** is an empty project folder with the same
   layout as the sample. Copy it to start your own app.
 - **[`templates/`](../templates/)** holds the fill-in documents (d-numbers)

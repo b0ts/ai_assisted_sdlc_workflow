@@ -1,16 +1,16 @@
 {% extends "base.html" %}
-{% set title = "My sign-ups" %}
+{% set title = w.SCREEN.my_sign_ups_title %}
 {% block content %}
-<h1>My sign-ups</h1>
+<h1>{{ w.SCREEN.my_sign_ups_title }}</h1>
 {% for row in rows %}
 <div class="card">
   <strong>{{ row.title }}</strong>
   <div class="slot">
     <span>{{ row.date|short_day }}<br><span class="places">{{ row|slot_time }}</span></span>
-    <a class="btn inline secondary" href="/sign-ups/{{ row.signup_id }}/cancel" aria-label="Cancel {{ row.title }}, {{ row.date|day_label }}, {{ row|hours }}">Cancel</a>
+    <a class="btn inline secondary" href="/sign-ups/{{ row.signup_id }}/cancel" aria-label="{{ w.cancel_label(row.title, row.date|day_label, row|hours) }}">{{ w.SCREEN.cancel_button }}</a>
   </div>
 </div>
 {% else %}
-<p>You haven't signed up for anything yet. <a href="/slots">See the open slots</a></p>
+<p>{{ w.NO_SIGN_UPS }} <a href="/slots">{{ w.SCREEN.see_open_slots }}</a></p>
 {% endfor %}
 {% endblock %}

@@ -1,6 +1,8 @@
 # Step 3: Requirements (The Product Manager Chat, Continued)
 
-**Role:** Product Manager · **Prompts:** c03-xx · **Templates:** d03-xx
+**Role:** Product Manager · **Prompt:** [c03](../prompts/c03-requirements-prompt.md) · **Templates:** d03-01
+
+> **Building your own app?** See [Building Your Own App, Step 3](a10-building-your-own-app.md#step-3-requirements) for what to do in this step for your project.
 
 ## Executive Summary
 

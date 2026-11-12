@@ -22,6 +22,10 @@ installed on the live servers is in
 
 Or ask Claude Code: "Set up the local environment and start the app."
 
+**Reviewing the app?** See [`REVIEW-GUIDE.md`](REVIEW-GUIDE.md): how to run
+the two AI code reviews and a person's hands-on review, read the reports,
+and decide, plus the messages to approve and a checklist for a developer.
+
 | Folder or file | What it holds |
 |---|---|
 | `bbpv/__init__.py` | Builds the app; reads every setting from the environment |

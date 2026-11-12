@@ -1,22 +1,22 @@
 {% extends "base.html" %}
-{% set title = "Roster" %}
+{% set title = w.SCREEN.roster_title %}
 {% block content %}
 <h1>{{ slot.title }}</h1>
-<p class="small">{{ slot.date|day_heading }}, {{ slot|slot_time }} · {{ slot.places - slot.places_left }} of {{ slot.places }} places filled</p>
+<p class="small">{{ w.roster_summary(slot.date|day_heading, slot|slot_time, slot.places - slot.places_left, slot.places) }}</p>
 {% if names %}
 <div class="card">
   {% for n in names %}
   <div class="slot"><strong>{{ n }}</strong>
     <span class="actions">
-      <a class="btn inline secondary" href="/volunteers/{{ n }}/message" aria-label="Message {{ n }}">Message</a>
-      <a class="btn inline danger" href="/volunteers/{{ n }}/block" aria-label="Block {{ n }}">Block</a>
+      <a class="btn inline secondary" href="/volunteers/{{ n }}/message?slot={{ slot.id }}" aria-label="{{ w.message_label(n) }}">{{ w.SCREEN.message_button }}</a>
+      <a class="btn inline danger" href="/volunteers/{{ n }}/block?slot={{ slot.id }}" aria-label="{{ w.block_label(n) }}">{{ w.SCREEN.block_button }}</a>
     </span>
   </div>
   {% endfor %}
 </div>
-<p class="small">Usernames only. Volunteers' emails are never shown.</p>
+<p class="small">{{ w.SCREEN.roster_privacy }}</p>
 {% else %}
-<div class="banner info" role="status"><strong>Note:</strong> {{ w.EMPTY_ROSTER }}</div>
+{% set kind, text = "info", w.EMPTY_ROSTER %}{% include "_banner.html" %}
 {% endif %}
-<a class="btn secondary" href="/my-tasks">Back to my tasks</a>
+<a class="btn secondary" href="/my-tasks">{{ w.SCREEN.back_to_my_tasks }}</a>
 {% endblock %}

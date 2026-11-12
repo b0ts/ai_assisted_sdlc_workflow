@@ -1,7 +1,7 @@
 # BeautifulBeachPark Volunteers: Test Results Log
 
-**Document:** d07-02 · **Step:** 7, Test Creation (continued in Steps 8 and 9) · **Version:** 1.2
-· **Last updated:** 2027-01-15 · **Status:** Green: all tests pass
+**Document:** d07-02 · **Step:** 7, Test Creation (continued in Steps 8 and 9) · **Version:** 1.5
+· **Last updated:** 2026-10-26 · **Status:** Green: all tests pass
 · **Owner:** SDET (Test Creation chat); runs added by the Software Engineer (Implementation chat) and the DevOps Engineer
 
 > **Sample document.** The dates and people are made up, but the runs are
@@ -9,7 +9,10 @@
 > results. Run 1 is the end of Step 7, when nothing was built. Runs 2 to 4
 > are Step 8: Claude Code wrote the whole app in one session, and the runs
 > found two problems in the **tests**, not the code (Section 6). Runs 5
-> and 6 are the same tests on Parks IT's servers in Step 9.
+> and 6 are the same tests on Parks IT's servers in Step 9. Runs 7 to 9
+> are the round 1 review fixes (d08-04-code-review-codex.md), run for real
+> on 2026-10-25: 13 new tests failed first, then all 51 passed. Run 10 is
+> the second pass, after Codex's re-review: 5 more tests, then all 56 passed.
 
 ## 1. Overview
 
@@ -41,16 +44,26 @@
 | 4 | 2026-12-08 | Implementation chat | TC-2: the SDET corrected three false alarms in T-MK-01 (Section 6), then ran it with several random seeds. Full length: 1,000 inputs per field; 5 minutes of random taps. | 38 | 0 | 0 |
 | 5 | 2027-01-12 | DevOps chat, with Parks IT | Moved to Parks IT's servers after the demo approval (Step 9); run against a test database there | 38 | 0 | 0 |
 | 6 | 2027-01-15 | DevOps chat, with Parks IT | Shared database connections (d06-01 v1.2) | 38 | 0 | 0 |
+| 7 | 2026-10-25 | SDET (Claude) | Round 1: 13 new tests and the a.m./p.m. time format (d07-01 v1.2), run against the old code. Quick tests only. The new tests failed for the right reasons; for example, one sign-in link signed in twice (R-1), and 12 sign-in emails were sent where 10 is the limit (R-6). Most older tests failed only on the new time format. | 14 | 33 | 0 |
+| 8 | 2026-10-25 | Software Engineer (Claude) | Round 1 fixes in `src/` (d08-01 Section 5). Full length. | 50 | 1 | 0 |
+| 9 | 2026-10-25 | Software Engineer (Claude) | TC-3: the SDET corrected a false alarm in T-MK-01 (Section 6). Full length, new random seeds; also the 47 quick tests on the project owner's Mac (2 browser tests skipped there) | 51 | 0 | 0 |
+| 10 | 2026-10-26 | Software Engineer (Claude) | Second pass after Codex's re-review (R-2, R-5, R-6, R-14, R-15): 5 new tests (d07-01 v1.3) failed first, then the fixes. Full length, new random seeds | 56 | 0 | 0 |
+| 11 | 2026-10-26 | Software Engineer (Claude) | Third pass after Codex's second re-review (R-5, R-15, R-17): T-EM-07 and T-WD-03 added and failing first; T-SEC-08 reworked; then the fixes. Full length | 58 | 0 | 0 |
 
 ```mermaid
 xychart-beta
     title "Tests passing, run by run"
-    x-axis [Run 1, Run 2, Run 3, Run 4, Run 5, Run 6]
-    y-axis "Tests passing" 0 --> 38
-    bar [0, 0, 37, 38, 38, 38]
+    x-axis [Run 1, Run 2, Run 3, Run 4, Run 5, Run 6, Run 7, Run 8, Run 9, Run 10, Run 11]
+    y-axis "Tests passing" 0 --> 58
+    bar [0, 0, 37, 38, 38, 38, 14, 50, 51, 56, 58]
 ```
 
 ## 4. Results by Test (Latest Run)
+
+Run 11 passed all 58 (T-EM-07 and T-WD-03 were added in d07-01 v1.4). Run 10 passed all 56 (T-SEC-08, T-EM-04 to T-EM-06, and T-WD-02 were added in d07-01 v1.3; each failed first against the Run 9 code). Run 9 passed all 51. The 13 tests added in d07-01 v1.2 (T-01-06, T-01-07,
+T-03-08, T-06-03, T-07-04, T-SEC-06, T-SEC-07, T-EM-01 to T-EM-03,
+T-DATA-01, T-QR-03, T-WD-01) first passed in Run 8; the table below lists
+the original 38.
 
 | Test ID | Use case | Type | Latest result | First passed in run | Step 7 check | Notes |
 |---|---|---|---|---|---|---|
@@ -97,17 +110,18 @@ xychart-beta
 
 | Use case | Tests | Pass | Fail | Blocked |
 |---|---|---|---|---|
-| UC-1: Post a task | 5 | 5 | 0 | 0 |
+| UC-1: Post a task | 7 | 7 | 0 | 0 |
 | UC-2: Create an account | 5 | 5 | 0 | 0 |
-| UC-3: Sign up for a slot | 7 | 7 | 0 | 0 |
+| UC-3: Sign up for a slot | 8 | 8 | 0 | 0 |
 | UC-4: Cancel a sign-up | 3 | 3 | 0 | 0 |
 | UC-5: View a roster | 4 | 4 | 0 | 0 |
-| UC-6: Message a volunteer | 2 | 2 | 0 | 0 |
-| UC-7: Block a volunteer | 3 | 3 | 0 | 0 |
-| Security (T-SEC) | 5 | 5 | 0 | 0 |
-| Quality (T-QR) | 2 | 2 | 0 | 0 |
+| UC-6: Message a volunteer | 3 | 3 | 0 | 0 |
+| UC-7: Block a volunteer | 4 | 4 | 0 | 0 |
+| Security (T-SEC) | 8 | 8 | 0 | 0 |
+| Email queue, clean-up, wording (T-EM, T-DATA, T-WD) | 11 | 11 | 0 | 0 |
+| Quality (T-QR) | 3 | 3 | 0 | 0 |
 | Monkey (T-MK) | 2 | 2 | 0 | 0 |
-| **Total** | **38** | **38** | **0** | **0** |
+| **Total** | **58** | **58** | **0** | **0** |
 
 ## 6. Problems Found
 
@@ -116,6 +130,8 @@ xychart-beta
 | 2026-12-07 | All | Run 2: every test failed for the **wrong reason**. The tests opened the app over plain HTTP, so the app correctly sent every request to HTTPS (Spec 11.1) and the tests never reached a screen. | SDET chat (d08-01 TC-1) | **Test wrong, code right.** The shared test setup (`tests/conftest.py`) now opens the app at its `https://` address; T-SEC-02 still checks plain HTTP on purpose. No test's expected result changed (d07-01 v1.1). |
 | 2026-12-07 | T-MK-01 | Run 3: reported a volunteer's email "shown" on My Tasks. A random task title happened to be `test_vol_01@example.test`, and the coordinator saw their own earlier title again. The test also counted `&lt;` as four characters when checking title lengths, and, with another random seed, flagged the username " 1YY1", which the app saves as `1YY1` after trimming the spaces. | SDET chat (d08-01 TC-2) | **Test wrong, code right.** Text a coordinator typed earlier may reappear, titles are measured as people read them, and usernames are checked as saved. The rules are unchanged: no one else's email may appear, and nothing saved may break a rule (d07-01 v1.1). |
 
+| 2026-10-25 | T-MK-01 | Run 8: reported a volunteer's email "shown" after sending a message on S-9. "Send" now returns to the coordinator's task list (d05-01 v1.2), where a random task title typed earlier on S-7, `test_vol_01@example.test`, appeared again. | SDET (d08-01 TC-3) | **Test wrong, code right.** As in TC-2, text the coordinator typed earlier may reappear; the S-9 check now allows the S-7 titles too. No one else's email may appear, as before (d07-01 v1.2). |
+
 ## 7. Change Log
 
 | Version | Date | Change | Reason | Approved by |
@@ -123,3 +139,6 @@ xychart-beta
 | 1.0 | 2026-10-15 | First version, with Run 1 | — | Park Manager (D11, 2026-10-16) |
 | 1.1 | 2026-12-08 | Added Runs 2 to 4 from Step 8; status Green | Implementation complete | Park Manager (D12, 2026-12-11) |
 | 1.2 | 2027-01-15 | Added Runs 5 and 6 on Parks IT's servers (Step 9) | The same tests prove the move worked | Park Manager (D16, 2027-01-21) |
+| 1.3 | 2026-10-25 | Added Runs 7 to 9: the round 1 review fixes | Round 1 code review (Codex) decisions | Park Manager, 2026-10-25 |
+| 1.4 | 2026-10-26 | Added Run 10: the second pass of round 1 fixes | Round 1 re-review (Codex) | Park Manager, 2026-10-26 |
+| 1.5 | 2026-10-26 | Added Run 11: the third pass of round 1 fixes | Round 1 re-review 2 (Codex) | Park Manager, 2026-10-26 |

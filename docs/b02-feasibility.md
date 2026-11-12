@@ -2,6 +2,8 @@
 
 **Role:** Product Manager · **Prompt:** [c02](../prompts/c02-feasibility-prompt.md) · **Templates:** d02-01 to d02-04
 
+> **Building your own app?** See [Building Your Own App, Step 2](a10-building-your-own-app.md#step-2-feasibility) for what to do in this step for your project.
+
 ## Executive Summary
 
 Before anyone writes requirements, designs screens, or writes code, someone

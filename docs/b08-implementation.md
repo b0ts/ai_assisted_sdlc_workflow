@@ -1,6 +1,8 @@
 # Step 8: Implementation (The Software Engineer Chat)
 
-**Role:** Software Engineer · **Prompt:** [c08](../prompts/c08-implementation-prompt.md) · **Templates:** d08-01 to d08-03
+**Role:** Software Engineer, then three independent reviewers · **Prompts:** [c08-01](../prompts/c08-01-implementation-prompt.md), [c08-02](../prompts/c08-02-code-review-prompt.md), [c08-03](../prompts/c08-03-hands-on-review-prompt.md) · **Templates:** d08-01 to d08-05
+
+> **Building your own app?** See [Building Your Own App, Step 8](a10-building-your-own-app.md#step-8-implementation) for what to do in this step for your project.
 
 ## Executive Summary
 
@@ -18,7 +20,11 @@ Step 8 builds it.
   requirements** the code must fit.
 - **Output:** **working software** that passes every test, the
   **Implementation Record**, a **Developer Guide** that explains the code,
-  and draft **Release Notes**.
+  draft **Release Notes**, and **three independent reviews, one after
+  another**: two **Code Review Reports** from AI reviewers that didn't
+  write the code, then a **Hands-On Review Report** from a person who used
+  the app, each with a decision on every finding and a re-check of every
+  fix before the next review starts.
 - **Hand-off:** once every test passes and the stakeholders sign off, the
   software goes to [Step 9: Release](b09-release.md), where the
   stakeholders try it in a demo on your computer, and only after they
@@ -82,6 +88,8 @@ looks wrong, they send a request back through the
 | **Implementation Record** (`d08-01`) | The build plan, progress, tools used, and any requests sent back | Stakeholders (sign-off), Scrum Master |
 | **Developer Guide** (`d08-02`) | How the code is organized, and how to set it up, run it, test it, and change it | Step 10, and anyone who works on the code later |
 | **Release Notes** (`d08-03`) | What this version does, in plain language, and any known problems | Users, stakeholders, the Release Manager |
+| **Code Review Reports** (`d08-04`, one per reviewer) | Findings from two independent AI reviewers, in plain language, with a person's decision on each | The person who decides, the Software Engineer and SDET chats, the Tracking chat |
+| **Hands-On Review Report** (`d08-05`) | What a person found by using the app: tasks tried, ad-hoc testing, usability, each finding with a route back and a decision, and a re-check after rework | The person who decides; the UI/UX, SDET, and Software Engineer chats; the Tracking chat |
 | **Test Results Log** (`d07-02`, continued) | A new row for every test run | Scrum Master, SDET |
 
 ---
@@ -172,6 +180,130 @@ stakeholders approved, not like the programmer's best guess.
 
 ---
 
+## Three Independent Reviews
+
+Passing tests prove the software does what the tests check. They can't
+prove there's nothing *else* wrong: a privacy promise the tests didn't
+cover, a security hole, code nobody could maintain, or a screen real
+people can't figure out. So when every test passes, the app gets **three
+independent reviews, one after another**. Each review is a **round**: the
+reviewer reports, you decide on every finding, the fixes are made and
+tested, and the same reviewer checks the fixes. Only then does the next
+round start, on the improved version. None of the reviewers built the
+app, and none reads an earlier reviewer's report. This follows the idea
+in [The Multi-AI-Agent Paradigm](a02-multi-ai-agent-paradigm.md): no one
+should grade their own homework.
+
+```mermaid
+flowchart LR
+    T["Every test<br/>passes"] --> R1["Round 1:<br/>Codex<br/>code review"]
+    R1 --> L1["Decide, fix,<br/>re-review"]
+    L1 --> R2["Round 2:<br/>Claude Code<br/>code review"]
+    R2 --> L2["Decide, fix,<br/>re-review"]
+    L2 --> R3["Round 3:<br/>a person's<br/>hands-on review"]
+    R3 --> L3["Decide, fix,<br/>re-check"]
+    L3 --> SO["Step 8<br/>sign-off"]
+```
+
+| Round | Who | Looks at | Prompt and report |
+|---|---|---|---|
+| **1. Codex code review** | A different company's AI tool, such as OpenAI's **Codex** (or, if you don't have one, a **new** Claude Code session) | The code, against the documents | [c08-02](../prompts/c08-02-code-review-prompt.md) → `d08-04-code-review-codex.md` |
+| **2. Claude Code code review** | A **new** Claude Code session: not the one that built the code, and not one used in round 1. It also runs Claude Code's built-in `/security-review` | The code, after round 1's fixes | c08-02 → `d08-04-code-review-claude.md` |
+| **3. Hands-on review** | **A person**, ideally someone like the app's real users who didn't build it; a stakeholder is fine too | **The running app**, after both code reviews' fixes: scripted tasks, free exploring to try to break it (**ad-hoc testing**), and how easy it is to use. Reading the code is optional. | [c08-03](../prompts/c08-03-hands-on-review-prompt.md) (an AI helper that plans the session and writes up the person's notes) → `d08-05-hands-on-review.md` |
+
+**Why this order:**
+
+- **A different company's AI goes first.** The code was written by one AI,
+  and an AI from another company has different blind spots, so it's the
+  most likely to find what the builder missed.
+- **Each round starts on a better version.** The round 2 reviewer sees
+  code that round 1 has already improved, so it spends its effort on new
+  problems instead of repeating old ones, and it looks at round 1's fixes
+  with fresh eyes.
+- **The person goes last.** Their time is the most valuable, so they use
+  the version closest to final and don't trip over problems an AI could
+  have caught. What they find, the AIs can't: a button nobody finds, a
+  word that confuses, a task that takes too many steps.
+
+**Keeping each review independent:** every reviewer reads the approved
+documents and the code, but **not** the earlier rounds' reports, and not
+the review rows of the Implementation Record (d08-01 Section 7). A later
+reviewer will see that the code changed; that's fine, because it reviews
+what's there now.
+
+All three reports are written for non-programmers. **You** (or a
+stakeholder) read each one when its round comes and decide on every
+finding: **Fix**, **Accept as is**, or **Ask**.
+
+### The Rework Loop
+
+Inside each round, a finding marked **Fix** goes back to the step where
+the problem really starts, so the documents, tests, and code stay in
+agreement:
+
+```mermaid
+flowchart LR
+    R["This round's review<br/>and your decisions"] --> K{"What kind<br/>of finding?"}
+    K -- "Bug" --> T7["Step 7: a test<br/>that catches it"]
+    K -- "Usability" --> S5["Step 5: change the<br/>screen or wording"]
+    K -- "Missing requirement" --> S3["Step 3: change<br/>the PRD"]
+    S3 --> S5
+    S5 --> T7
+    T7 --> B8["Step 8: fix and<br/>rebuild"]
+    B8 --> A["All tests pass"]
+    A --> RR["Re-review by the<br/>same reviewer"]
+    RR -- "new findings" --> K
+    RR -- "all settled" --> N["Next round<br/>(after round 3:<br/>Step 8 sign-off)"]
+```
+
+After the rework, **every test runs again**. Then the reviewer of this
+round checks the work: a code reviewer reviews just the **changes** and
+each fixed finding (prompt c08-02, Mode E; Codex's `/review` can look at
+uncommitted changes or a branch), and the hands-on reviewer **re-checks**
+each fixed finding on the new version (prompt c08-03, Mode E). Anything
+new goes around the loop again. The next round starts only when every
+finding from this round is settled, and Step 8 is signed off after round
+3.
+
+**When a round ends.** Each re-review tends to find smaller things than
+the last, so without a rule a round could go on and on. The rule: **a
+round ends when no Must-fix finding is left open.** After that point, a
+new Should-fix finding from a re-review goes on a **Future Version** list
+(to be considered in Step 10) unless the person deciding chooses Fix.
+Every finding still gets a decision; only the default changes.
+
+### Running the Reviews
+
+- **Round 1, Codex:** if Codex is installed and signed in, open Claude
+  Code in your project folder and ask: "Run Codex in read-only mode with
+  the c08-02 prompt, and save its final answer, word for word, as
+  `docs/d08-04-code-review-codex.md`." Claude Code only passes along the
+  prompt and saves the report; it must never edit or summarize the other
+  AI's findings. (The sample also has a `run-codex-review.command` file
+  you can double-click in Finder to do the same.) Codex uses your OpenAI
+  plan or account, so this is one of the few steps before going live that
+  may cost a little; a new Claude Code session is the free alternative.
+- **Round 2, Claude Code:** when round 1 is settled, open a **new** Claude
+  Code session in your project folder and say: "Please follow
+  `prompts/c08-02-code-review-prompt.md` and run `/security-review`
+  first."
+- **Round 3, hands-on review:** when round 2 is settled, start a chat
+  with prompt c08-03 to write the person's **session plan** (how to start
+  the app, and the tasks to try). The person runs the app on a computer
+  with made-up accounts and the pretend inbox, works through the plan,
+  explores, and takes notes. The same chat then turns the notes into the
+  report. It's the person's review: the helper never coaches them through
+  the screens.
+
+**Reviewers aren't perfect.** An AI reviewer can miss a real problem or
+report one that isn't there, and one person's experience isn't everyone's.
+That's why there are three reviews, why the tests still matter, and why a
+person decides. If a professional developer is available, especially for
+an app that stores personal information, their review is still worth
+having as well.
+
+---
+
 ## Why AI Is So Good at Programming
 
 Of all the roles in this workflow, programming is one of the jobs AI does
@@ -237,7 +369,8 @@ still reviews the code before it goes live.
 | **Secrets in the code.** | Passwords and keys are never written into the code or pasted into a chat; they stay where d06-01 says. |
 | **Code that only runs on your computer.** | Every setting comes from outside the code, and the code fits the live server requirements in d06-01 Section 5.1. |
 | **Unknown code libraries.** | Every library is listed in the Developer Guide with its license (Spec Section 11.2). |
-| **No human review.** | A person reviews the code before Step 9, as the Spec's AI-Related Risks section requires. |
+| **Grading its own homework.** | Three independent reviews before Step 9, one after another, each with its own fix-and-re-review loop: a code review by a different company's AI, then one by a new Claude Code session (prompt c08-02), then a person's hands-on review of the running app (prompt c08-03). A person decides on every finding, as the Spec's AI-Related Risks section requires. |
+| **Never trying it as a person would.** | The hands-on reviewer uses the app for real, and usability findings go back to Step 5, not straight into the code. |
 
 ---
 
@@ -245,11 +378,21 @@ still reviews the code before it goes live.
 
 **Prompts** (in `prompts/`):
 
-- [`c08-implementation-prompt`](../prompts/c08-implementation-prompt.md):
+- [`c08-01-implementation-prompt`](../prompts/c08-01-implementation-prompt.md):
   plays the Software Engineer; reviews every input, plans the build order,
   builds one small piece at a time until every test passes, builds screens
   from the UI/UX Document, reviews security and cost, writes the Developer
   Guide and Release Notes, and prepares the hand-off to Step 9
+- [`c08-02-code-review-prompt`](../prompts/c08-02-code-review-prompt.md):
+  plays an independent Code Reviewer, in a new Claude Code session or in
+  another AI tool such as Codex; checks the code against the documents,
+  never changes it, and writes a plain-language Code Review Report; also
+  re-reviews the changes after rework
+- [`c08-03-hands-on-review-prompt`](../prompts/c08-03-hands-on-review-prompt.md):
+  helps a person do the hands-on review: writes the session plan, stays
+  out of the way during the session, turns the person's notes into the
+  Hands-On Review Report with a route for each finding, and records the
+  re-check after rework
 
 **Templates** (in `templates/`):
 
@@ -261,16 +404,30 @@ still reviews the code before it goes live.
   test, and change it
 - [`d08-03-release-notes`](../templates/d08-03-release-notes.md): Release
   Notes: what this version does, in plain language
+- [`d08-04-code-review`](../templates/d08-04-code-review.md): Code Review
+  Report: an independent reviewer's findings, each with a seriousness, a
+  plain explanation, a next step, and a Decision column for the person
+- [`d08-05-hands-on-review`](../templates/d08-05-hands-on-review.md):
+  Hands-On Review Report: the session plan, tasks and results, what was
+  explored, findings by kind (Bug, Usability, Requirement, Question,
+  Praise) with a route back and a Decision column, a usability summary,
+  and the re-check after rework
 
 **Samples** (in [`samples/BeautifulBeachParkVolunteers/docs/`](../samples/BeautifulBeachParkVolunteers/docs/)):
 
 - [**d08-01**](../samples/BeautifulBeachParkVolunteers/docs/d08-01-implementation-record.md):
   the sample project's Implementation Record, from 0 to 38 of 38 tests
-  passing, including one request to change a test that was turned down
+  passing, including two requests to change a test, both accepted because
+  the tests, not the code, were wrong
 - [**d08-02**](../samples/BeautifulBeachParkVolunteers/docs/d08-02-developer-guide.md):
   the sample's Developer Guide
 - [**d08-03**](../samples/BeautifulBeachParkVolunteers/docs/d08-03-release-notes.md):
   the sample's Release Notes for version 1.0
+- [**d08-04**](../samples/BeautifulBeachParkVolunteers/docs/d08-04-code-review-codex.md):
+  the sample's round 1 Code Review Report, from Codex, waiting for
+  decisions (round 2, a new Claude Code session, comes after round 1's
+  fixes, and round 3, the hands-on review, d08-05, after that; its session
+  plan is ready)
 
 Additional [case studies](case-studies.md) may be added to this repo at a
 future time.

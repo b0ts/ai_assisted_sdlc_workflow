@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% set title = "Open slots" %}
+{% set title = w.SCREEN.open_slots_title %}
 {% block content %}
-<h1>Open slots</h1>
+<h1>{{ w.SCREEN.open_slots_title }}</h1>
 {% for day in days %}
   <h2>{{ day.date|day_heading }}</h2>
   {% for task in day.tasks %}
@@ -12,13 +12,13 @@
     <div class="slot">
       <span>{{ s|slot_time }}<br><span class="places">{{ s.places_left|places_text }}</span></span>
       {% if user.role == "volunteer" and s.places_left > 0 %}
-      <a class="btn inline" href="/slots/{{ s.id }}/confirm" aria-label="Sign up for {{ task.title }}, {{ s|hours }}">Sign up</a>
+      <a class="btn inline" href="/slots/{{ s.id }}/confirm" aria-label="{{ w.sign_up_label(task.title, s|hours) }}">{{ w.SCREEN.sign_up_button }}</a>
       {% endif %}
     </div>
     {% endfor %}
   </div>
   {% endfor %}
 {% else %}
-  <p>There are no open slots right now. Please check again soon.</p>
+  <p>{{ w.NO_OPEN_SLOTS }}</p>
 {% endfor %}
 {% endblock %}

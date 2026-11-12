@@ -2,6 +2,8 @@
 
 **Role:** Scrum Master · **Prompt:** [c01](../prompts/c01-tracking-prompt.md) · **Templates:** d01-01 to d01-03
 
+> **Building your own app?** See [Building Your Own App, Step 1](a10-building-your-own-app.md#step-1-tracking) for what to do in this step for your project.
+
 ## Executive Summary
 
 Every project needs someone who keeps the big picture in view. In our

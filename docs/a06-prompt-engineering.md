@@ -187,3 +187,6 @@ something different.
   tutorials on prompting and prompt evaluation
 - [Prompts](../prompts/README.md): the predefined prompts used for each
   step's chat in this workflow
+
+**Next:** [What Is an AI-Assisted SDLC Workflow?](a07-what-is-an-ai-assisted-sdlc-workflow.md)
+puts the steps, roles, and prompts together into ten chained AI chats.

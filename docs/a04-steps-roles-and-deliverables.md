@@ -32,7 +32,7 @@ Deliverables. The steps are the same ten described in
 | 5. User experience | UI/UX Designer | UI/UX Document: sketches ("mockups") of the screens people will see |
 | 6. Initial infrastructure | DevOps Engineer | A Cost Sign-Off Sheet, approved before anything is set up; System Infrastructure Document: where the software will go live (often the organization's existing servers) and that place's rules, plus a security review; a free local environment to build and test on; then ongoing DevOps support through steps 7 to 10 |
 | 7. Test creation | SDET (Software Development Engineer in Test) | Test Plan Document and the automated checks ("tests") that prove the software works |
-| 8. Implementation | Software Engineer | Working software that passes every check, its documentation, and Release Notes |
+| 8. Implementation | Software Engineer | Working software that passes every check, its documentation, and Release Notes; then three independent reviews, one after another (two AI code reviews, then a person's hands-on review of the running app), with a decision on every finding and the fixes re-checked before the next review |
 | 9. Release | Release Manager | A stakeholder demo and approval on the local copy; the software moved to its live servers, tried in a private pilot, then live for real users; and a Release Efficacy Document describing how well the release went |
 | 10. Maintenance | SRE (Site Reliability Engineer) / Maintenance Engineer | Ongoing fixes and updates, recorded in a Maintenance Log; regular Maintenance Status Reports; and, when the product no longer serves its purpose, a recommendation to start a new phase or sunset (retire) it |
 
@@ -95,3 +95,6 @@ department of specialists to fill every role.
 **Learn more:** the [BeautifulBeachPark Volunteers sample](../samples/README.md)
 shows each step's deliverables filled in for a made-up project, a volunteer
 sign-up app for a park.
+
+**Next:** [Understanding AI](a05-understanding-ai.md)
+explains what AI does well, where it needs checking, and how to ask for good work.
