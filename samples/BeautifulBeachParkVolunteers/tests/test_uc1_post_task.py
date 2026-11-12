@@ -109,3 +109,19 @@ def test_t_01_07_add_another_slot_up_to_ten(coord):
         assert "Test Add Slot" not in text(coord.get("/my-tasks")), "adding a row saved the task"
         data["slot_start"] = data["slot_start"] + [""]
     assert not add_button(resp), "'Add another slot' is still offered at 10 rows"
+
+
+def test_t_01_08_a_line_break_counts_as_one_character(coord):
+    """BC · UC-1 AC3 (PRD v1.3); round 2, R2-1
+
+    Browsers send each line break in a form as two characters (CR LF). The
+    counter counts one, so the server must too.
+    """
+    lines = "\r\n".join(["d" * 99] * 10) + "d"  # 991 letters + 9 line breaks = 1,000 counted
+    assert len(lines.replace("\r\n", "\n")) == 1000 and len(lines) == 1009
+    resp = coord.post_task(title="Test Description Lines", description=lines)
+    assert MSG["description_long"] not in text(resp)
+    assert "Test Description Lines" in text(coord.get("/my-tasks"))
+
+    resp = coord.post_task(title="Test Description Lines 2", description=lines + "d")
+    assert MSG["description_long"] in text(resp)

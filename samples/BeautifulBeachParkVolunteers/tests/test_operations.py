@@ -5,8 +5,11 @@ Added after the round 1 code review (d08-04-code-review-codex.md).
 
 import datetime as dt
 
+import pytest
+
 from conftest import (
     MSG, NOON, TASK, TODAY, TOMORROW, make_app, mails_to, new_client, run_command, sign_in_link, text,
+    use_link,
 )
 
 
@@ -28,7 +31,7 @@ def test_t_em_01_sign_in_email_waits_while_the_email_service_is_down(app, inbox,
     run_command(app, "send-emails")
     sent = mails_to(inbox, "test_vol_01@example.test")
     assert len(sent) == 1, "the sign-in email wasn't sent once the service was back"
-    resp = client.get(sign_in_link(sent[0]))
+    resp = use_link(client, sign_in_link(sent[0]))
     assert resp.status_code in (302, 303), "the late sign-in link didn't work"
 
     run_command(app, "send-emails")
@@ -217,24 +220,33 @@ def test_t_wd_02_no_wording_written_in_the_pages(app):
     assert not found, f"words written in page templates instead of wording.py: {found}"
 
 
-def test_t_em_07_a_page_never_waits_long_for_a_slow_email_service(app, inbox):
-    """BC · Spec DD-6 (a page waits at most EMAIL_SEND_TIMEOUT); round 1 re-review 2, R-15"""
+def test_t_em_07_a_page_never_waits_long_for_a_slow_email_service(app, inbox, beach_task, people):
+    """BC · Spec DD-6 (a page waits at most EMAIL_SEND_TIMEOUT); round 1 re-review 2, R-15
+
+    v1.5 (round 2): uses S-9, because the sign-in page no longer waits at all (DD-10).
+    """
     import time
 
-    run_command(app, "create-account", "test_vol_01", "test_vol_01@example.test", "--role", "volunteer")
+    from conftest import target_of
+
+    vol = people("test_vol_01")
+    vol.sign_up()
+    path = target_of(beach_task.roster(), "Message test_vol_01")
     app.config["EMAIL_SEND_TIMEOUT"] = 0.5
     inbox.slow = 3
+    beach_task.client.wait_for_emails = False
+    since = len(inbox)
     started = time.monotonic()
-    resp = new_client(app).post("/sign-in", data={"email": "test_vol_01@example.test"}, follow_redirects=True)
+    resp = beach_task.post(path, data={"message": "See you tomorrow."})
     waited = time.monotonic() - started
-    assert MSG["check_email"] in text(resp)
+    assert MSG["sent"] in text(resp)
     assert waited < 2, f"the page waited {waited:.1f} seconds for the email service"
 
     for _ in range(100):  # the email still goes out once the service answers
-        if mails_to(inbox, "test_vol_01@example.test"):
+        if mails_to(inbox, vol.email, since):
             break
         time.sleep(0.1)
-    assert len(mails_to(inbox, "test_vol_01@example.test")) == 1
+    assert len(mails_to(inbox, vol.email, since)) == 1
 
 
 def test_t_wd_03_times_take_their_words_from_the_wording_file(app, coord, people, monkeypatch):
@@ -250,3 +262,49 @@ def test_t_wd_03_times_take_their_words_from_the_wording_file(app, coord, people
     assert "11:00 AM to 12:00 PM" in text(page)
     from conftest import target_of
     assert target_of(page, f"Sign up for {TASK}, 11:00 AM until 12:00 PM")
+
+
+def test_t_em_08_no_database_connection_is_held_while_sending(app, inbox, beach_task, people):
+    """EF · Spec DD-12; round 1, R-18; round 2, R2-5
+
+    While the email service is working on an email, the app holds no database
+    connection, so a slow service can't use them all up.
+    """
+    engine = app.extensions["engine"]
+    held = []
+    plain_append = inbox.append
+
+    def append(mail):
+        held.append(engine.pool.checkedout())
+        plain_append(mail)
+
+    inbox.append = append
+    vol = people("test_vol_01")           # a sign-in email (sent in the background)
+    vol.sign_up()                         # a confirmation (sent by the page)
+    inbox.down = True
+    from conftest import target_of
+    path = target_of(beach_task.roster(), "Message test_vol_01")
+    beach_task.post(path, data={"message": "Bring a hat."})
+    inbox.down = False
+    run_command(app, "send-emails")       # the 5-minute job
+    assert len(held) >= 3, "the test didn't see every way an email is sent"
+    assert held == [0] * len(held), f"database connections held while sending: {held}"
+
+
+def test_t_qr_04_the_production_web_server_runs_the_app(clock, inbox, db_url):
+    """HP · d06-01 v1.5, 5.1; d08-02 Section 5.1; round 2, R2-7"""
+    import threading
+    import urllib.request
+
+    waitress = pytest.importorskip("waitress", reason="Waitress isn't installed: pip install -r src/requirements.txt")
+    app = make_app(clock, inbox, db_url, FORCE_HTTPS=False)
+    server = waitress.create_server(app, host="127.0.0.1", port=0, threads=4)
+    worker = threading.Thread(target=server.run, daemon=True)
+    worker.start()
+    try:
+        port = server.effective_port
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/sign-in", timeout=10) as resp:
+            assert resp.status == 200
+            assert "Send me a sign-in link" in resp.read().decode()
+    finally:
+        server.close()

@@ -1,7 +1,7 @@
 # BeautifulBeachPark Volunteers: Developer Guide
 
-**Document:** d08-02 · **Step:** 8, Implementation · **Version:** 1.1
-· **Last updated:** 2026-10-25 · **Status:** Approved
+**Document:** d08-02 · **Step:** 8, Implementation · **Version:** 1.3
+· **Last updated:** 2026-11-11 · **Status:** Approved
 · **Owner:** Software Engineer (Implementation chat)
 
 > **Sample document.** BeautifulBeachPark, its city, and Parks IT are made
@@ -100,12 +100,12 @@ checks this.
 | Task | How |
 |---|---|
 | Add made-up accounts and tasks | In the `src/` folder: `flask --app bbpv seed-demo` |
-| Run the app on your own computer | In the `src/` folder: `flask --app bbpv run`, then open <http://localhost:5000>. Sign in as `sandyhelps@example.test` (volunteer), `democoordinator@example.test`, or `demoadmin@example.test`, and find the sign-in link in the **pretend inbox** (linked from the sign-in page). This is also how the stakeholder demo is run in Step 9. |
+| Run the app on your own computer | In the `src/` folder: `flask --app bbpv run`, then open <http://localhost:5000>. (After updating to v1.3, delete `src/bbpv-local.db` once and run `seed-demo` again: the email queue table changed in round 2, R2-14, and the app can't change existing tables.) Sign in as `sandyhelps@example.test` (volunteer), `democoordinator@example.test`, or `demoadmin@example.test`, and find the sign-in link in the **pretend inbox** (linked from the sign-in page). This is also how the stakeholder demo is run in Step 9. |
 | Send tomorrow's reminders by hand | `flask --app bbpv send-reminders` (they appear in the pretend inbox) |
 | Send queued emails by hand | `flask --app bbpv send-emails` |
 | Remove tasks older than 12 months | `flask --app bbpv clean-up` |
 | Run every test | In Visual Studio Code, choose the **Testing** icon (a beaker) in the left sidebar, then **Run Tests**. Or, in the project folder, run `pytest`. Or ask Claude Code to "run all the tests." The tests use a throwaway database and never send email. |
-| Run the quick tests while working | `pytest -m "not monkey and not browser"`: 54 tests in a few seconds |
+| Run the quick tests while working | `pytest -m "not monkey and not browser"`: 66 tests in a few seconds |
 | Run one test | In the **Testing** panel, find the test by its ID (for example, `test_t_03_02`) and choose its run button. |
 | Where results go | Add a Run History row to `docs/d07-02-test-results.md` after every full run. |
 
@@ -125,8 +125,14 @@ runs on your computer and on Parks IT's servers; only the values change.
 | `TRUST_PROXY` | Trusts Parks IT's web server to say the visitor used HTTPS | Not set | `true` |
 | `DB_POOL_SIZE` | Database connections each copy of the app may keep | Not needed | `4`: Parks IT runs 4 copies, and allows 20 connections in all (d06-01 v1.2) |
 | `PARK_TIMEZONE` | The park's time zone, used for every "now" (Spec DD-8) | `America/Los_Angeles` (the default) | `America/Los_Angeles` (d06-01 v1.4) |
-| `EMAIL_SEND_TIMEOUT` | Seconds a page waits for the email service before leaving its email to the 5-minute job | `5` (the default) | `5` |
+| `EMAIL_SEND_TIMEOUT` | Seconds a page waits for the email service before leaving its email to the 5-minute job. The sign-in and create-account pages never wait (Spec DD-10) | `5` (the default) | `5` |
 | `EMAIL_FROM`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` | The sending address and the city email service | Not needed | From Parks IT; the password in their secret store |
+| `SMTP_CA_FILE` | The certificate authority used to check the email service's certificate, if Parks IT uses its own (otherwise the computer's standard ones are used) | Not needed | Only if Parks IT says so (d06-01 v1.5) |
+
+**Never change or lose `EMAIL_ENCRYPTION_KEY`.** The app finds accounts
+and checks the block list with scrambled copies made from this key. With a
+new key, or none, no one can sign in and every block stops working. Keep a
+copy in Parks IT's secret store and its backup (round 2, R2-11).
 
 The local settings file is listed in `.gitignore`, so it never goes to
 GitHub. Never copy any real value into the code, a document, or a chat.
@@ -141,8 +147,14 @@ demo, on a Tuesday evening (d06-01 Section 5.1):
    `psycopg[binary]` (for PostgreSQL).
 2. Create the app's database on the PostgreSQL 16 server, and set the
    environment variables above from Parks IT's secret store.
-3. Start the app as a service behind Parks IT's web server, with HTTPS.
-   It creates its database tables the first time it starts.
+3. Start the app as a service behind Parks IT's web server, with HTTPS,
+   using the Waitress production web server (installed by
+   `src/requirements.txt`), from the `src/` folder:
+   `waitress-serve --listen=127.0.0.1:8000 --threads=4 --call bbpv:create_app`.
+   Four threads match `DB_POOL_SIZE` 4. Never use `flask run` on the live
+   servers: it's Flask's development server (d06-01 v1.5). The app creates
+   its database tables the first time it starts; later changes to the
+   tables need manual steps (round 2, R2-12).
 4. Add three jobs to Parks IT's scheduler (d06-01 v1.4): a daily 6 p.m.
    job that runs `flask --app bbpv send-reminders`; one every 5 minutes
    that runs `flask --app bbpv send-emails`, with its output emailed to the
@@ -174,6 +186,7 @@ demo, on a Tuesday evening (d06-01 Section 5.1):
 | cryptography | Encrypts volunteer emails | See `src/requirements.txt` | Apache-2.0 or BSD-3-Clause | Yes |
 | python-dotenv | Reads `src/.env` in the local environment | See `src/requirements.txt` | BSD-3-Clause | Yes |
 | tzdata | Time zone data, for `PARK_TIMEZONE` on computers that lack it | See `src/requirements.txt` | Apache-2.0 | Yes |
+| Waitress | The production web server on Parks IT's servers (Section 5.1) | See `src/requirements.txt` | ZPL-2.1 | Yes |
 | psycopg | Talks to PostgreSQL on Parks IT's servers | 3.1 or newer | LGPL-3.0 | Yes, used unchanged as a library |
 | pytest | Runs the tests | See `tests/requirements.txt` | MIT | Yes |
 | Playwright for Python | Drives a real browser in T-QR-01 and T-QR-02 | Latest | Apache-2.0 | Yes |
@@ -195,3 +208,4 @@ demo, on a Tuesday evening (d06-01 Section 5.1):
 | 1.0 | 2026-12-11 | First version | — | Park Manager (D12, 2026-12-11) |
 | 1.1 | 2026-10-25 | Email queue and `send-emails`; `clean-up`; `PARK_TIMEZONE`; tzdata; decryption now in `deliver()` | Round 1 code review fixes (d08-04-code-review-codex.md) | Park Manager, 2026-10-25 |
 | 1.2 | 2026-10-26 | Pages send only their own email (`EMAIL_SEND_TIMEOUT`); fixed 5-minute retries and expiry; safe failure reasons; all screen text in `wording.py` | Round 1 re-review (Codex), R-2, R-5, R-14, R-15 | Park Manager, 2026-10-26 |
+| 1.3 | 2026-11-11 | Waitress production server and start command; recreate the local database after updating (R2-14); `SMTP_CA_FILE`; never change `EMAIL_ENCRYPTION_KEY`; sign-in pages don't wait for email | Round 2 code review (Claude Code), R2-3, R2-6, R2-7, R2-11, R2-12 | Park Manager, 2026-11-11 |

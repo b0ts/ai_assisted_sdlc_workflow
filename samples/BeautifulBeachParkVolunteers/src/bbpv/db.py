@@ -69,13 +69,30 @@ sign_in_links = sa.Table(
 )
 
 
+# A new account waits here until its owner signs in from the emailed link (Spec DD-13;
+# round 2 re-review, R2-14). Nothing about the email changes until then, so no number
+# of tries on Create Account can show who has an account. An email may have several
+# requests; each link works until one becomes the account (R2-17).
+account_requests = sa.Table(
+    "account_requests", metadata,
+    sa.Column("token_hash", sa.String(64), primary_key=True),
+    sa.Column("username", sa.String(20), nullable=False),
+    sa.Column("email_encrypted", sa.Text, nullable=False),
+    sa.Column("email_lookup", sa.String(64), nullable=False, index=True),
+    sa.Column("email_block_key", sa.String(64), nullable=False),
+    sa.Column("expires", sa.DateTime, nullable=False),
+)
+
+
 # Every email waits here until the email service accepts it (Spec DD-6). It is saved in
 # the same step as the change it's about, so nothing is lost if the service is down.
 # Subject and text are encrypted: a sign-in email holds a sign-in link.
 outbox = sa.Table(
     "outbox", metadata,
     sa.Column("id", sa.Integer, primary_key=True),
-    sa.Column("account_id", sa.Integer, sa.ForeignKey("accounts.id", ondelete="CASCADE"), nullable=False),
+    # An account's email, or (account_id empty) an account request's, sent to to_encrypted
+    sa.Column("account_id", sa.Integer, sa.ForeignKey("accounts.id", ondelete="CASCADE"), nullable=True),
+    sa.Column("to_encrypted", sa.Text, nullable=True),
     sa.Column("subject_encrypted", sa.Text, nullable=False),
     sa.Column("text_encrypted", sa.Text, nullable=False),
     sa.Column("created", sa.DateTime, nullable=False),
@@ -83,6 +100,7 @@ outbox = sa.Table(
     sa.Column("attempts", sa.Integer, nullable=False, default=0),
     sa.Column("expires", sa.DateTime, nullable=True),  # sign-in emails expire with their link
     sa.Column("last_error", sa.String(200), nullable=True),
+    sa.CheckConstraint("account_id IS NOT NULL OR to_encrypted IS NOT NULL", name="outbox_has_recipient"),
 )
 
 # One row per sign-in email sent, kept 24 hours, for the limit of 10 a day (Spec DD-9).

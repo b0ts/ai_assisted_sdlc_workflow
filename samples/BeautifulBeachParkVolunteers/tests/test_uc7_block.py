@@ -60,3 +60,31 @@ def test_t_07_04_block_returns_to_the_roster(beach_task, people):
     resp = beach_task.post(path, data={"confirm": "yes"})
     assert MSG["blocked"] in text(resp)
     assert resp.request.path == roster_path, "'Yes, block' didn't return to the roster"
+
+
+def test_t_07_05_blocking_cancels_upcoming_sign_ups(app, inbox, clock, beach_task, people):
+    """HP · UC-7 main flow 3, AC2 (PRD v1.3); round 2, R2-9"""
+    from conftest import NOON, mails_to, run_command
+
+    vol4 = people("test_vol_04")
+    vol4.sign_up(TASK, "09:00", "10:00")
+    vol4.sign_up(TASK, "10:00", "11:00")
+    vol1 = people("test_vol_01")
+    vol1.sign_up(TASK, "09:00", "10:00")
+
+    beach_task.block("test_vol_04")
+
+    assert "test_vol_04" not in text(beach_task.roster(TASK, "09:00", "10:00"))
+    assert "test_vol_04" not in text(beach_task.roster(TASK, "10:00", "11:00"))
+    assert "test_vol_01" in text(beach_task.roster(TASK, "09:00", "10:00")), "someone else's sign-up was canceled"
+    assert "1 place left" in text(vol1.open_slots()), "the 9:00 place wasn't given back"
+    assert "2 places left" in text(vol1.open_slots()), "the 10:00 places weren't given back"
+
+    since = len(inbox)
+    clock.set(NOON.replace(hour=18))
+    run_command(app, "send-reminders")
+    run_command(app, "send-emails")
+    assert not [m for m in mails_to(inbox, vol4.email, since) if m["subject"].startswith("Reminder")], (
+        "a blocked volunteer got a reminder"
+    )
+    assert [m for m in mails_to(inbox, vol1.email, since) if m["subject"].startswith("Reminder")]

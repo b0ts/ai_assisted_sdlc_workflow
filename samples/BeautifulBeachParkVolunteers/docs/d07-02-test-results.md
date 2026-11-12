@@ -1,7 +1,7 @@
 # BeautifulBeachPark Volunteers: Test Results Log
 
-**Document:** d07-02 · **Step:** 7, Test Creation (continued in Steps 8 and 9) · **Version:** 1.5
-· **Last updated:** 2026-10-26 · **Status:** Green: all tests pass
+**Document:** d07-02 · **Step:** 7, Test Creation (continued in Steps 8 and 9) · **Version:** 1.6
+· **Last updated:** 2026-11-11 · **Status:** Green: all tests pass
 · **Owner:** SDET (Test Creation chat); runs added by the Software Engineer (Implementation chat) and the DevOps Engineer
 
 > **Sample document.** The dates and people are made up, but the runs are
@@ -49,18 +49,25 @@
 | 9 | 2026-10-25 | Software Engineer (Claude) | TC-3: the SDET corrected a false alarm in T-MK-01 (Section 6). Full length, new random seeds; also the 47 quick tests on the project owner's Mac (2 browser tests skipped there) | 51 | 0 | 0 |
 | 10 | 2026-10-26 | Software Engineer (Claude) | Second pass after Codex's re-review (R-2, R-5, R-6, R-14, R-15): 5 new tests (d07-01 v1.3) failed first, then the fixes. Full length, new random seeds | 56 | 0 | 0 |
 | 11 | 2026-10-26 | Software Engineer (Claude) | Third pass after Codex's second re-review (R-5, R-15, R-17): T-EM-07 and T-WD-03 added and failing first; T-SEC-08 reworked; then the fixes. Full length | 58 | 0 | 0 |
+| 12 | 2026-11-11 | SDET (Claude) | Round 2: 10 new tests and TC-4 (d07-01 v1.5), run against the round 1 code. Quick tests only. Every test that signs someone in failed, because opening a link still signed in (R2-4). With only that change tried, each other new test failed for its own reason, for example a 500-character message with line breaks was refused (R2-1). T-QR-04 passed once Waitress was installed: R2-7 is about naming it | 12 | 52 | 0 |
+| 13 | 2026-11-11 | Software Engineer (Claude) | Round 2 fixes in `src/` (d08-01 Section 5). Full length, in Claude's cloud workspace (Python 3.13); the quick tests also on the project owner's Mac. All passed, with one warning: the test helper once tried to wait for an email sender that hadn't started (Section 6) | 68 | 0 | 0 |
+| 14 | 2026-11-11 | Software Engineer (Claude) | A sender is listed only once it has started. Full length, with that warning turned into a failure: none | 68 | 0 | 0 |
+| 15 | 2026-11-11 | SDET (Claude) | Re-review finding R2-14: T-02-07 added and TC-5 (d07-01 v1.6), run against the Run 14 code. Quick tests only. T-02-07 failed for the right reason: the second try with the same username showed whether the email had an account | 64 | 1 | 0 |
+| 16 | 2026-11-11 | Software Engineer (Claude) | R2-14 fixed: the account is made only at "Sign in" (Spec DD-13). Full length, in Claude's cloud workspace, warnings as failures, Waitress installed so T-QR-04 ran (R2-15); the quick tests also on the project owner's Mac | 69 | 0 | 0 |
+| 17 | 2026-11-11 | SDET (Claude) | Re-review 2 finding R2-17: T-02-08 added (d07-01 v1.6), run against the Run 16 code. Quick tests only. T-02-08 failed for the right reason: the first of two emails' links no longer opened | 65 | 1 | 0 |
+| 18 | 2026-11-11 | Software Engineer (Claude) | R2-17 fixed: every request's link works until one becomes the account. Full length, in Claude's cloud workspace, warnings as failures; the quick tests also on the project owner's Mac | 70 | 0 | 0 |
 
 ```mermaid
 xychart-beta
     title "Tests passing, run by run"
-    x-axis [Run 1, Run 2, Run 3, Run 4, Run 5, Run 6, Run 7, Run 8, Run 9, Run 10, Run 11]
-    y-axis "Tests passing" 0 --> 58
-    bar [0, 0, 37, 38, 38, 38, 14, 50, 51, 56, 58]
+    x-axis [Run 1, Run 2, Run 3, Run 4, Run 5, Run 6, Run 7, Run 8, Run 9, Run 10, Run 11, Run 12, Run 13, Run 14, Run 15, Run 16, Run 17, Run 18]
+    y-axis "Tests passing" 0 --> 70
+    bar [0, 0, 37, 38, 38, 38, 14, 50, 51, 56, 58, 12, 68, 68, 64, 69, 65, 70]
 ```
 
 ## 4. Results by Test (Latest Run)
 
-Run 11 passed all 58 (T-EM-07 and T-WD-03 were added in d07-01 v1.4). Run 10 passed all 56 (T-SEC-08, T-EM-04 to T-EM-06, and T-WD-02 were added in d07-01 v1.3; each failed first against the Run 9 code). Run 9 passed all 51. The 13 tests added in d07-01 v1.2 (T-01-06, T-01-07,
+Run 18 passed all 70 (T-02-07 and T-02-08 were added in d07-01 v1.6, for re-review findings R2-14 and R2-17). Run 14 passed all 68 (T-01-08, T-02-06, T-06-04, T-07-05, T-SEC-09 to T-SEC-12, T-EM-08, and T-QR-04 were added in d07-01 v1.5, for round 2). Run 11 passed all 58 (T-EM-07 and T-WD-03 were added in d07-01 v1.4). Run 10 passed all 56 (T-SEC-08, T-EM-04 to T-EM-06, and T-WD-02 were added in d07-01 v1.3; each failed first against the Run 9 code). Run 9 passed all 51. The 13 tests added in d07-01 v1.2 (T-01-06, T-01-07,
 T-03-08, T-06-03, T-07-04, T-SEC-06, T-SEC-07, T-EM-01 to T-EM-03,
 T-DATA-01, T-QR-03, T-WD-01) first passed in Run 8; the table below lists
 the original 38.
@@ -110,18 +117,18 @@ the original 38.
 
 | Use case | Tests | Pass | Fail | Blocked |
 |---|---|---|---|---|
-| UC-1: Post a task | 7 | 7 | 0 | 0 |
-| UC-2: Create an account | 5 | 5 | 0 | 0 |
+| UC-1: Post a task | 8 | 8 | 0 | 0 |
+| UC-2: Create an account | 8 | 8 | 0 | 0 |
 | UC-3: Sign up for a slot | 8 | 8 | 0 | 0 |
 | UC-4: Cancel a sign-up | 3 | 3 | 0 | 0 |
 | UC-5: View a roster | 4 | 4 | 0 | 0 |
-| UC-6: Message a volunteer | 3 | 3 | 0 | 0 |
-| UC-7: Block a volunteer | 4 | 4 | 0 | 0 |
-| Security (T-SEC) | 8 | 8 | 0 | 0 |
-| Email queue, clean-up, wording (T-EM, T-DATA, T-WD) | 11 | 11 | 0 | 0 |
-| Quality (T-QR) | 3 | 3 | 0 | 0 |
+| UC-6: Message a volunteer | 4 | 4 | 0 | 0 |
+| UC-7: Block a volunteer | 5 | 5 | 0 | 0 |
+| Security (T-SEC) | 12 | 12 | 0 | 0 |
+| Email queue, clean-up, wording (T-EM, T-DATA, T-WD) | 12 | 12 | 0 | 0 |
+| Quality (T-QR) | 4 | 4 | 0 | 0 |
 | Monkey (T-MK) | 2 | 2 | 0 | 0 |
-| **Total** | **58** | **58** | **0** | **0** |
+| **Total** | **70** | **70** | **0** | **0** |
 
 ## 6. Problems Found
 
@@ -129,8 +136,8 @@ the original 38.
 |---|---|---|---|---|
 | 2026-12-07 | All | Run 2: every test failed for the **wrong reason**. The tests opened the app over plain HTTP, so the app correctly sent every request to HTTPS (Spec 11.1) and the tests never reached a screen. | SDET chat (d08-01 TC-1) | **Test wrong, code right.** The shared test setup (`tests/conftest.py`) now opens the app at its `https://` address; T-SEC-02 still checks plain HTTP on purpose. No test's expected result changed (d07-01 v1.1). |
 | 2026-12-07 | T-MK-01 | Run 3: reported a volunteer's email "shown" on My Tasks. A random task title happened to be `test_vol_01@example.test`, and the coordinator saw their own earlier title again. The test also counted `&lt;` as four characters when checking title lengths, and, with another random seed, flagged the username " 1YY1", which the app saves as `1YY1` after trimming the spaces. | SDET chat (d08-01 TC-2) | **Test wrong, code right.** Text a coordinator typed earlier may reappear, titles are measured as people read them, and usernames are checked as saved. The rules are unchanged: no one else's email may appear, and nothing saved may break a rule (d07-01 v1.1). |
-
 | 2026-10-25 | T-MK-01 | Run 8: reported a volunteer's email "shown" after sending a message on S-9. "Send" now returns to the coordinator's task list (d05-01 v1.2), where a random task title typed earlier on S-7, `test_vol_01@example.test`, appeared again. | SDET (d08-01 TC-3) | **Test wrong, code right.** As in TC-2, text the coordinator typed earlier may reappear; the S-9 check now allows the S-7 titles too. No one else's email may appear, as before (d07-01 v1.2). |
+| 2026-11-11 | All (shared setup) | Run 13: a warning, not a failure. The test client waits for emails sent in the background; once, in T-MK-02, it tried to wait for a sender the app had listed a moment before starting it | Software Engineer (code) | **Code changed, test right.** The app now lists a sender only once it has started, and always removes it. Run 14: no warning, even with warnings turned into failures |
 
 ## 7. Change Log
 
@@ -142,3 +149,4 @@ the original 38.
 | 1.3 | 2026-10-25 | Added Runs 7 to 9: the round 1 review fixes | Round 1 code review (Codex) decisions | Park Manager, 2026-10-25 |
 | 1.4 | 2026-10-26 | Added Run 10: the second pass of round 1 fixes | Round 1 re-review (Codex) | Park Manager, 2026-10-26 |
 | 1.5 | 2026-10-26 | Added Run 11: the third pass of round 1 fixes | Round 1 re-review 2 (Codex) | Park Manager, 2026-10-26 |
+| 1.6 | 2026-11-11 | Added Runs 12 to 18: the round 2 review fixes, and the R2-14 and R2-17 fixes | Round 2 code review (Claude Code) decisions | Park Manager, 2026-11-11 |

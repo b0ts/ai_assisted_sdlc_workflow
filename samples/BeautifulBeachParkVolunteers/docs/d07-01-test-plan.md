@@ -1,7 +1,7 @@
 # BeautifulBeachPark Volunteers: Test Plan
 
-**Document:** d07-01 · **Step:** 7, Test Creation · **Version:** 1.4
-· **Last updated:** 2026-10-26 · **Status:** Approved
+**Document:** d07-01 · **Step:** 7, Test Creation · **Version:** 1.6
+· **Last updated:** 2026-11-11 · **Status:** Approved
 · **Owner:** SDET (Test Creation chat)
 
 > **Sample document.** BeautifulBeachPark, its people, and every username
@@ -21,7 +21,7 @@
 | Phase covered | Phase 1: UC-1 to UC-7, email reminders |
 | Test environment | Local (made-up data only, on the Volunteer Program Manager's laptop), d06-01 Section 4; the full suite runs again on Parks IT's servers in Step 9 |
 | Where the tests live | `tests/` |
-| Number of tests | 58: 15 happy path, 26 expected failure, 12 bounds, 2 monkey, 3 quality (v1.4; 38 in v1.1) |
+| Number of tests | 70: 16 happy path, 34 expected failure, 14 bounds, 2 monkey, 4 quality (v1.6; 58 in v1.4, 38 in v1.1) |
 | Plan in one sentence | Every use case is tested for its normal path, its refusals, and its limits, with extra checks that no email address ever reaches a volunteer's or coordinator's screen. |
 
 ## 2. Inputs
@@ -45,7 +45,7 @@
 - Reliability (99% available): measured by the uptime alert in d06-01
   Section 9 once the app is live (Step 10).
 - Devices and browsers: T-QR-01 and T-QR-02 run in a real phone-sized and
-  desktop browser; the other 56 tests send requests straight to the app,
+  desktop browser; the other 68 tests send requests straight to the app,
   which is much faster. Other browsers are checked by hand in Step 9.
 - Delivery of real emails into real inboxes: the local environment never
   sends to real addresses (d06-01 v1.1). Checked by hand in Step 9.
@@ -62,9 +62,11 @@
 
 **Testing tools:** pytest, a common Python test framework, chosen with the
 Software Engineer to match the Spec's Python web service (d04-01 Section
-5). 54 tests use Flask's built-in test client, which sends requests
+5). Most tests use Flask's built-in test client, which sends requests
 straight to the app; T-QR-01 and T-QR-02 use Playwright to drive a real
-Chromium browser. T-QR-02's accessibility check is written into the test
+Chromium browser, and T-QR-04 starts the production web server. The test
+client waits for any email a page sends in the background before the test
+goes on (v1.5), except in the timing tests T-EM-07 and T-SEC-10. T-QR-02's accessibility check is written into the test
 (contrast, text labels, button sizes, page language) rather than using an
 outside checker, so it runs without the internet.
 
@@ -89,11 +91,15 @@ criterion of UC-3 in the PRD. "UC-3 2a" means alternate flow 2a.
 | | Spec 6: title up to 60 characters | T-01-04 |
 | | AC3 (v1.2): 1 to 10 slots; description up to 1,000 characters | T-01-06 |
 | | d05-01 v1.2: "Add another slot," up to 10 | T-01-07 |
+| | AC3 (v1.3): a line break counts as one character | T-01-08 |
 | UC-2: Create an account | AC1: username and email only | T-02-01, T-SEC-04 |
 | | AC2: 3 to 20 letters, numbers, or underscores | T-02-03 |
 | | AC3: privacy notice before creating | T-02-05 |
 | | AC4: blocked email refused, even written differently | T-02-04 |
 | | 3a: username taken | T-02-02 |
+| | 3c, AC5 (v1.3): an email in use gets the same reply, even over several tries | T-02-06, T-02-07, T-SEC-10 |
+| | 4a (v1.3): username taken before signing in | T-02-07 |
+| Spec DD-13 | Sending Create Account twice: the first email's link still works; the other stops once one is used | T-02-08 |
 | UC-3: Sign up for a slot | AC1: places left shown | T-03-01 |
 | | AC2: places left drops by one; "Full" at zero | T-03-01, T-03-02 |
 | | AC3: never over-filled, even at the same moment | T-03-04, T-MK-02 |
@@ -111,17 +117,24 @@ criterion of UC-3 in the PRD. "UC-3 2a" means alternate flow 2a.
 | UC-6: Message a volunteer | AC1: arrives by email; neither sees the other's address | T-06-01 |
 | | AC2: up to 500 characters | T-06-02 |
 | | d05-01 v1.2: live counter; Send returns to the roster | T-06-03 |
+| | AC2 (v1.3): a line break counts as one character | T-06-04 |
 | UC-7: Block a volunteer | AC1: blocked volunteer can't sign up | T-07-01 |
 | | AC2: new account with the blocked email refused | T-02-04, T-SEC-03 |
 | | AC3: coordinator never sees the email | T-07-01, T-SEC-01 |
 | | AC4: only the System Administrator can undo | T-07-02, T-07-03 |
 | | d05-01 v1.2: "Yes, block" returns to the roster | T-07-04 |
+| | Main flow 3, AC2 (v1.3): upcoming sign-ups canceled | T-07-05 |
 | Spec 11.1 | Emails never sent to the client | T-SEC-01 |
 | Spec 11.1 | HTTPS only | T-SEC-02 |
 | Spec 11.1 | Block list holds a scrambled copy only | T-SEC-03 |
 | PRD 6, Privacy | No real names collected | T-SEC-04 |
 | Spec 7, DD-3 | Sign-in link reply never reveals who has an account | T-SEC-05, T-EM-01 |
 | Spec DD-7 | A sign-in link signs in only once, even used twice at the same moment | T-SEC-06 |
+| Spec DD-11 | Opening a sign-in link doesn't use it up; only "Sign in" does | T-SEC-09 |
+| Spec DD-10 | Sign-in and create-account replies take the same time | T-SEC-10 |
+| Spec DD-12 | No database connection held while an email is sent | T-EM-08 |
+| Spec 11.1 | The email service's certificate is checked; forms without their token are refused | T-SEC-11, T-SEC-12 |
+| d06-01 5.1 | The app runs under the production web server | T-QR-04 |
 | Spec 11.1, DD-6 | A failed email never leaves an address in the database or the log | T-EM-04 |
 | Spec DD-6 | A page sends only its own email, waiting at most 5 seconds in all; two reminder runs send one reminder | T-EM-05, T-EM-06, T-EM-07 |
 | Spec 10 | No words written in the page templates or the time format: every word comes from the wording file | T-WD-02, T-WD-03 |
@@ -158,6 +171,7 @@ has a security test. No test lacks a source.
 | T-01-04 | BC | Post tasks with titles of 60 and 61 characters. | 60 saved; 61 refused with "Titles can be up to 60 characters." | Spec 6; d05-01 v1.1 |
 | T-01-06 | BC | Post tasks with descriptions of 1,000 and 1,001 characters, and with 10 and 11 slots. | 1,000 and 10 saved; 1,001 refused with "Descriptions can be up to 1,000 characters."; 11 refused with "A task can have up to 10 slots." | UC-1 AC3 (PRD v1.2); round 1, R-12 |
 | T-01-07 | HP | On S-7, tap "Add another slot" until there are 10 rows. | Each tap adds one row and keeps what was typed; nothing is saved; at 10 rows the button is gone. | d05-01 v1.2, S-7; round 1, R-9 |
+| T-01-08 | BC | Post descriptions of 1,000 and 1,001 characters as a browser sends them, with 9 line breaks (each sent as two characters). | 1,000 saved; 1,001 refused with "Descriptions can be up to 1,000 characters." | UC-1 AC3 (PRD v1.3); round 2, R2-1 |
 | T-01-05 | EF | test_vol_01 sends a Post task request. | "Not allowed. Please contact the park office if you think this is wrong." No "Post a task" button appears for volunteers. | UC-1 AC3 |
 
 ### UC-2: Create an account
@@ -165,10 +179,13 @@ has a security test. No test lacks a source.
 | ID | Type | Steps | Expected result | Source |
 |---|---|---|---|---|
 | T-02-01 | HP | On S-2, enter test_vol_01 and an `example.test` email, tick "I've read this," tap "Create account." | Account created; S-1 shows "Check your email…"; the sign-in link arrives in the test inbox. S-2 has only the username and email fields. | UC-2 main flow, AC1 |
-| T-02-02 | EF | Create test_vol_01 again with a different email. | "That username is taken. Please try another." | UC-2 3a |
+| T-02-02 | EF | Create test_vol_01 and sign in from its link; then create test_vol_01 again with a different email. | "That username is taken. Please try another." | UC-2 3a |
 | T-02-03 | BC | Try usernames of 2, 3, 20, and 21 characters, and "sandy helps" (a space). | 3 and 20 accepted; the others refused with "Usernames are 3 to 20 letters, numbers, or underscores." | UC-2 AC2; d05-01 v1.1 |
 | T-02-04 | EF | `john@example.test` is blocked. Create an account with `j.o.h.n+beach@example.test`. | "We couldn't create this account. Please contact the park office." The message doesn't mention blocking. | UC-2 AC4, 3b; UC-7 AC2 |
 | T-02-05 | EF | Fill in S-2 without ticking "I've read this." | "Create account" can't be used; no account is saved. | UC-2 AC3 |
+| T-02-06 | EF | test_vol_01 has an account. On S-2, create test_vol_02 with test_vol_01's email, written with capitals. | The reply is identical to a new account's ("Check your email…"); test_vol_01 gets a sign-in link; no second account is made, and the username test_vol_02 is still free. | UC-2 3c, AC5 (PRD v1.3); round 2, R2-2 |
+| T-02-07 | EF | test_vol_01 has an account. Try username probe_one with test_vol_01's email, then with another email; do the same with probe_two and an email that has no account. Then the new email's owner signs in, and later the second prober. | All four replies are "Check your email…"; the two second tries are identical; no account exists until someone signs in; the owner's account is made at "Sign in"; the second prober is told "That username is taken." | UC-2 4a, AC5 (PRD v1.3); Spec DD-13; round 2 re-review, R2-14 |
+| T-02-08 | EF | Create test_vol_01 with the same email twice (a double tap). Use the first email's link. Then use the second's. | The first link signs in and makes the account; the second then shows "This link isn't valid…" and makes no second account. | Spec DD-13, Section 6; round 2 re-review 2, R2-17 |
 
 ### UC-3: Sign up for a slot
 
@@ -207,6 +224,7 @@ has a security test. No test lacks a source.
 | T-06-01 | HP | On S-8, test_coord_01 taps "Message" next to test_vol_01, writes a message on S-9, and taps "Send." | "Message sent." The message arrives in the test inbox for test_vol_01, from the park's no-reply address; it contains no coordinator email. S-9 never shows test_vol_01's email. | UC-6 AC1 |
 | T-06-02 | BC | Send messages of 500 and 501 characters. | 500 sent; 501 refused with "Messages can be up to 500 characters." | UC-6 AC2, 1a |
 | T-06-03 | HP | test_coord_01 opens S-9 from the roster, then sends a message. | S-9 shows "0 of 500 characters"; after "Send," the roster opens with "Message sent." | d05-01 v1.2, S-9 and Section 6; round 1, R-9 |
+| T-06-04 | BC | Send messages of 500 and 501 characters as a browser sends them, with 6 line breaks (each sent as two characters). | 500 sent, with its line breaks; 501 refused with "Messages can be up to 500 characters." | UC-6 AC2 (PRD v1.3); d05-01 v1.3, S-9; round 2, R2-1 |
 
 ### UC-7: Block a volunteer
 
@@ -216,6 +234,7 @@ has a security test. No test lacks a source.
 | T-07-02 | EF | test_coord_01 sends an Undo block request for test_vol_04. | "Not allowed. Please contact the park office if you think this is wrong." test_vol_04 stays blocked. | UC-7 AC4 |
 | T-07-03 | HP | test_admin_01 opens S-10 and taps "Undo block" next to test_vol_04. | S-10 lists usernames only; "Block removed."; test_vol_04 can sign up again. | UC-7 1a, AC4 |
 | T-07-04 | HP | From the roster, test_coord_01 blocks test_vol_04. | After "Yes, block," the roster opens with "Blocked." | d05-01 v1.2, Section 6; round 1, R-9 |
+| T-07-05 | HP | test_vol_04 is signed up for both of tomorrow's slots, test_vol_01 for one. test_coord_01 blocks test_vol_04; at 6 p.m. the reminders are sent. | test_vol_04 is gone from both rosters and their places are open again; test_vol_01 stays signed up; test_vol_04 gets no reminder, test_vol_01 does. | UC-7 main flow 3, AC2 (PRD v1.3); round 2, R2-9 |
 
 ## 8. Security and Privacy Tests
 
@@ -229,6 +248,10 @@ has a security test. No test lacks a source.
 | T-SEC-06 | EF | Use one sign-in link from two browsers at the same moment: the second use comes after the first has read the link, just before it removes it. | Only one of them is signed in. | Spec 11.1, DD-7; round 1, R-1 |
 | T-SEC-07 | BC | Ask for a sign-in link for one address 12 times in an hour; then once more 24 hours later. | Exactly 10 emails in the first day; all 12 replies identical; the 13th request sends one again. | PRD 6, Email limits; Spec DD-9; round 1, R-6 |
 | T-SEC-08 | BC | After 9 emails, two requests for the same address arrive at once: the second starts after the first has begun, just before it records its email, and the two run side by side with bounded waits. | Both finish; exactly 10 emails in all. | PRD 6; Spec DD-9; round 1 re-reviews, R-6, R-17 |
+| T-SEC-09 | EF | Ask for a sign-in link; open it twice from one browser (as a link checker would), then press "Sign in" from another. | Opening shows "Finish signing in" and a "Sign in" button, and doesn't sign in; the button signs in; the link then doesn't work again. | Spec 7, DD-11; d05-01 v1.3, UX-7; round 2, R2-4 |
+| T-SEC-10 | EF | With an email service that takes 1 second, ask for sign-in links for an email with an account and one without, and create accounts with an email in use and a new one. | All four replies come back in under half a second; each pair is identical; the emails are still sent. | PRD UC-2 AC5; Spec DD-10; round 2, R2-2, R2-3 |
+| T-SEC-11 | EF | Send an email through a stand-in for the city email service. | The connection is encrypted with the certificate and the server's name checked. | Spec 11.1; d06-01 v1.5, 7.1; round 2, R2-6 |
+| T-SEC-12 | EF | With the forged-form protection turned on, send S-1, S-2, and the "Sign in" button without their token, then with it. | Without the token: refused, and no email sent. With it: accepted. | Spec 11.1; round 2, R2-8 |
 
 ## 9. Quality Requirement Tests
 
@@ -236,6 +259,7 @@ has a security test. No test lacks a source.
 |---|---|---|---|---|
 | T-QR-01 | Speed | Load S-3 with 50 open slots in a phone-sized browser on a slowed, phone-like connection. | Fully loaded in under 2 seconds. | PRD 6, Speed |
 | T-QR-03 | Time zone | Start the app without a test clock, with `PARK_TIMEZONE` set to two different zones. | "Now" is the time in that zone, whatever the computer's own clock is set to. | Spec DD-8; d06-01 v1.4; round 1, R-10 |
+| T-QR-04 | Ready to move | Start the app under the production web server (Waitress) and open S-1. | S-1 opens. | d06-01 v1.5, 5.1; d08-02 Section 5.1; round 2, R2-7 |
 | T-QR-02 | Accessibility | Run an automatic WCAG 2.1 AA check on S-1 to S-10, and measure every button. | No serious problems; every text color at least 4.5 to 1; every button and field has a text label; every button at least 44 by 44 pixels. | PRD 6; d05-01 Section 10 |
 
 ### 9.1 Email Queue, Clean-Up, and Wording (added in v1.2)
@@ -251,7 +275,8 @@ if the email service were down.
 | T-EM-04 | EF | The email service refuses a volunteer's address, with an error that names it. | No address in the database or the log. | Spec 11.1, DD-6; round 1 re-review, R-14 |
 | T-EM-05 | EF | Two sign-in emails are waiting after an outage. A third person asks for a link. | The page sends only the third person's email; `send-emails` sends the other two. | Spec DD-6; round 1 re-review, R-15 |
 | T-EM-06 | EF | Two reminder runs at once: the second starts after the first has found who needs a reminder, just before it marks the first one. | Each volunteer gets exactly one reminder. | Spec DD-6; UC-3 AC6; round 1 re-review, R-2 |
-| T-EM-07 | BC | The email service takes 3 seconds to answer; the page's limit is half a second. Ask for a sign-in link. | The page answers in under 2 seconds; the email still arrives once the service answers. | Spec DD-6; round 1 re-review 2, R-15 |
+| T-EM-07 | BC | The email service takes 3 seconds to answer; the page's limit is half a second. A coordinator sends a message on S-9 (v1.5: the sign-in page no longer waits at all). | The page answers in under 2 seconds; the email still arrives once the service answers. | Spec DD-6; round 1 re-review 2, R-15 |
+| T-EM-08 | EF | Send a sign-in email, a confirmation, a coordinator's message (with the service down), then run `send-emails`; each time the email service is called, count the app's database connections in use. | None is in use while the service works on any email. | Spec DD-12; round 1, R-18; round 2, R2-5 |
 | T-DATA-01 | HP | Tasks dated just over and just under 12 months ago, each with a sign-up, plus tomorrow's task and a block. Run `clean-up`. | The older task, its slots, and its sign-up are gone; the others and the block stay. | Spec 6; round 1, R-3 |
 | T-WD-01 | EF | Open S-3, S-5, and S-6 with nothing on them, and an invalid sign-in link. | Each shows its d05-01 v1.2 wording. | Spec 10; d05-01 v1.2; round 1, R-5 |
 | T-WD-03 | EF | Change the time words in the wording file (a.m., p.m., and the dash and "to" between times), then open S-3. | The times and the button labels use the changed words. | Spec 10; round 1 re-review 2, R-5 |
@@ -308,3 +333,5 @@ if the email service were down.
 | 1.2 | 2026-10-25 | 13 tests added (T-01-06, T-01-07, T-03-08, T-06-03, T-07-04, T-SEC-06, T-SEC-07, T-EM-01 to T-EM-03, T-DATA-01, T-QR-03, T-WD-01); T-03-01's "Signed up" wording and every time format changed to d05-01 v1.2 (a.m. and p.m.); the test inbox can act as a down email service. 51 tests in all. TC-3: T-MK-01's S-9 check allows the titles typed on S-7, which now reappear after "Send" | Round 1 code review (Codex) decisions; PRD v1.2, Spec v1.2, d05-01 v1.2, d06-01 v1.4 | SDET; Park Manager, 2026-10-25 |
 | 1.3 | 2026-10-26 | 5 tests added after Codex's re-review (T-SEC-08, T-EM-04 to T-EM-06, T-WD-02); the test inbox can also refuse a recipient. 56 tests in all | Round 1 re-review (Codex), findings R-2, R-5, R-6, R-14, R-15 | SDET; Park Manager, 2026-10-26 |
 | 1.4 | 2026-10-26 | T-EM-07 and T-WD-03 added; T-SEC-08 runs its two requests side by side with bounded waits, so it can't hang on PostgreSQL; the test inbox can be slow. 58 tests in all | Round 1 re-review 2 (Codex), findings R-5, R-15, R-17 | SDET; Park Manager, 2026-10-26 |
+| 1.5 | 2026-11-11 | 10 tests added (T-01-08, T-02-06, T-06-04, T-07-05, T-SEC-09 to T-SEC-12, T-EM-08, T-QR-04). TC-4: signing in in the shared setup, T-02-01, T-SEC-05, T-SEC-06, T-EM-01, and the browser tests now press "Sign in" on the page the link opens; the test client waits for emails sent in the background; T-07-01 uses the new block wording; T-EM-07 uses S-9, since the sign-in page no longer waits. 68 tests in all | Round 2 code review (Claude Code) decisions, R2-1 to R2-9; PRD v1.3, Spec v1.3, d05-01 v1.3, d06-01 v1.5 | SDET; Park Manager, 2026-11-11 |
+| 1.6 | 2026-11-11 | T-02-07 and T-02-08 added. TC-5: T-02-02 signs in from the first account's link before trying the username again, since an account now exists only from "Sign in" (PRD v1.3 UC-2 step 4). 70 tests in all | Round 2 re-reviews (Claude Code), R2-14, R2-17 | SDET; Park Manager, 2026-11-11 |

@@ -48,7 +48,13 @@ def browser_sign_in(app, base, browser, inbox, username, role, viewport=PHONE):
     page.fill("input[name=email]", email)
     page.locator("form button, form input[type=submit]").first.click()
     page.wait_for_load_state()
+    for _ in range(100):  # the sign-in page sends its email in the background (Spec DD-10)
+        if mails_to(inbox, email):
+            break
+        time.sleep(0.05)
     page.goto(base + sign_in_link(mails_to(inbox, email)[-1]))
+    page.get_by_role("button", name="Sign in").click()  # the "Finish signing in" page (UX-7)
+    page.wait_for_load_state()
     return page
 
 
