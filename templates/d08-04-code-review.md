@@ -8,7 +8,10 @@ c08-02: one that did not write the code and has not seen any other
 reviewer's report. Each project gets two, one after another: round 1 from
 a different company's AI (such as Codex), then round 2 from a new Claude
 Code session, each saved as docs/d08-04-code-review-<tool>.md. Each round
-is decided, fixed, and re-reviewed before the next starts. The reviewer never
+is decided, fixed, and re-reviewed before the next starts. After round 2,
+the person who built the app polishes it (prompt c08-04, d08-06), and the
+round 2 reviewer re-reviews just the polishing changes (Mode E), added to
+this same report. The reviewer never
 changes code and leaves the Decision column empty; a person fills it in.
 Never write passwords, keys, tokens, or real people's information here. -->
 
@@ -94,7 +97,9 @@ opinion." Leave Decision and Decided by empty for the person. -->
 - [Assumptions made, e.g., "Reviewed the code as it was in the folder on
   YYYY-MM-DD"]
 - An AI reviewer can miss problems or misjudge them. This report is one of
-  three independent review rounds, and a person decides on every finding.
+  three independent review rounds (two code reviews, then a hands-on
+  review, with polishing by the builder in between), and a person decides
+  on every finding.
 
 ## 7. Change Log
 
