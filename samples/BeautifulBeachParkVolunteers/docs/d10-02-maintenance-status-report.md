@@ -8,6 +8,7 @@
 > IT are made up, and every number is made up for illustration.
 > This is the third monthly report, which is also the three-month
 > success-measure check promised in d09-03.
+> Aligned on 2026-11-12 with the real app as reviewed in Step 8.
 
 ## 1. Overall Health: Watch
 
@@ -68,6 +69,8 @@ expects about 800 volunteers. At that size, all three limits are passed.
 ## 8. What People Said
 
 - Coordinators: "Editing a posted task" is still the top request (R-2).
+  They can delete a task and post it again (UC-8), but its sign-ups are
+  lost, so they rarely do.
 - Volunteers asked for text reminders, already planned for Phase 2.
 - Two volunteers noticed the slow pages on Earth Day morning.
 
@@ -77,7 +80,7 @@ expects about 800 volunteers. At that size, all three limits are passed.
 |---|---|---|---|---|
 | 1 | Ask Parks IT for more database connections and a higher email limit, with a new Cost Sign-Off Sheet if they charge for it | Two limits at 88% to 89% (Section 5) | DevOps chat, with Parks IT | 2027-05-15 |
 | 2 | Finish the move to the city email service's new sending method | The old method stops working 2027-06-30 | SDET and Software Engineer chats | 2027-05-15 |
-| 3 | Start Phase 2 in Step 2: text reminders, task editing, and support for 1,000 volunteers | Phase 1 has met its goals, but the park's needs have grown past its design; see d10-03 | Product Manager, through Tracking | Decision by 2027-04-30 |
+| 3 | Start Phase 2 in Step 2: text reminders, task editing, support for 1,000 volunteers, and the Future Version list (R2-19) | Phase 1 has met its goals, but the park's needs have grown past its design; see d10-03 | Product Manager, through Tracking | Decision by 2027-04-30 |
 
 ## 10. Product Fit: New Phase
 

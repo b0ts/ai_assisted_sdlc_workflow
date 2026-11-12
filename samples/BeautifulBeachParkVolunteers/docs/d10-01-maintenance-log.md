@@ -9,6 +9,10 @@
 > including one phone update that broke a screen, a database upgrade by
 > Parks IT, the city email service retiring its old sending method, and a busy
 > Earth Day that came close to a tipping point.
+> Aligned on 2026-11-12 with the real app as reviewed in Step 8 (74 tests,
+> Delete a task, the Future Version list). The maintenance runs here are
+> numbered after the real ones in d07-02 (Run 24), so they start at
+> Run 25.
 
 ## 1. Overview
 
@@ -18,7 +22,7 @@
 | Live since | 2027-01-23 |
 | Maintenance sign-off | D17, 2027-02-10 |
 | Source Release Efficacy Document | d09-03 v1.0, 2027-02-09 |
-| Source System Infrastructure Document | d06-01 v1.3, 2027-01-20 |
+| Source System Infrastructure Document | d06-01 v1.5, 2026-11-11 |
 | Reliability targets | 99% available; pages under 2 seconds on a phone (d03-01, d04-01) |
 | Approved monthly spending limit | $0 new spending (d06-03); Parks IT's limits: 20 database connections, 3,000 emails a month (d06-01 Section 5.1) |
 | Update rhythm | Check every part on the first Monday of each month; security fixes within 7 days |
@@ -31,6 +35,7 @@
 | Parks IT's app server | Hosting platform | Current | Current | — | Parks IT | 2027-04-05 |
 | Python | Language | 3.12 | 3.13 | 2027-12-01 (Parks IT moves every app to 3.13) | Us, then Parks IT installs it | 2027-04-05 |
 | Flask | Framework | 3.1.4 | 3.1.4 | — | Us | 2027-04-05 |
+| Waitress | Production web server | 3.0 | 3.0 | — | Us, then Parks IT installs it | 2027-04-05 |
 | Other code libraries (12) | Libraries | See `src/requirements.txt` | 11 current, 1 waiting | — | Us | 2027-04-05 |
 | PostgreSQL (Parks IT's server) | Database | 17 | 17 | — | Parks IT, with notice | 2027-04-05 |
 | City email service connection | Outside service | Old sending method | New sending method | 2027-06-30 | Us | 2027-04-05 |
@@ -43,10 +48,10 @@
 
 | ID | Date | Part | From → To | Why | Tests run | Result | Released |
 |---|---|---|---|---|---|---|---|
-| U-1 | 2027-02-15 | Flask | 3.1.2 → 3.1.4 | Security fix | 38 of 38 pass (Run 7) | Done | 2027-02-16, installed by Parks IT |
-| U-2 | 2027-03-02 | Claude Code | Older model → newer model | Old model being retired | 38 of 38 pass (Run 8); the c08 and c10 prompts reran unchanged | Done | Not needed (tool only) |
-| U-3 | 2027-03-08 | PostgreSQL | 16 → 17 | Parks IT's planned upgrade on 2027-03-14; tried on the local environment first | 38 of 38 pass (Run 9) | Done | 2027-03-14, by Parks IT |
-| U-4 | 2027-04-12 | City email service connection | Old → new sending method | Parks IT retires the old method 2027-06-30; the code must change | New test T-03-08 written; fix in progress | Waiting | Target 2027-05-15 |
+| U-1 | 2027-02-15 | Flask | 3.1.2 → 3.1.4 | Security fix | 74 of 74 pass (Run 25) | Done | 2027-02-16, installed by Parks IT |
+| U-2 | 2027-03-02 | Claude Code | Older model → newer model | Old model being retired | 74 of 74 pass (Run 26); the c08 and c10 prompts reran unchanged | Done | Not needed (tool only) |
+| U-3 | 2027-03-08 | PostgreSQL | 16 → 17 | Parks IT's planned upgrade on 2027-03-14; tried on the local environment first | 74 of 74 pass (Run 27) | Done | 2027-03-14, by Parks IT |
+| U-4 | 2027-04-12 | City email service connection | Old → new sending method | Parks IT retires the old method 2027-06-30; the code must change | New test T-EM-09 written; fix in progress | Waiting | Target 2027-05-15 |
 | U-5 | — | Python | 3.12 → 3.13 | Parks IT moves every app 2027-12-01 | Not yet | Planned for 2027-07 | Not yet |
 
 ## 4. Incidents
@@ -54,21 +59,30 @@
 | ID | Date | What happened | Who it affected | How it was found | Cause | Fix | Stops it happening again | Status |
 |---|---|---|---|---|---|---|---|---|
 | M-1 | 2027-02-20 | App unreachable for 4 minutes | About 10 visitors | Log (under the 5-minute alert) | Parks IT server maintenance | None needed | Noted Parks IT's maintenance calendar | Closed |
-| M-2 | 2027-03-09 | Date box on Post a Task (S-7) showed blank on some phones | 3 coordinators | Coordinator email | A phone operating-system update changed how date boxes work | Test T-01-06 added (SDET); date box fixed (Software Engineer) | Test now runs on the newest phone browsers every month | Fixed 2027-03-12 |
-| M-3 | 2027-04-10 | Earth Day Beach Cleanup: pages took up to 3.1 seconds | 210 volunteers at once, for about 20 minutes | Dashboard | Database connections reached 14 of 16 | None during the event | See status report 2027-04-23, Recommendation 1 | Open |
+| M-2 | 2027-03-09 | Date box on Post a Task (S-7) showed blank on some phones | 3 coordinators | Coordinator email | A phone operating-system update changed how date boxes work | Test T-01-10 added (SDET); date box fixed (Software Engineer) | Test now runs on the newest phone browsers every month | Fixed 2027-03-12 |
+| M-3 | 2027-04-10 | Earth Day Beach Cleanup: pages took up to 3.1 seconds | 210 volunteers at once, for about 20 minutes | Dashboard | Database connections reached 14 of 16, all from page requests (emails no longer hold one while sending, Spec DD-12) | None during the event | See status report 2027-04-23, Recommendation 1 | Open |
 
 ## 5. Problems Handed Over From Step 9
 
 | ID | Problem | Sent to | Status |
 |---|---|---|---|
-| R-1 | Volunteers mistyping their email address | UI/UX, SDET, Software Engineer chats | Fixed 2027-03-12: "check your email address" message added to S-2 (d05-01 v1.2) |
-| R-2 | Coordinators can't edit a posted task (Issue I4) | Product Manager, through Tracking | Proposed for Phase 2 (d10-03) |
+| R-1 | Volunteers mistyping their email address | UI/UX, SDET, Software Engineer chats | Fixed 2027-03-12: "check your email address" message added to S-2 (d05-01 v1.5) |
+| R-2 | Coordinators can't edit a posted task; since UC-8 they can delete it and post it again, but its sign-ups are lost (Issue I4) | Product Manager, through Tracking | Proposed for Phase 2 (d10-03) |
+
+### 5.1 Future Version List, Carried From Step 8
+
+Findings the Park Manager decided were worth doing, but not before
+release (d08-01 Section 9). Each is weighed at the monthly check.
+
+| ID | What it is | From | Status |
+|---|---|---|---|
+| R2-19 | If a volunteer signs up in the same split second a coordinator deletes the task, the volunteer can be told "You're signed up" and never get the "Canceled" email | Round 2 reviewer, re-review of the polishing changes (d08-04-code-review-claude.md) | Not seen in use so far; proposed for Phase 2 (d10-03) |
 
 ## 6. Requests Sent to Other Chats
 
 | Date | To chat | Request | Reason (ID) | Outcome |
 |---|---|---|---|---|
-| 2027-02-17 | UI/UX | Clearer wording on S-2 for mistyped email addresses | R-1 | d05-01 v1.2 approved |
+| 2027-02-17 | UI/UX | Clearer wording on S-2 for mistyped email addresses | R-1 | d05-01 v1.5 approved |
 | 2027-02-24 | SDET, then Software Engineer | Test and build the new S-2 message | R-1 | Released 2027-03-12 |
 | 2027-03-09 | SDET, then Software Engineer | Test and fix the S-7 date box on the new phone update | M-2 | Released 2027-03-12 |
 | 2027-04-12 | SDET, then Software Engineer | Move to the city email service's new sending method | U-4 | In progress |
@@ -81,3 +95,4 @@
 | 2027-02-10 | Log started | SRE |
 | 2027-03-12 | Version 1.1 released (R-1, M-2) | SRE |
 | 2027-04-23 | Earth Day incident; Python and email service dates added | SRE |
+| 2026-11-12 | Aligned with the real app after Step 8's reviews: test counts and run numbers, test IDs, Waitress, the Future Version list, UC-8 | Release chat, for the sample |
