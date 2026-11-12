@@ -1,12 +1,13 @@
 # BeautifulBeachPark Volunteers: Hands-On Review Report
 
-**Document:** d08-05 · **Step:** 8, Implementation · **Version:** 0.3
-· **Last updated:** 2026-11-12 · **Status:** Session planned; ready to run
-· **Owner:** Hands-on reviewer (to be named), helped by the Hands-On Review Helper (prompt c08-03)
+**Document:** d08-05 · **Step:** 8, Implementation · **Version:** 1.1
+· **Last updated:** 2026-11-12 · **Status:** Decided; round 3 closed
+· **Owner:** Hands-on reviewer ("the reviewer"), helped by the Hands-On Review Helper (prompt c08-03)
 
 > **Sample document.** The park and its people are made up; the app is
-> real. This report is at the **Session planned** stage: Section 2 is
-> ready, and the rest is filled in after a real person has used the app.
+> real, and so is this session: a real person used the app on
+> 2026-11-12, and the findings are hers, as relayed by the project owner,
+> who sat with her.
 > This is **round 3**, the last of the three reviews: the session waits
 > until both code review rounds (Codex, then Claude Code) are settled, so
 > the person tests the version closest to final. If those rounds change a
@@ -45,15 +46,15 @@
 | Item | Details |
 |---|---|
 | Product | BeautifulBeachPark Volunteers |
-| Version tested | `src/` after both code review rounds and polishing (d08-06) (commit to be named once committed) |
-| Reviewer | To be filled in |
-| Connection to the project | To be filled in (for example, "didn't build it," "stakeholder," or "built the app") |
-| Read the code reviews first? | Should be **No**: don't read `d08-04` or d08-01 Section 7 before this session |
-| Looked at the code? | To be filled in (optional) |
-| Where it ran | To be filled in (for example, "MacBook, Safari, local demo; also a narrow, phone-sized window") |
-| Session date and length | To be filled in (allow 60 to 90 minutes) |
-| Overall impression | To be filled in, in the reviewer's own words |
-| Findings | To be filled in |
+| Version tested | `src/` at commit 93b3fe4 (2026-11-12): after both code review rounds and polishing (d08-06) |
+| Reviewer | "The reviewer" (she asked to be called that) |
+| Connection to the project | Didn't build it; not an approver. The project owner sat with her and relayed her answers |
+| Read the code reviews first? | No. She had never seen the app |
+| Looked at the code? | No |
+| Where it ran | The project owner's MacBook, Chrome, local demo with fresh made-up data and the pretend inbox; a second, private (incognito) window for T12 |
+| Session date and length | 2026-11-12, about 55 minutes (13:34 to 14:28), including free exploring |
+| Overall impression | "Cool basic app, love that stalking is restricted ;)"; "Looking good" |
+| Findings | 0 Bug · 0 Usability · 0 Requirement · 0 Question · 4 Praise · 1 Note (about the session plan, not the app); 0 Must fix |
 
 ## 2. Session Plan
 
@@ -83,6 +84,11 @@ steps 1 and 2 once.
    open while you test.
 4. **Open the app:** in your browser, go to <http://127.0.0.1:5050>. (Not
    port 5000: on a Mac, AirPlay Receiver answers there instead of the app.)
+
+   > **The app's address is <http://127.0.0.1:5050>.** If you open a new
+   > browser window or tab (including a private or incognito window) and
+   > it's blank, the app is still running: click in the address bar at the
+   > top, type `http://127.0.0.1:5050`, and press Return to see the app.
 5. **Sign in:** type one of the made-up email addresses below and click
    **Send me a sign-in link**. No real email is sent: click **Open the
    pretend inbox** on the sign-in page and click the newest link
@@ -98,7 +104,9 @@ steps 1 and 2 once.
 
    To switch roles, click **Sign out** at the top of the page and sign in
    as someone else. To be two people at once, use a second browser, or a
-   private window (in Safari: **File**, then **New Private Window**).
+   private window (in Safari: **File**, then **New Private Window**; in
+   Chrome: **File**, then **New Incognito Window**). A new window opens
+   blank: type the app's address, `http://127.0.0.1:5050`, into it.
 6. **Stop the app at the end:** close the Terminal window.
 
 **Taking notes:** keep a document open and write as you go: what you
@@ -114,18 +122,18 @@ write down where, and move on.
 
 | Task | Role | What to do | Use case | Result | About how long | Notes |
 |---|---|---|---|---|---|---|
-| T1 | New volunteer (signed out) | Create your own account, with a username you make up and an email ending in `@example.test`, and sign in with it. | UC-2 | | | |
-| T2 | Volunteer (your new account) | Sign up for a Beach Cleanup slot. | UC-3 | | | |
-| T3 | Volunteer | Find the list of everything you've signed up for. | UC-3, UC-4 | | | |
-| T4 | Volunteer | Change your mind: cancel the Beach Cleanup sign-up. Then sign up for a Pulling Weeds slot instead. | UC-4, UC-3 | | | |
-| T5 | Coordinator (`democoordinator`) | Post a new task for next Saturday, "Picnic Area Tidy," with two one-hour slots in the morning, 3 volunteers each. | UC-1 | | | |
-| T6 | Volunteer (`sandyhelps`) | Sign up for one of the Picnic Area Tidy slots. | UC-3 | | | |
-| T7 | Coordinator | Find out who signed up for that Picnic Area Tidy slot. | UC-5 | | | |
-| T8 | Coordinator | Send that volunteer a short message: "Please bring gloves." Then, as the volunteer, find out whether it arrived (pretend inbox). | UC-6 | | | |
-| T9 | Coordinator | Block that volunteer. | UC-7 | | | |
-| T10 | Volunteer (the blocked one) | Try to sign up for another slot. | UC-7, UC-3 | | | |
-| T11 | System Administrator (`demoadmin`) | Find the blocked volunteer and undo the block. Then, as the volunteer, check you can sign up again. | UC-7 | | | |
-| T12 | Two volunteers at once | Find a slot with only one place left (or make one: post a task with 1 place). With two browsers, have two volunteers try to take the last place at about the same time. | UC-3 | | | |
+| T1 | New volunteer (signed out) | Create your own account, with a username you make up and an email ending in `@example.test`, and sign in with it. | UC-2 | Done | 3 to 5 min | Typed a username with spaces and symbols first: "The app gave me an adequate error message and I was able to fix it easily" (F-1). No confusion |
+| T2 | Volunteer (your new account) | Sign up for a Beach Cleanup slot. | UC-3 | Done | Under 30 s | At first she hadn't been asked to sign up (the helper's slip in relaying the task, not the app); once asked: "no confusion" |
+| T3 | Volunteer | Find the list of everything you've signed up for. | UC-3, UC-4 | Done | Under 1 min | Found My Sign-Ups straight away |
+| T4 | Volunteer | Change your mind: cancel the Beach Cleanup sign-up. Then sign up for a Pulling Weeds slot instead. | UC-4, UC-3 | Done | Under 1 min |  |
+| T5 | Coordinator (`democoordinator`) | Post a new task for next Saturday, "Picnic Area Tidy," with two one-hour slots in the morning, 3 volunteers each. | UC-1 | Done | 2 to 3 min | A slip of her own ("user driver error"); nothing wrong in the app |
+| T6 | Volunteer (`sandyhelps`) | Sign up for one of the Picnic Area Tidy slots. | UC-3 | Done | Under 2 min |  |
+| T7 | Coordinator | Find out who signed up for that Picnic Area Tidy slot. | UC-5 | Done | Under 1 min |  |
+| T8 | Coordinator | Send that volunteer a short message: "Please bring gloves." Then, as the volunteer, find out whether it arrived (pretend inbox). | UC-6 | Done | Under 3 min | Sent, and confirmed in the pretend inbox; another small slip of her own |
+| T9 | Coordinator | Block that volunteer. | UC-7 | Done | — | "The app asked if I was sure I wanted to block with a button choice" (F-2) |
+| T10 | Volunteer (the blocked one) | Try to sign up for another slot. | UC-7, UC-3 | Done | — | Refused: "Not allowed. Please contact the park office if you think this is wrong." in red, with a link to the home page. Afterwards My Sign-Ups showed no sign-ups: blocking had canceled them, as designed (F-3) |
+| T11 | System Administrator (`demoadmin`) | Find the blocked volunteer and undo the block. Then, as the volunteer, check you can sign up again. | UC-7 | Done | — | The administrator removed the block; Sandy then signed up for the second Picnic Area Tidy slot |
+| T12 | Two volunteers at once | Find a slot with only one place left (or make one: post a task with 1 place). With two browsers, have two volunteers try to take the last place at about the same time. | UC-3 | Done | — | ShellSeeker got the place; Tide Pool Tim saw, in red, "Sorry, this slot was just taken," with the open slots (F-4). The private window opened blank, so she copied the app's address into it (F-5) |
 
 ### 2.3 Things to Explore
 
@@ -154,35 +162,41 @@ seem wrong?
 
 ## 3. What Was Explored
 
-To be filled in after the session.
+After the tasks, about 10 minutes of free exploring. In her words: she
+"explored back button, double clicks, not filling out fields, restoring
+the page, etc." Nothing broke, and nothing showed an error she didn't
+expect. She looked for other people's email addresses: "did not see other
+folks emails on the app." Earlier, in T1, she had also tried a username
+with spaces and symbols on purpose.
 
 ## 4. Findings
 
-To be filled in after the session (prompt c08-03, Mode C), from the
-reviewer's notes.
-
 | ID | Kind | Seriousness | Screen | What I did | What happened | What I expected | Screenshot | Route | Decision | Decided by and date |
 |---|---|---|---|---|---|---|---|---|---|---|
+| F-1 | Praise | Note | S-2 Create Account | Typed a username with spaces and symbols | "The app gave me an adequate error message and I was able to fix it easily" | A clear message | — | None: keep it | | |
+| F-2 | Praise | Note | Block confirm | Blocked a volunteer as the coordinator | "The app asked if I was sure I wanted to block with a button choice" | — | — | None: keep it | | |
+| F-3 | Praise | Note | Every screen | Looked for other people's email addresses, as each role | "Love that stalking is restricted"; "did not see other folks emails on the app" | No one else's email | — | None: keep it | | |
+| F-4 | Praise | Note | S-3, S-4 | Two volunteers took the last place at about the same time (T12) | One got it; the other saw "Sorry, this slot was just taken," with the other open slots | Only one gets it | — | None: keep it | | |
+| F-5 | Note | Note | (The session plan, not the app) | Opened a private (incognito) window for the second volunteer (T12) | "The google incognito page is blank"; she copied the app's address into it | — | — | Session plan (d08-05 Section 2): say to type <http://127.0.0.1:5050> in the new window. No change to the app | Fix: the plan gives the app's address, with a note on what to do if a new window or tab is blank (Section 2.1, steps 4 and 5) | Project owner, 2026-11-12 |
 
 ## 5. Usability Summary
 
-To be filled in after the session.
-
 | Question | Reviewer's answer |
 |---|---|
-| Which tasks were easy? | |
-| Which were hard, and why? | |
-| Any words or labels that confused you? | |
-| Could a typical user manage without help? | |
-| Did anything feel unsafe or too revealing? | |
+| Which tasks were easy? | "Easy tasks." Every task was done, most in under 3 minutes |
+| Which were hard, and why? | None in the app: "hard for me to follow simple directions (user error)" |
+| Any words or labels that confused you? | "Nothing confused me, except my own brain" |
+| Could a typical user manage without help? | "Yes, I think a person could follow the app and volunteer or coordinate" |
+| Did anything feel unsafe or too revealing? | No: "did not see other folks emails on the app" |
 
 ## 6. Notes on the Code (Optional)
 
-Not reviewed yet.
+Not reviewed: she didn't look at the code.
 
 ## 7. Re-Check After Rework
 
-Not yet.
+Not needed unless a finding is marked Fix: no finding is about the app
+itself.
 
 ## 8. Change Log
 
@@ -191,3 +205,5 @@ Not yet.
 | 0.1 | 2026-10-25 | Session plan written (prompt c08-03, Mode A) | Hands-On Review Helper |
 | 0.2 | 2026-11-12 | Plan checked after round 2; version to test named; `start-demo.command` added | Hands-On Review Helper (Claude) |
 | 0.3 | 2026-11-12 | Plan checked after polishing; the owner's notes moved to the Polishing Log (d08-06); the app's address is now port 5050 | Hands-On Review Helper (Claude) |
+| 1.0 | 2026-11-12 | Session held; results, findings, and usability summary written from the reviewer's answers (prompt c08-03, Mode C) | Hands-On Review Helper (Claude), from the reviewer's answers |
+| 1.1 | 2026-11-12 | Report confirmed by the project owner ("She was happy with the app"); round 3 closed. F-5 decided and done: the session plan gives the app's address, and what to do if a new window or tab is blank | Hands-On Review Helper (Claude), decided by the project owner |
