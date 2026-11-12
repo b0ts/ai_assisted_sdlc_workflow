@@ -45,7 +45,7 @@ error pages at the moment the newsletter arrived.
 | ID | Date | Problem | Who it affected | Rollback trigger? | What was done | Status |
 |---|---|---|---|---|---|---|
 | R-1 | 2027-01-23 | Some volunteers didn't get a sign-in email because they mistyped their address. Not a fault in the app. | 27 volunteers, all helped by the park office | No | Park office help sheet used; a clearer "check your email address" message suggested | Handed to Step 10, as a request for the UI/UX Designer |
-| R-2 | 2027-01-27 | Coordinators can't edit a task after posting it; one posted the wrong date and had to ask the park office. Not in the PRD. | 2 coordinators | No | Logged as a feature request | Handed to Step 10, for the Product Manager (Phase 2) |
+| R-2 | 2027-01-27 | Coordinators can't edit a task after posting it; one posted the wrong date and had to delete it and post it again. Editing isn't in the PRD. | 2 coordinators | No | Logged as a feature request | Handed to Step 10, for the Product Manager (Phase 2) |
 | R-3 | 2027-01-23 | 3 error pages during a Parks IT server update | 3 visitors | No (under 2%) | No action needed; noted for Step 10 to watch | Closed |
 
 ## 5. Rollbacks

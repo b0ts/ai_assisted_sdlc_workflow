@@ -1,6 +1,6 @@
 # BeautifulBeachPark Volunteers: Release Plan, Version 1.1
 
-**Document:** d09-01 · **Step:** 9, Release · **Version:** 1.1
+**Document:** d09-01 · **Step:** 9, Release · **Version:** 1.2
 · **Last updated:** 2027-01-21 · **Status:** Released
 · **Owner:** Release Manager (Release chat)
 
@@ -10,6 +10,9 @@
 > Parks IT's servers; Section 7 shows a stress test that failed during the
 > private pilot and how it was fixed; Section 8 shows a manual check that
 > failed, which led to the No-Go in d09-02 v1.0.
+> The demo in Section 1.1 really happened (2026-11-12), on the reviewed
+> app; Sections 6 onward, on Parks IT's made-up servers, remain a story,
+> updated in v1.2 to match the real app's tests and features.
 
 ## 1. Overview
 
@@ -17,10 +20,10 @@
 |---|---|
 | Product | BeautifulBeachPark Volunteers |
 | Software version being released | 1.0 |
-| Source Implementation Record | d08-01 v1.0, 2026-12-11 |
-| Source Release Notes | d08-03 v1.0, 2026-12-11 |
-| Implementation sign-off | D12, 2026-12-11 |
-| Latest test result | 38 of 38 pass locally (d07-02, Run 4), and on Parks IT's servers (Run 6) |
+| Source Implementation Record | d08-01 v1.4, 2026-11-12 |
+| Source Release Notes | d08-03 v1.2, 2026-11-12 |
+| Implementation sign-off | D12, 2026-11-12 |
+| Latest test result | 74 of 74 pass locally at full length (d07-02, Run 24), and on Parks IT's servers (Run 6) |
 | Planned release date | 2027-01-23 (Saturday), the spring volunteer newsletter |
 | Hard deadline, if any | 2027-03-01, the start of spring planting season |
 | Release type | Small: one new web app, used by one park, with no other products depending on it |
@@ -31,23 +34,23 @@
 
 | Item | Details |
 |---|---|
-| Date and place | 2026-12-18, park office, on the Volunteer Program Manager's laptop (the local environment) |
-| Who tried it | Park Manager and Volunteer Program Manager (stakeholders); two coordinators (consulted) |
-| Version shown | 1.0, the version that passed d07-02 Run 4 |
-| Script | Each person took a role with a made-up account: a coordinator posted "Demo Beach Cleanup" (UC-1); the Park Manager created a volunteer account and signed up (UC-2, UC-3), then canceled (UC-4); the coordinator viewed the roster, sent a message, and blocked a volunteer (UC-5 to UC-7). Everyone checked the pretend inbox for the emails. |
-| What they said | Approved, with no changes. One coordinator asked to edit a posted task; that isn't in the PRD, so it was logged for Phase 2 (I4). |
-| Demo approval | D13, 2026-12-18. Parks IT's security review was booked the same day. |
+| Date and place | 2026-11-12, on the project owner's MacBook (the local environment, started with `start-demo.command`, fresh made-up data) |
+| Who tried it | The Park Manager, taking each role in turn, guided by the Release chat |
+| Version shown | 1.0 at commit c4c7525: after three review rounds and polishing, the version that passed d07-02 Run 24 |
+| Script | Five scenes, one role at a time, with made-up accounts: (1) a coordinator posted "Demo Beach Cleanup" with two morning slots (UC-1); (2) a new volunteer created an account, signed in from the pretend inbox, signed up, got the confirmation email, canceled, and took the other slot (UC-2 to UC-4); (3) the coordinator opened the roster (username only) and sent a message, checked in the pretend inbox (UC-5, UC-6); (4) the coordinator blocked the volunteer, and the System Administrator undid the block (UC-7); (5) the coordinator deleted the task, and the volunteer signed up for it got a "Canceled" email (UC-8) |
+| What they said | "Looks good" after every scene; "Looks good - approved to go live." No changes asked for |
+| Demo approval | D13, 2026-11-12. Parks IT's security review was booked the same day. |
 
 ## 2. Inputs
 
 | Input | Source | Notes |
 |---|---|---|
-| Product Requirements Document | d03-01 v1.1 | Success measures (Section 2); UC-3 reminders are a Must-have; up to 500 volunteers |
-| Software Design Specification | d04-01 v1.1 | Under 2 seconds on a phone; Security & Compliance (Section 11) |
-| System Infrastructure Document | d06-01 v1.1 (v1.3 after the requests in Section 14) | Live server requirements (Section 5.1); production on Parks IT's servers planned for Step 9; second contact needed (I2) |
+| Product Requirements Document | d03-01 v1.4 | Success measures (Section 2); UC-3 reminders are a Must-have; up to 500 volunteers |
+| Software Design Specification | d04-01 v1.4 | Under 2 seconds on a phone; Security & Compliance (Section 11) |
+| System Infrastructure Document | d06-01 v1.5 | Live server requirements (Section 5.1); production on Parks IT's servers planned for Step 9; second contact needed (I2) |
 | Cost Sign-Off Sheet | d06-03 v1.0 | $0 new spending |
-| Test Plan | d07-01 v1.0 | Section 3 leaves real email delivery and other browsers to Step 9 |
-| Implementation Record, Developer Guide, Release Notes | d08-01, d08-02, d08-03 v1.0 | Known issues: none |
+| Test Plan | d07-01 v1.7 | Section 3 leaves real email delivery and other browsers to Step 9 |
+| Implementation Record, Developer Guide, Release Notes | d08-01 v1.4, d08-02 v1.4, d08-03 v1.2 | Known issues: one Future Version item (R2-19, a rare timing gap when a task is deleted); none affecting a Must-have |
 
 ## 3. What Is Being Released
 
@@ -101,7 +104,7 @@ turned on for a few volunteers first, and off at once if costs rise
 | Monitoring and alerts on, going to a person | Yes | Volunteer Program Manager received a test alert from Parks IT, 2027-01-13 |
 | Budget alert | Not needed | $0 new spending (d06-03) |
 | Second contact for Parks IT (Issue I2) | Yes | Board treasurer added, 2027-01-07 (D14) |
-| Version on Parks IT's servers matches the demo and Run 4 | Yes | Release chat, 2027-01-15 |
+| Version on Parks IT's servers matches the demo and Run 24 | Yes | Release chat, 2027-01-15 |
 
 ## 7. Stress Test
 
@@ -201,3 +204,4 @@ turned on for a few volunteers first, and off at once if costs rise
 |---|---|---|---|---|
 | 1.0 | 2027-01-08 | First version: demo results (Section 1.1, D13), then the move, pilot, and release plan | — | Park Manager (D14, 2027-01-08) |
 | 1.1 | 2027-01-21 | Stress test, manual check, and rollback practice results added; requests 1 to 3 | Results from Mode D | Park Manager (D16, 2027-01-21) |
+| 1.2 | 2026-11-12 | The stakeholder demo held for real, on the reviewed app (Section 1.1, D13); inputs and test results updated to the real versions | Step 8 signed off after three review rounds and polishing | Park Manager (D13, 2026-11-12) |
