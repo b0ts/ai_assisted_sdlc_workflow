@@ -138,8 +138,10 @@ report; the reviews must be independent.
 2. Write **Section 2, Session Plan**, of the report from the template:
    - **How to start the app:** numbered, plain steps taken from the
      Developer Guide, including how to sign in with each made-up account
-     and how to open the pretend inbox. Say how to stop the app at the
-     end.
+     and how to open the pretend inbox. Give the app's **address** (for
+     example, `http://127.0.0.1:5050`), and say that a new browser window
+     or tab, including a private one, opens blank: type the address into
+     it to see the app. Say how to stop the app at the end.
    - **Tasks:** one or two per use case, per role, in plain words that say
      **what** to do, never **how** (for example, "Sign up for the
      Saturday beach cleanup," not "Tap Open slots, then Sign up"). Order
