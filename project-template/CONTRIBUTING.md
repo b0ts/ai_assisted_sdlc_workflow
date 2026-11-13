@@ -6,6 +6,39 @@ ten steps, each carried out by its own AI chat, with a person deciding at
 every step. The README's **Collaborators and ownership** section says who's
 involved and who owns the work.
 
+## Joining a Project Already Under Way
+
+You can follow a public project without joining it: anyone with its link
+can read it on GitHub, with no account needed. Its README's **Status**
+says which step it's on. To help with the work:
+
+1. **Get invited.** You need a free [GitHub](https://github.com) account.
+   Send your username to the project's owner; they add you as a
+   collaborator, and GitHub emails you an invitation. Click **Accept
+   invitation**. (Until then you can read the project but not change it.)
+2. **Get the project onto your computer.** Install
+   [GitHub Desktop](https://desktop.github.com) and sign in. Choose
+   **File**, then **Clone Repository...**, pick the project from the list,
+   choose where to put it, and click **Clone**.
+3. **Catch up, in this order:**
+   1. `README.md`: what the project is, and who's involved.
+   2. The tracking checklist, [`docs/d01-01-checklist.md`](docs/d01-01-checklist.md):
+      its **Next Action** says what's happening now, and its Decision Log
+      says how it got there.
+   3. The documents already approved, in step order (the checklist's
+      Status Table lists them): for example, the one-pager (`d02-01`), then
+      the requirements (`d03-01`), then the design (`d04-01`).
+4. **Know which rules are already in force.** Approved documents don't
+   change without a "go-back" approved in the Tracking chat. After Step 7,
+   the tests are locked (see Rules below).
+5. **Agree on your part** with the project's owner: which step or document
+   you'll work on, and whether you'll sign anything off. The Tracking chat
+   records it.
+
+To run a step's chat yourself, start your own chat with the step's prompt
+from [`prompts/`](prompts/) and attach the documents it needs; see
+`START-HERE.md`, Part 2.
+
 ## The Shared Record
 
 - **The tracking checklist,** [`docs/d01-01-checklist.md`](docs/d01-01-checklist.md),

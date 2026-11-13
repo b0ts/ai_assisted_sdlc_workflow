@@ -182,7 +182,8 @@ level.
 
 - [`c01-tracking-prompt.md`](../prompts/c01-tracking-prompt.md): one prompt
   that initializes tracking, then handles step updates, issues, status
-  reports, and go/no-go reviews each time you return to the chat
+  reports, go/no-go reviews, and people joining or leaving the project, each
+  time you return to the chat
 
 **Templates** (in `templates/`):
 

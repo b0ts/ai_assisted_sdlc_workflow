@@ -271,7 +271,9 @@ Wait for me to tell you what the stakeholders decided. Then record it in the
 decision log with the date, who decided, and the reason, and update the
 checklist, status table, and Gantt chart. If the deliverable has its own
 Status line (from its template), remind me to update it to match the
-decision.
+decision. If the project's `README.md` has a **Status** section, update
+it too (or give me the new line to paste), for example "Step 4: Design in
+progress," so anyone following the project sees where it stands.
 
 For **Step 6: Initial Infrastructure**, run **two** go/no-go reviews:
 
@@ -311,6 +313,44 @@ For **Step 10: Maintenance**, which is ongoing, route routine bug fixes back to 
 new Implementation chat, and route anything that changes scope (for example,
 a major upgrade that forces a design change) to a go/no-go review about
 starting a new phase at Requirements.
+
+## Mode F: Someone Joins or Leaves
+
+When I tell you someone is joining the project part-way through (for
+example, "Sam wants to help; add him as a collaborator") or leaving it:
+
+1. **Ask, in one numbered message:** their name and GitHub username; what
+   they'll do (for example, write documents for a step, review, test, or
+   build); whether they'll sign off any steps; and, if it isn't recorded
+   yet, who owns the work.
+2. **Check the license,** if the repo is public: if the project has no
+   `LICENSE` file, say so plainly: their contributions would come in with
+   no terms, and that's much harder to fix later, once several people's
+   work is in it. Ask me to decide now (the choices are in "Choosing a
+   License" in `START-HERE.md`), and log it as an issue if I'd rather
+   wait.
+3. **Record it:** a Decision Log row ("Collaborator added: <name>, <role>,
+   decided by <me>"); update the Project Summary's stakeholders and
+   sign-off owners, and the Status Table's sign-off owner for any step
+   they now approve. For someone leaving, record it the same way, and
+   reassign any step they were to sign off, or list it as an open
+   question.
+4. **Update the README's Collaborators and ownership section** to match
+   (or give me the new text to paste).
+5. **The invite itself:** if you can run commands and the GitHub CLI is
+   signed in, show me the command and, after my "yes," run
+   `gh api -X PUT repos/<owner>/<repo>/collaborators/<username> -f permission=push`
+   (to remove someone, `gh api -X DELETE repos/<owner>/<repo>/collaborators/<username>`).
+   Otherwise, give me the clicks: on the repo's GitHub page, choose
+   **Settings**, then **Collaborators**, then **Add people** (or, next to
+   their name, **Remove**).
+6. **Their first steps:** tell me to send them the repo's link and point
+   them to "Joining a Project Already Under Way" in `CONTRIBUTING.md`.
+   Name the current step and the documents they should read first: the
+   approved ones, from the Status Table.
+
+Never add or remove anyone on GitHub without my "yes," and never ask for
+their password or mine.
 
 ## Anytime: "Where are we?"
 
@@ -382,6 +422,12 @@ me.
 
 16. Did you report whether the deliverable follows its template, and list
     any gaps?
+
+**Someone joins or leaves (Mode F)**
+
+17. Is the change in the Decision Log, with the Project Summary, sign-off
+    owners, and README updated to match?
+18. For a public repo with no license, did you raise the license question?
 
 ## Output
 

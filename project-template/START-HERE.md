@@ -285,6 +285,43 @@ settle:
    - **Collaborators make good independent reviewers,** especially for the
      hands-on review in Step 8.
 
+### Sharing Your Progress
+
+Anyone can follow a **public** project: send them the repo's link
+(`https://github.com/<you>/<project>`). They can read it on GitHub
+without an account, and don't need an invitation. To make it easy to
+follow:
+
+- Keep the README's **Status** line current. The Tracking chat updates it
+  (or gives you the line) after each decision.
+- Point them to the tracking checklist, `docs/d01-01-checklist.md`, for
+  the details, and to the approved documents in `docs/`.
+- If they might help later, a license chosen now saves trouble (see
+  [Choosing a License](#choosing-a-license)).
+
+A **private** project can be seen only by people you invite, so follow
+the next section even for someone who only wants to look.
+
+### Adding or Removing Someone Later
+
+You can add a collaborator at any step. Say so in the **Tracking chat**:
+"Add Sam as a collaborator." It asks what they'll do, records it in the
+checklist, updates the README's **Collaborators and ownership** section,
+and, if the repo is public with no license, asks you to choose one first,
+before their work comes in. It sends the invite for you if it can run
+commands; otherwise:
+
+- **To add someone:** on the repo's GitHub page, choose **Settings**, then
+  **Collaborators**, then **Add people**, and enter their GitHub username.
+  They get an email invitation to accept.
+- **To remove someone:** the same page, then **Remove** next to their
+  name. Tell the Tracking chat too, so it reassigns anything they were to
+  sign off.
+
+Then send them the repo's link and point them to "Joining a Project
+Already Under Way" in `CONTRIBUTING.md`: how to get the project onto their
+computer, and what to read to catch up.
+
 This is general information, not legal advice. If money, a client, or an
 organization's ownership is involved, ask whoever handles its agreements.
 
@@ -326,6 +363,7 @@ organization.
 - [ ] D: Committed and published to GitHub
 - [ ] E: Claude Project created and linked; file access working
 - [ ] Collaborators (if any) invited, and who owns the work written in the README
+- [ ] Later collaborators added through the Tracking chat (it records them and updates the README)
 - [ ] Step 1: Tracking chat started; checklist saved
 - [ ] Step 2: One-pager written; Go or No-Go recorded
 - [ ] Steps 3 to 10, each with a decision recorded in the Tracking chat
