@@ -24,3 +24,5 @@ These two files are not step prompts. They are the informal and formal prompts u
 
 - [example-01-roles-and-deliverables.md](example-01-roles-and-deliverables.md): informal prompt
 - [example-02-roles-and-deliverables.md](example-02-roles-and-deliverables.md): formal prompt
+
+A copy of every prompt is also in [`project-template/prompts/`](../project-template/prompts/), for new projects. After changing a prompt here, run `python3 scripts/build_project_template.py` to refresh the copies.

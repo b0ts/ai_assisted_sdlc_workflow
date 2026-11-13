@@ -16,7 +16,7 @@ Coordinators post tasks such as Raking Leaves, Pulling Weeds, Beach
 Cleanup, and Driftwood Removal, and volunteers sign up for one-hour slots
 using a username only.
 
-The sample folder has the same layout as the [skeleton](../skeleton/), so
+The sample folder has the same layout as the [project template](../project-template/), so
 you can compare your folder with it after any step. For example, after
 Step 3 your `docs/` folder should have a PRD like
 `BeautifulBeachParkVolunteers/docs/d03-01-prd.md`.

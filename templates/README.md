@@ -66,3 +66,5 @@ To use a template, fill it in: keep every heading in the same order, replace eve
 To see a template filled in, open the file with the same name in the sample project's [`docs/`](../samples/BeautifulBeachParkVolunteers/docs/) folder. When you change a template, update its sample document to match.
 
 See the [numbering system](../README.md#numbering-system) for the full scheme.
+
+A blank copy of every template is also in [`project-template/docs/`](../project-template/docs/), for new projects. After changing a template here, run `python3 scripts/build_project_template.py` to refresh the copies.

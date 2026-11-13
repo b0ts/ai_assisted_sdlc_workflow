@@ -1,0 +1,25 @@
+# Mac and editors
+.DS_Store
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# JavaScript
+node_modules/
+
+# Secrets and local settings: never commit these
+.env
+.env.*
+!.env.example
+
+# Local databases and logs
+*.db
+*.db-*
+*.sqlite3
+*.log
