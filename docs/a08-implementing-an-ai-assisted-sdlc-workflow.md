@@ -39,6 +39,15 @@ menus in [GitHub Desktop](https://desktop.github.com), a free app from GitHub.
 Pick whichever you're more comfortable with; both give the same result. Menu
 names can differ slightly between versions of GitHub Desktop.
 
+**Want Claude to do the setup?** If Claude can run commands on your computer
+(Claude Code, or a thread linked to your computer) and you've signed in to
+GitHub's command-line tool once, say "Use the ai_assisted_sdlc_workflow for a
+new project" and attach [`prompts/c00-new-project-prompt.md`](../prompts/c00-new-project-prompt.md).
+It asks for the project's name and your GitHub link, then does Steps 2, 3,
+and 5 of this guide for you, gives you the clicks for Steps 4 and 6, and
+starts Step 1: Tracking. This guide is the same setup by hand, for when you'd
+rather do it yourself or can't give Claude that access.
+
 A checklist of all the steps is at the [end of this guide](#checklist).
 
 ---

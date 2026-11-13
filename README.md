@@ -44,10 +44,20 @@ The [`samples/`](samples/) folder holds a finished sample project: [BeautifulBea
 
 ## Starting your own project
 
-Copy the [`project-template/`](project-template/) folder into a new project
-folder, and follow its [`START-HERE.md`](project-template/START-HERE.md):
-create the project's GitHub repo, then run the steps, starting with the Scrum
-Master (Step 1). Its `prompts/` and `docs/` folders are copies of this repo's
+**Fastest start: let Claude set it up.** In Claude Code, or a Claude thread
+that can run commands on your computer, say **"Use the
+ai_assisted_sdlc_workflow for a new project"** and attach
+[`prompts/c00-new-project-prompt.md`](prompts/c00-new-project-prompt.md).
+Claude asks for the project's name and your GitHub link, creates the folder
+in your projects folder, copies in the starter kit, creates the GitHub repo
+with the same name, makes the first push, and starts Step 1. You need Git and
+the GitHub CLI, signed in once (`gh auth login`); the prompt explains.
+
+**Or do it yourself:** copy the [`project-template/`](project-template/)
+folder into a new project folder, and follow Part 1 of its
+[`START-HERE.md`](project-template/START-HERE.md), with menus in Finder and
+GitHub Desktop: create the project's GitHub repo, then run the steps,
+starting with the Scrum Master (Step 1). Its `prompts/` and `docs/` folders are copies of this repo's
 prompts and templates; after changing either, run
 `python3 scripts/build_project_template.py` to refresh the copies.
 

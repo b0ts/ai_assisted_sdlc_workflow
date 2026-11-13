@@ -29,9 +29,25 @@ and the step-by-step walkthrough is
 Throughout, `<your-project>` stands for your project's name, for example
 `OurGroupVolunteerApp`: letters and numbers, no spaces.
 
+### Two Ways to Set Up
+
+- **Let Claude do it (about 5 minutes).** In Claude Code, or a Claude
+  thread that can run commands on your computer, say **"Use the
+  ai_assisted_sdlc_workflow for a new project"** and attach the workflow
+  repo's
+  [`prompts/c00-new-project-prompt.md`](https://github.com/b0ts/ai_assisted_sdlc_workflow/blob/main/prompts/c00-new-project-prompt.md).
+  It asks for the name and your GitHub link, does Steps A to D below for
+  you, gives you the clicks for Step E, and starts Step 1. You need Git and
+  the GitHub CLI, signed in once with `gh auth login` in Terminal; the
+  prompt checks and explains. If you're reading this inside a project it
+  already set up, skip to Part 2.
+- **Do it yourself (about 30 minutes),** with menus, following Part 1. Use
+  this way if you'd rather, or if you can't give Claude access to run
+  commands or to your GitHub account.
+
 ---
 
-## Part 1: Set Up the Project (About 30 Minutes, Once)
+## Part 1: Set Up the Project by Hand (About 30 Minutes, Once)
 
 ### What You Need First
 

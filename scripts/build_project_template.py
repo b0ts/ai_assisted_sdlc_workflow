@@ -40,6 +40,8 @@ def copy_all(source_dir, pattern, target_dir, kind):
     target_dir.mkdir(parents=True, exist_ok=True)
     copied = []
     for source in sorted(source_dir.glob(pattern)):
+        if source.name.startswith("c00-"):
+            continue  # c00 sets up a new project; it lives in this repo, not in the kit
         text = rewrite_links(source.read_text(encoding="utf-8"))
         (target_dir / source.name).write_text(text, encoding="utf-8")
         copied.append(source.name)
