@@ -11,7 +11,8 @@ Copy it into a new project folder, and you get, ready to use:
 | Blank **deliverables** | [`docs/`](docs/) | Every document the workflow produces, as a blank template with `[placeholders]`, named by its d-number (for example, `d03-01-prd.md`). Each step's chat fills its own in. |
 | Instructions for Claude | `CLAUDE.md` | How this project is organized, and the workflow's rules |
 | Places for the work | [`tests/`](tests/), [`src/`](src/), [`assets/`](assets/) | Tests (Step 7), code (Step 8), images and data |
-| Your project's front page | `README.md` | Fill in the name and description |
+| Your project's front page | `README.md` | Fill in the name, description, and who's involved |
+| Working with others | `CONTRIBUTING.md` | How collaborators pull, branch, commit, and share changes |
 
 You don't need to know how to program. You do need to read what each chat
 produces and decide whether it's right: that is your job in every step.
@@ -250,6 +251,45 @@ the Tracking chat, then return.
 
 ---
 
+## Working With Others
+
+You can work with others before the project is finished. Three things to
+settle:
+
+1. **Who can see it.** Keep the repo private and invite each person: on the
+   repo's GitHub page, choose **Settings**, then **Collaborators**, then
+   **Add people**, and enter their GitHub username or email. They get an
+   invitation to accept. For a group, a GitHub **organization** that owns
+   the repo makes adding and removing people easier.
+2. **What they may do with it.** Write it down in the README's
+   **Collaborators and ownership** section, in plain words: who's involved,
+   and who owns the work (you, all of you, or an organization).
+   - A **private** group usually doesn't need a license file, but agree on
+     ownership, especially for an organization's project.
+   - A **public** repo that anyone may contribute to: choose the license
+     **now**, usually MIT (see [Choosing a License](#choosing-a-license)),
+     so contributions come in under terms already in place.
+3. **How you share the work.** The repo is the shared record:
+   - **The tracking checklist** is everyone's source of truth: one
+     checklist, one decision log. Name who approves each step, and, if it
+     helps, who owns each step.
+   - **Get the latest before you start, and push when you finish.** In
+     GitHub Desktop: **Repository**, then **Pull**; afterwards, commit,
+     then **Push origin**.
+   - **Bigger changes go on a branch, with a pull request,** so others can
+     read them before they join `main`. `CONTRIBUTING.md` has the clicks.
+   - **Claude chats are personal.** Each person runs their own step chats
+     with the same prompts; the documents in `docs/` carry the work
+     between people. (On a Claude Team or Enterprise plan, a Claude Project
+     can also be shared.)
+   - **Collaborators make good independent reviewers,** especially for the
+     hands-on review in Step 8.
+
+This is general information, not legal advice. If money, a client, or an
+organization's ownership is involved, ask whoever handles its agreements.
+
+---
+
 ## Choosing a License
 
 A **license** is a short file, `LICENSE`, that tells other people what
@@ -285,6 +325,7 @@ organization.
 - [ ] C: Name and description filled in
 - [ ] D: Committed and published to GitHub
 - [ ] E: Claude Project created and linked; file access working
+- [ ] Collaborators (if any) invited, and who owns the work written in the README
 - [ ] Step 1: Tracking chat started; checklist saved
 - [ ] Step 2: One-pager written; Go or No-Go recorded
 - [ ] Steps 3 to 10, each with a decision recorded in the Tracking chat

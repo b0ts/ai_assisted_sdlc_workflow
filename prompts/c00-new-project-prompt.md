@@ -40,7 +40,8 @@ On your computer, once:
    either attach this file, or paste everything below the line. (If you've
    saved the workflow's new-project skill, the sentence alone is enough.)
 3. Answer Claude's questions: the project's name, a sentence about it, your
-   GitHub link, private or public, and who may use your code (no need to
+   GitHub link, private or public, whether others will work on it with
+   you, and who may use your code (no need to
    know about licenses: it asks in plain words, and "not sure yet" is fine).
 4. Confirm the summary it shows you. It creates everything, then starts
    Step 1 in the same thread, which becomes the project's **Tracking chat**.
@@ -128,7 +129,13 @@ Ask these, in one numbered message:
    organization has a rule about licenses, or about who owns code made for
    it." Say once that this is general information, not legal advice, and
    that the license can be added or changed later.
-6. **Projects folder:** where your projects live. Suggest the folder this
+6. **Will others work on this with you before it's finished?** If yes:
+   their GitHub usernames (or "later"), and, in a sentence, who owns the
+   work (for example, "I do," "we all do," or "the museum does"). If the
+   repo is public and others will contribute, suggest choosing the license
+   now (usually answer 2 above), because it's much simpler than adding one
+   later to code several people wrote.
+7. **Projects folder:** where your projects live. Suggest the folder this
    session started in if it looks like one, otherwise `~/projects`.
 
 Then check, and tell me if anything needs another answer:
@@ -148,7 +155,8 @@ Then check, and tell me if anything needs another answer:
    <private/public> repo `https://github.com/<owner>/<name>`, then push."
    Name the license in plain words, for example "the MIT license (anyone
    may reuse it, with credit)" or "no license (only you and the people you
-   choose).
+   choose)." If I named collaborators, add: "and invite <usernames> to
+   it, with permission to make changes."
 2. **Create the folder** and **copy the starter kit** into it, including
    hidden files such as `.gitignore`:
    - If `<projects folder>/ai_assisted_sdlc_workflow` exists and is a Git
@@ -159,10 +167,14 @@ Then check, and tell me if anything needs another answer:
      copy `project-template/`'s contents, then delete the temporary clone.
    - Copy the folder's **contents**, not the folder itself: the new
      project's top level has `START-HERE.md`, `README.md`, `CLAUDE.md`,
-     `.gitignore`, `docs/`, `prompts/`, `tests/`, `src/`, and `assets/`.
+     `CONTRIBUTING.md`, `.gitignore`, `docs/`, `prompts/`, `tests/`,
+     `src/`, and `assets/`.
 3. **Fill in the placeholders** in `README.md` and `CLAUDE.md`: the project
    name and the one-sentence description. In the README's Status, write
-   "Step 1: Tracking in progress."
+   "Step 1: Tracking in progress." In the README's **Collaborators and
+   ownership** section, write who owns the work and who's collaborating, in
+   my words; or, if I'm working alone, replace its text with "Working
+   alone for now." 
 4. **Add the license**, if I chose 2 or 3: get its text from GitHub
    (`gh api licenses/mit --jq .body`, or `licenses/apache-2.0`), fill in the
    year and the name I gave, and save it as `LICENSE`. For 1 or 4, add no
@@ -174,6 +186,12 @@ Then check, and tell me if anything needs another answer:
    `gh repo create <owner>/<name> --<private|public> --source . --remote origin --push --description "<the one sentence>"`.
 7. **Check it worked:** the push succeeded, and `gh repo view <owner>/<name>`
    shows the repo. Tell me its address.
+8. **Invite collaborators,** if I named any:
+   `gh api -X PUT repos/<owner>/<name>/collaborators/<username> -f permission=push`
+   for each. Tell me each one gets an email invitation to accept, and how
+   to invite more later: on the repo's GitHub page, choose **Settings**,
+   then **Collaborators**, then **Add people**. Point me to "Working With
+   Others" in `START-HERE.md` and to `CONTRIBUTING.md`.
 
 ## Mode D: Connect Claude to the New Project
 

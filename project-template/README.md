@@ -17,6 +17,12 @@ every step. [`START-HERE.md`](START-HERE.md) explains how to run them.
 | [`src/`](src/) | The project's source code (Step 8: Implementation) |
 | [`assets/`](assets/) | Images, media, and data files the project uses |
 
+## Collaborators and ownership
+
+<Who is working on this, and who owns the work, for example: "Pat and Sam,
+for the museum; the museum owns the code." Or: "Working alone for now."
+If others will contribute, see [`CONTRIBUTING.md`](CONTRIBUTING.md).>
+
 ## Status
 
 <Where the project stands, for example: "Step 2: Feasibility in progress.">

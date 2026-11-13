@@ -43,3 +43,6 @@ for each step (b01 to b10).
   the documents, or a chat.
 - A person decides at every step. Ask, in one numbered list, rather than
   guess.
+- Others may work in this repo too (see `CONTRIBUTING.md`): get the latest
+  before starting, and for anything bigger than a small fix, use a branch
+  and a pull request rather than committing straight to `main`.
