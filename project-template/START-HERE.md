@@ -76,8 +76,10 @@ GitHub Desktop creates the folder, a README, and a license in one go:
    - Tick **Initialize this repository with a README**
    - **Git Ignore:** choose **Python** (a sensible start; the starter kit
      adds its own list too)
-   - **License:** choose one, for example **MIT License** (anyone may reuse
-     your work, with credit), or **None** if you want to keep all rights
+   - **License:** see [Choosing a License](#choosing-a-license), below. In
+     short: **None** for a private project (only you and the people you
+     choose may use it), **MIT License** if anyone may reuse it with
+     credit. Not sure? Choose **None**; you can add one any time.
 3. Click **Create Repository**.
 
 You now have `projects/<your-project>/` with a `README.md`, `LICENSE`, and
@@ -245,6 +247,34 @@ Copy `d08-04-code-review.md` once per code reviewer, named after the tool.
 **If a step says an earlier document must change** (a "go-back"), take its
 request to that earlier step's chat, get the revised document approved in
 the Tracking chat, then return.
+
+---
+
+## Choosing a License
+
+A **license** is a short file, `LICENSE`, that tells other people what
+they're allowed to do with your project's code. You don't need to know
+license names: answer one question, **who should be allowed to use your
+project's code?**
+
+| Your answer | Choose | What it means for someone who finds your code |
+|---|---|---|
+| **Just me and the people I choose** | **No license** | They may look at it if the repo is public, but they have no permission to copy, change, or reuse it. The usual choice for a private project. |
+| **Anyone, for free, as long as they credit me** | **MIT** | They may use, change, and share it, even in paid products, as long as they keep your name and the license. The most common, simplest open license. |
+| **Anyone, with credit, plus protection around patents** | **Apache 2.0** | Like MIT, plus each contributor grants a patent license. Mostly matters for larger organizations; if you're unsure, MIT is fine. |
+| **I'm not sure yet** | **No license, for now** | Same as the first row. Add one before you make the repo public or share the code; Step 9 (Release) asks again. |
+
+- **It can change later.** Adding a `LICENSE` file later is easy: on your
+  repo's GitHub page, click **Add file**, then **Create new file**, type
+  `LICENSE` as the name, and click **Choose a license template**.
+- **Making it for an organization?** Check whether it has a rule about
+  licenses, or about who owns code made for it, before you choose.
+- **Want to know more?** GitHub's [choosealicense.com](https://choosealicense.com)
+  explains the common licenses in plain words.
+
+This is general information, not legal advice. If money, a client, or
+ownership is involved, ask whoever handles agreements for your
+organization.
 
 ---
 

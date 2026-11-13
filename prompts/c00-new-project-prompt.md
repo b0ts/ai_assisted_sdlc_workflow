@@ -40,7 +40,8 @@ On your computer, once:
    either attach this file, or paste everything below the line. (If you've
    saved the workflow's new-project skill, the sentence alone is enough.)
 3. Answer Claude's questions: the project's name, a sentence about it, your
-   GitHub link, private or public, and a license.
+   GitHub link, private or public, and who may use your code (no need to
+   know about licenses: it asks in plain words, and "not sure yet" is fine).
 4. Confirm the summary it shows you. It creates everything, then starts
    Step 1 in the same thread, which becomes the project's **Tracking chat**.
 
@@ -108,10 +109,25 @@ Ask these, in one numbered message:
    to, so I can see whether they match.)
 4. **Private or public?** Private: only people you invite can see it.
    Public: anyone can. It can be changed later in the repo's settings.
-5. **License:** MIT (others may reuse your work, with credit), Apache 2.0
-   (similar, with a patent grant), or none (you keep all rights). If you're
-   not sure, MIT is common for open projects, and none is fine for private
-   ones. If a license, whose name goes on it?
+5. **Who should be allowed to use your project's code?** (This decides
+   the license; I don't need to know license names.)
+   1. **Just me and the people I choose.** No license file: nobody else
+      has permission to copy or reuse it. The usual choice for a private
+      repo, and the suggestion if I chose private.
+   2. **Anyone, for free, as long as they credit me.** The **MIT**
+      license, the most common and simplest open one. The suggestion if I
+      chose public.
+   3. **Anyone, for free, with credit, plus protection around patents.**
+      The **Apache 2.0** license. Mostly for larger organizations; if
+      unsure, 2 is fine.
+   4. **I'm not sure yet.** No license for now; it's noted as an open
+      question to decide before the repo is made public or shared.
+
+   If I choose 2 or 3: whose name goes on it (mine, or my organization's)?
+   If the project is for an organization, add: "Check whether your
+   organization has a rule about licenses, or about who owns code made for
+   it." Say once that this is general information, not legal advice, and
+   that the license can be added or changed later.
 6. **Projects folder:** where your projects live. Suggest the folder this
    session started in if it looks like one, otherwise `~/projects`.
 
@@ -130,6 +146,9 @@ Then check, and tell me if anything needs another answer:
    "I'll create `<projects folder>/<name>`, copy in the starter kit, fill in
    its name and description, add the <license> license, and create the
    <private/public> repo `https://github.com/<owner>/<name>`, then push."
+   Name the license in plain words, for example "the MIT license (anyone
+   may reuse it, with credit)" or "no license (only you and the people you
+   choose).
 2. **Create the folder** and **copy the starter kit** into it, including
    hidden files such as `.gitignore`:
    - If `<projects folder>/ai_assisted_sdlc_workflow` exists and is a Git
@@ -144,9 +163,10 @@ Then check, and tell me if anything needs another answer:
 3. **Fill in the placeholders** in `README.md` and `CLAUDE.md`: the project
    name and the one-sentence description. In the README's Status, write
    "Step 1: Tracking in progress."
-4. **Add the license**, if I chose one: get its text from GitHub
+4. **Add the license**, if I chose 2 or 3: get its text from GitHub
    (`gh api licenses/mit --jq .body`, or `licenses/apache-2.0`), fill in the
-   year and the name I gave, and save it as `LICENSE`.
+   year and the name I gave, and save it as `LICENSE`. For 1 or 4, add no
+   license file.
 5. **Make the first commit** on a branch named `main`:
    `git init -b main`, add everything, and commit with the message
    "Start from the AI-assisted SDLC starter kit".
@@ -179,7 +199,10 @@ These need me, in the Claude desktop app, so give me the steps:
    `docs/d01-01-checklist.md` (and `d01-02` and `d01-03`, if the project is
    large) as the templates. Use what you already know (the name, the
    description, where the files live, that it's my own project, and which
-   tools I'm using) and ask only Mode A's remaining questions.
+   tools I'm using) and ask only Mode A's remaining questions. If I answered
+   "not sure yet" about the license, log it in the checklist's Issue Log as
+   an open question, "Decide who may use the code (the license) before the
+   repo is made public or shared," for the Release step.
 3. This thread is now the project's **Tracking chat**: say so, and remind me
    to come back to it after every step. Save the checklist as
    `docs/d01-01-checklist.md`, commit it, and push it.
