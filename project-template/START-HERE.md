@@ -37,6 +37,8 @@ Throughout, `<your-project>` stands for your project's name, for example
   ai_assisted_sdlc_workflow for a new project"** and attach the workflow
   repo's
   [`prompts/c00-new-project-prompt.md`](https://github.com/b0ts/ai_assisted_sdlc_workflow/blob/main/prompts/c00-new-project-prompt.md).
+  (Or paste that link instead of attaching the file. No copy of the
+  workflow repo is needed; Claude fetches the starter kit itself.)
   It asks for the name and your GitHub link, does Steps A to D below for
   you, gives you the clicks for Step E, and starts Step 1. You need Git and
   the GitHub CLI, signed in once with `gh auth login` in Terminal; the
@@ -57,12 +59,23 @@ Throughout, `<your-project>` stands for your project's name, for example
   GitHub through menus. (Prefer a terminal? Every step below also says what
   to ask Claude Code.)
 - The **Claude desktop app**, and **Claude Code** (needed from Step 6).
-- A copy of the workflow repo on your computer, in your projects folder. In
-  GitHub Desktop: choose **File**, then **Clone Repository...**, click the
-  **URL** tab, paste `https://github.com/b0ts/ai_assisted_sdlc_workflow`,
-  choose your projects folder as the **Local Path**, and click **Clone**.
-  If you already have it, get the latest version: select it in GitHub
-  Desktop, then choose **Repository**, then **Pull**.
+- A copy of the workflow repo on your computer, in your projects folder,
+  for its starter kit (`project-template/`). Either way works:
+  - **Clone it (easy to update later):** in GitHub Desktop, choose
+    **File**, then **Clone Repository...**, click the **URL** tab, paste
+    `https://github.com/b0ts/ai_assisted_sdlc_workflow`, choose your
+    projects folder as the **Local Path**, and click **Clone**. If you
+    already have it, get the latest version: select it in GitHub Desktop,
+    then choose **Repository**, then **Pull**.
+  - **Or download it (no Git needed):** on
+    [the workflow repo's GitHub page](https://github.com/b0ts/ai_assisted_sdlc_workflow),
+    click the green **Code** button, then **Download ZIP**. In Finder,
+    double-click the downloaded file to unzip it, and move the folder
+    (named `ai_assisted_sdlc_workflow-main`) into your projects folder.
+    Download it again for each new project, to get the latest version.
+
+  After setup, your project has its own copies of every prompt and
+  template, so you don't need the workflow repo for day-to-day work.
 
 ### Step A: Create the Project Folder and Its GitHub Repo
 
@@ -93,7 +106,8 @@ You now have `projects/<your-project>/` with a `README.md`, `LICENSE`, and
 
 ### Step B: Copy the Starter Kit Into It
 
-1. In **Finder**, open `ai_assisted_sdlc_workflow/project-template/`.
+1. In **Finder**, open `ai_assisted_sdlc_workflow/project-template/` (or
+   `ai_assisted_sdlc_workflow-main/project-template/`, if you downloaded it).
 2. Choose **Edit**, then **Select All**, then **Edit**, then **Copy**.
 3. Open your new `<your-project>` folder, and choose **Edit**, then
    **Paste Items**.

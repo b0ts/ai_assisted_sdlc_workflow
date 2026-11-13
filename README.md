@@ -70,8 +70,14 @@ first push, and starts Step 1.
 5. **Confirm the summary.** Claude creates everything, then starts Step 1
    in the same thread, which becomes the project's Tracking chat.
 
-**Or do it yourself:** copy the [`project-template/`](project-template/)
-folder into a new project folder, and follow Part 1 of its
+Someone else using this workflow doesn't need a copy of this repo for that:
+pasting the link is enough, and Claude fetches the starter kit itself.
+
+**Or do it yourself:** get a copy of this repo, either by cloning it
+(in GitHub Desktop: **File**, then **Clone Repository...**) or, with no Git
+needed, by clicking the green **Code** button above, then **Download ZIP**,
+and unzipping it. Then copy the [`project-template/`](project-template/)
+folder's contents into a new project folder, and follow Part 1 of its
 [`START-HERE.md`](project-template/START-HERE.md), with menus in Finder and
 GitHub Desktop: create the project's GitHub repo, then run the steps,
 starting with the Scrum Master (Step 1). Its `prompts/` and `docs/` folders are copies of this repo's
