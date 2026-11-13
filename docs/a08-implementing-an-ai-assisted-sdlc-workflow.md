@@ -67,6 +67,13 @@ where you keep your projects, start Claude Code, and ask it to clone the repo.
 3. Under **Local Path**, click **Choose...** and select your projects folder.
 4. Click **Clone**.
 
+**Or download it, with no Git needed:** on
+[the repo's GitHub page](https://github.com/b0ts/ai_assisted_sdlc_workflow),
+click the green **Code** button, then **Download ZIP**. In Finder,
+double-click the downloaded file to unzip it, and move the folder (named
+`ai_assisted_sdlc_workflow-main`) into your projects folder. Download it
+again for each new project, to get the latest version.
+
 ---
 
 ## Step 2: Create a new folder for your project
