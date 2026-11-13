@@ -44,14 +44,31 @@ The [`samples/`](samples/) folder holds a finished sample project: [BeautifulBea
 
 ## Starting your own project
 
-**Fastest start: let Claude set it up.** In Claude Code, or a Claude thread
-that can run commands on your computer, say **"Use the
-ai_assisted_sdlc_workflow for a new project"** and attach
-[`prompts/c00-new-project-prompt.md`](prompts/c00-new-project-prompt.md).
-Claude asks for the project's name and your GitHub link, creates the folder
-in your projects folder, copies in the starter kit, creates the GitHub repo
-with the same name, makes the first push, and starts Step 1. You need Git and
-the GitHub CLI, signed in once (`gh auth login`); the prompt explains.
+**Fastest start: let Claude set it up.** Claude creates the project folder,
+copies in the starter kit, creates the project's GitHub repo, makes the
+first push, and starts Step 1.
+
+1. **Once, on your computer:** install Git and the
+   [GitHub CLI](https://cli.github.com). In Terminal, run `gh auth status`
+   to check it's signed in; if it isn't, run `gh auth login` and follow its
+   questions. (Claude never asks for your password.)
+2. **Use a Claude chat that can run commands on your computer:** Claude
+   Code, or a Claude desktop thread linked to your computer. A plain chat
+   can't create the repo.
+3. **Start a new thread** (for example, `00-new-project`) and say:
+   > Use the ai_assisted_sdlc_workflow for a new project:
+   > https://github.com/b0ts/ai_assisted_sdlc_workflow/blob/main/prompts/c00-new-project-prompt.md
+
+   If the chat can't open the link, attach
+   [`prompts/c00-new-project-prompt.md`](prompts/c00-new-project-prompt.md)
+   instead.
+4. **Answer its questions:** the project's name, a sentence about it, your
+   GitHub link, private or public, who may use the code, and whether others
+   will work on it. For the **projects folder**, give the folder your
+   projects live in; if it holds your copy of this repo, Claude copies the
+   starter kit from there, after updating it.
+5. **Confirm the summary.** Claude creates everything, then starts Step 1
+   in the same thread, which becomes the project's Tracking chat.
 
 **Or do it yourself:** copy the [`project-template/`](project-template/)
 folder into a new project folder, and follow Part 1 of its

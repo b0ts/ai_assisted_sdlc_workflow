@@ -27,22 +27,29 @@ A plain chat that can only read and write files can't create the GitHub repo.
 On your computer, once:
 
 - **Git**, and the **GitHub CLI** (`gh`, from [cli.github.com](https://cli.github.com)),
-  signed in to your GitHub account: in Terminal, run `gh auth login` and
-  follow its questions. Claude checks this first, and tells you what's
-  missing. Claude never asks for your password or a token.
+  signed in to your GitHub account. To check, in Terminal, run
+  `gh auth status`; if it isn't signed in, run `gh auth login` and follow
+  its questions. Claude checks this first, and tells you what's missing.
+  Claude never asks for your password or a token.
 - A **projects folder** (for example, `~/projects`) where your projects live.
+  If it also holds your copy of this workflow repo, Claude copies the
+  starter kit from there, after updating it; otherwise it downloads a
+  temporary copy.
 
 ### How to Start
 
 1. Create (or open) a Claude Project to start new projects from, and start a
    new thread in it. Name the thread something like `00-new-project`.
-2. Say: **"Use the ai_assisted_sdlc_workflow for a new project."** Then
-   either attach this file, or paste everything below the line. (If you've
-   saved the workflow's new-project skill, the sentence alone is enough.)
+2. Say: **"Use the ai_assisted_sdlc_workflow for a new project:"**
+   followed by this prompt's link,
+   `https://github.com/b0ts/ai_assisted_sdlc_workflow/blob/main/prompts/c00-new-project-prompt.md`.
+   If the chat can't open the link, attach this file, or paste everything
+   below the line. (If you've saved the workflow's new-project skill, the
+   sentence alone is enough.)
 3. Answer Claude's questions: the project's name, a sentence about it, your
-   GitHub link, private or public, whether others will work on it with
-   you, and who may use your code (no need to
-   know about licenses: it asks in plain words, and "not sure yet" is fine).
+   GitHub link, private or public, who may use your code (no need to know
+   about licenses: it asks in plain words, and "not sure yet" is fine),
+   whether others will work on it with you, and your projects folder.
 4. Confirm the summary it shows you. It creates everything, then starts
    Step 1 in the same thread, which becomes the project's **Tracking chat**.
 
