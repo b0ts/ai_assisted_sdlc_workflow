@@ -11,7 +11,8 @@ Copy it into a new project folder, and you get, ready to use:
 | Blank **deliverables** | [`docs/`](docs/) | Every document the workflow produces, as a blank template with `[placeholders]`, named by its d-number (for example, `d03-01-prd.md`). Each step's chat fills its own in. |
 | Instructions for Claude | `CLAUDE.md` | How this project is organized, and the workflow's rules |
 | Places for the work | [`tests/`](tests/), [`src/`](src/), [`assets/`](assets/) | Tests (Step 7), code (Step 8), images and data |
-| Your project's front page | `README.md` | Fill in the name and description |
+| Your project's front page | `README.md` | Fill in the name, description, and who's involved |
+| Working with others | `CONTRIBUTING.md` | How collaborators pull, branch, commit, and share changes |
 
 You don't need to know how to program. You do need to read what each chat
 produces and decide whether it's right: that is your job in every step.
@@ -29,9 +30,25 @@ and the step-by-step walkthrough is
 Throughout, `<your-project>` stands for your project's name, for example
 `OurGroupVolunteerApp`: letters and numbers, no spaces.
 
+### Two Ways to Set Up
+
+- **Let Claude do it (about 5 minutes).** In Claude Code, or a Claude
+  thread that can run commands on your computer, say **"Use the
+  ai_assisted_sdlc_workflow for a new project"** and attach the workflow
+  repo's
+  [`prompts/c00-new-project-prompt.md`](https://github.com/b0ts/ai_assisted_sdlc_workflow/blob/main/prompts/c00-new-project-prompt.md).
+  It asks for the name and your GitHub link, does Steps A to D below for
+  you, gives you the clicks for Step E, and starts Step 1. You need Git and
+  the GitHub CLI, signed in once with `gh auth login` in Terminal; the
+  prompt checks and explains. If you're reading this inside a project it
+  already set up, skip to Part 2.
+- **Do it yourself (about 30 minutes),** with menus, following Part 1. Use
+  this way if you'd rather, or if you can't give Claude access to run
+  commands or to your GitHub account.
+
 ---
 
-## Part 1: Set Up the Project (About 30 Minutes, Once)
+## Part 1: Set Up the Project by Hand (About 30 Minutes, Once)
 
 ### What You Need First
 
@@ -60,8 +77,10 @@ GitHub Desktop creates the folder, a README, and a license in one go:
    - Tick **Initialize this repository with a README**
    - **Git Ignore:** choose **Python** (a sensible start; the starter kit
      adds its own list too)
-   - **License:** choose one, for example **MIT License** (anyone may reuse
-     your work, with credit), or **None** if you want to keep all rights
+   - **License:** see [Choosing a License](#choosing-a-license), below. In
+     short: **None** for a private project (only you and the people you
+     choose may use it), **MIT License** if anyone may reuse it with
+     credit. Not sure? Choose **None**; you can add one any time.
 3. Click **Create Repository**.
 
 You now have `projects/<your-project>/` with a `README.md`, `LICENSE`, and
@@ -232,6 +251,110 @@ the Tracking chat, then return.
 
 ---
 
+## Working With Others
+
+You can work with others before the project is finished. Three things to
+settle:
+
+1. **Who can see it.** Keep the repo private and invite each person: on the
+   repo's GitHub page, choose **Settings**, then **Collaborators**, then
+   **Add people**, and enter their GitHub username or email. They get an
+   invitation to accept. For a group, a GitHub **organization** that owns
+   the repo makes adding and removing people easier.
+2. **What they may do with it.** Write it down in the README's
+   **Collaborators and ownership** section, in plain words: who's involved,
+   and who owns the work (you, all of you, or an organization).
+   - A **private** group usually doesn't need a license file, but agree on
+     ownership, especially for an organization's project.
+   - A **public** repo that anyone may contribute to: choose the license
+     **now**, usually MIT (see [Choosing a License](#choosing-a-license)),
+     so contributions come in under terms already in place.
+3. **How you share the work.** The repo is the shared record:
+   - **The tracking checklist** is everyone's source of truth: one
+     checklist, one decision log. Name who approves each step, and, if it
+     helps, who owns each step.
+   - **Get the latest before you start, and push when you finish.** In
+     GitHub Desktop: **Repository**, then **Pull**; afterwards, commit,
+     then **Push origin**.
+   - **Bigger changes go on a branch, with a pull request,** so others can
+     read them before they join `main`. `CONTRIBUTING.md` has the clicks.
+   - **Claude chats are personal.** Each person runs their own step chats
+     with the same prompts; the documents in `docs/` carry the work
+     between people. (On a Claude Team or Enterprise plan, a Claude Project
+     can also be shared.)
+   - **Collaborators make good independent reviewers,** especially for the
+     hands-on review in Step 8.
+
+### Sharing Your Progress
+
+Anyone can follow a **public** project: send them the repo's link
+(`https://github.com/<you>/<project>`). They can read it on GitHub
+without an account, and don't need an invitation. To make it easy to
+follow:
+
+- Keep the README's **Status** line current. The Tracking chat updates it
+  (or gives you the line) after each decision.
+- Point them to the tracking checklist, `docs/d01-01-checklist.md`, for
+  the details, and to the approved documents in `docs/`.
+- If they might help later, a license chosen now saves trouble (see
+  [Choosing a License](#choosing-a-license)).
+
+A **private** project can be seen only by people you invite, so follow
+the next section even for someone who only wants to look.
+
+### Adding or Removing Someone Later
+
+You can add a collaborator at any step. Say so in the **Tracking chat**:
+"Add Sam as a collaborator." It asks what they'll do, records it in the
+checklist, updates the README's **Collaborators and ownership** section,
+and, if the repo is public with no license, asks you to choose one first,
+before their work comes in. It sends the invite for you if it can run
+commands; otherwise:
+
+- **To add someone:** on the repo's GitHub page, choose **Settings**, then
+  **Collaborators**, then **Add people**, and enter their GitHub username.
+  They get an email invitation to accept.
+- **To remove someone:** the same page, then **Remove** next to their
+  name. Tell the Tracking chat too, so it reassigns anything they were to
+  sign off.
+
+Then send them the repo's link and point them to "Joining a Project
+Already Under Way" in `CONTRIBUTING.md`: how to get the project onto their
+computer, and what to read to catch up.
+
+This is general information, not legal advice. If money, a client, or an
+organization's ownership is involved, ask whoever handles its agreements.
+
+---
+
+## Choosing a License
+
+A **license** is a short file, `LICENSE`, that tells other people what
+they're allowed to do with your project's code. You don't need to know
+license names: answer one question, **who should be allowed to use your
+project's code?**
+
+| Your answer | Choose | What it means for someone who finds your code |
+|---|---|---|
+| **Just me and the people I choose** | **No license** | They may look at it if the repo is public, but they have no permission to copy, change, or reuse it. The usual choice for a private project. |
+| **Anyone, for free, as long as they credit me** | **MIT** | They may use, change, and share it, even in paid products, as long as they keep your name and the license. The most common, simplest open license. |
+| **Anyone, with credit, plus protection around patents** | **Apache 2.0** | Like MIT, plus each contributor grants a patent license. Mostly matters for larger organizations; if you're unsure, MIT is fine. |
+| **I'm not sure yet** | **No license, for now** | Same as the first row. Add one before you make the repo public or share the code; Step 9 (Release) asks again. |
+
+- **It can change later.** Adding a `LICENSE` file later is easy: on your
+  repo's GitHub page, click **Add file**, then **Create new file**, type
+  `LICENSE` as the name, and click **Choose a license template**.
+- **Making it for an organization?** Check whether it has a rule about
+  licenses, or about who owns code made for it, before you choose.
+- **Want to know more?** GitHub's [choosealicense.com](https://choosealicense.com)
+  explains the common licenses in plain words.
+
+This is general information, not legal advice. If money, a client, or
+ownership is involved, ask whoever handles agreements for your
+organization.
+
+---
+
 ## Checklist
 
 - [ ] A: Project folder and GitHub repo created (README, license, .gitignore)
@@ -239,6 +362,8 @@ the Tracking chat, then return.
 - [ ] C: Name and description filled in
 - [ ] D: Committed and published to GitHub
 - [ ] E: Claude Project created and linked; file access working
+- [ ] Collaborators (if any) invited, and who owns the work written in the README
+- [ ] Later collaborators added through the Tracking chat (it records them and updates the README)
 - [ ] Step 1: Tracking chat started; checklist saved
 - [ ] Step 2: One-pager written; Go or No-Go recorded
 - [ ] Steps 3 to 10, each with a decision recorded in the Tracking chat

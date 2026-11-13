@@ -2,6 +2,7 @@
 
 Predefined prompts for each step's chat. Names start with the step number. If a step ever needs more than one prompt, a second number is added (`c01-01-...`, `c01-02-...`).
 
+- [c00-new-project-prompt.md](c00-new-project-prompt.md): Start a new project (Project Setup Assistant): asks the name and your GitHub link, creates the folder from `project-template/`, creates and pushes the GitHub repo, then starts Step 1. The manual alternative is Part 1 of [`project-template/START-HERE.md`](../project-template/START-HERE.md)
 - [c01-tracking-prompt.md](c01-tracking-prompt.md): Step 1, Tracking (Scrum Master)
 - [c02-feasibility-prompt.md](c02-feasibility-prompt.md): Step 2, Feasibility (Product Manager)
 - [c03-requirements-prompt.md](c03-requirements-prompt.md): Step 3, Requirements (Product Manager)
